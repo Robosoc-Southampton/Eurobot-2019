@@ -14,7 +14,7 @@ public:
 	void setup();
 
 	// sets and gets the acceleration of the MD25
-	// valid acceleration values are 1, 2, 3, 5, and 10
+	// valid acceleration values are in the range 1 to 10
 	// see https://www.robot-electronics.co.uk/htm/md25i2c.htm#acceleration%20register
 	void setAcceleration(uint8_t acceleration);
 	uint8_t getAcceleration();

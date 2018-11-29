@@ -1,4 +1,6 @@
 
+#pragma once
+
 #include <arduino.h>
 
 // use rerror(message) to error with a message

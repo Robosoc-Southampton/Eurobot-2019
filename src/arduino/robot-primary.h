@@ -1,4 +1,6 @@
 
+#pragma once
+
 #include <arduino.h>
 #include "MD25.h"
 
