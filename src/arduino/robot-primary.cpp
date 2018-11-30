@@ -5,9 +5,13 @@ MD25 md25;
 
 auto ledOn = LOW;
 
-ACTIVITY(toggleLED, 500000, 5000000) {
+ACTIVITY(toggleLED, cooldown=500000, timeout=5000000) {
 	digitalWrite(LED_BUILTIN, ledOn);
 	ledOn ^= HIGH;
+}
+
+PREDICATE(toggleLED) {
+	return false;
 }
 
 uint16_t readComponentValue(uint16_t component_ID) {
@@ -15,7 +19,7 @@ uint16_t readComponentValue(uint16_t component_ID) {
 }
 
 Activity* lookupActivity(uint16_t activity_ID) {
-	return &toggleLED;
+	return ACTIVITY(toggleLED);
 }
 
 Sensor *sensors;
@@ -28,8 +32,6 @@ void primary_setup() {
 	md25.setup();
 
 	sensors = malloc(1);
-
-	toggleLED_setup();
 
 	robot::set_component_value_reader(&readComponentValue);
 	robot::set_activity_lookup(&lookupActivity);
