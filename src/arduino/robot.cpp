@@ -7,8 +7,12 @@ namespace robot {
 	uint32_t current_activity_clock = 0;
 	uint32_t current_activity_last_call = 0;
 
-	void setup() {
+	bool is_moving = false;
 
+	robot::ReadComponentValue component_value_reader = nullptr;
+
+	void setup() {
+		rassert(component_value_reader != nullptr, "Component value reader has not been set");
 	}
 
 	void loop() {
@@ -62,6 +66,67 @@ namespace robot {
 	}
 
 	void read_message_buffer() {
+		// if no message is available, stop
+		if (Serial.available() < MESSAGE_SIZE) return;
 
+		bool is_activity_running = current_activity != nullptr;
+		bool is_readable = false;
+		Message message;
+
+		// test the command char to determine if the message is ready to be read
+		switch ((char) Serial.peek()) {
+			case 'F': case 'T': case 'A': // forward, turn and align commands
+				// can only run next movement command if not currently moving
+				is_readable = !is_moving;
+				break;
+			case 'D': // can only run next activity if the current one has finished
+				is_readable = !is_activity_running;
+				break;
+			case 'R':
+				// can always read a component value
+				is_readable = true;
+				break;
+		}
+
+		// if can't read next message, stop
+		if (!is_readable) return;
+
+		// read message from serial buffer
+		uint8_t bytes[MESSAGE_SIZE];
+
+		for (uint8_t i = 0; i < MESSAGE_SIZE; ++i) {
+			bytes[i] = Serial.read();
+		}
+
+		message = Message(bytes);
+
+		// act on message
+		switch (message.command) {
+			case 'F': // forward
+				// TODO: implement forward
+				break;
+			case 'T': // turn
+				// TODO: implement turn
+				break;
+			case 'A': // align
+				// TODO: implement align
+				break;
+			case 'D': // do
+				// TODO: implement do
+				break;
+			case 'R': // request
+				uint16_t value = (*component_value_reader)(message.payload);
+				send_message('r', value);
+				break;
+		}
+	}
+
+	void set_component_value_reader(ReadComponentValue reader) {
+		component_value_reader = reader;
+	}
+
+	void send_message(char command, uint16_t payload) {
+		Serial.write(command);
+		Serial.write((uint8_t*) &payload, 2); // this is beautifully hacky right?
 	}
 }
