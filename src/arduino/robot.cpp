@@ -2,15 +2,9 @@
 #include "robot.h"
 
 namespace robot {
-	Activity *current_activity = nullptr;
-	uint32_t current_activity_cooldown = 0;
-	uint32_t current_activity_clock = 0;
-	uint32_t current_activity_last_call = 0;
-
 	bool is_moving = false;
 
 	ReadComponentValue component_value_reader = nullptr;
-	ActivityLookup lookup_activity = nullptr;
 
 	void set_component_value_reader(ReadComponentValue reader) {
 		component_value_reader = reader;
@@ -38,41 +32,6 @@ namespace robot {
 
 	void update_motor_speeds() {
 
-	}
-
-	void run_activity() {
-		if (current_activity == nullptr) return;
-
-		uint32_t current_time = micros();
-		uint32_t delta_time = current_time - current_activity_last_call;
-
-		// update clock and cooldown
-		current_activity_cooldown -= delta_time;
-		current_activity_clock += delta_time;
-
-		// if activity has timed out then stop it
-		if (current_activity_clock > current_activity->timeout && current_activity->timeout != 0) {
-			current_activity = nullptr;
-			return;
-		}
-
-		// if activity predicate exists and returns false, stop activity
-		if (current_activity->predicate != nullptr && !(*current_activity->predicate)()) {
-			current_activity = nullptr;
-			return;
-		}
-
-		// if cooldown is satisfied
-		if (delta_time >= current_activity_cooldown) {
-			// run the activity
-			current_activity->callback();
-			// note the last call time
-			current_activity_last_call = current_time;
-			// reset the cooldown (TODO: review this)
-			current_activity_cooldown = delta_time >= current_activity->cooldown
-			                          ? current_activity->cooldown
-			                          : current_activity->cooldown - delta_time + current_activity_cooldown;
-		}
 	}
 
 	void read_message_buffer() {
@@ -130,14 +89,7 @@ namespace robot {
 					break;
 				}
 
-				// set the current activity
-				current_activity = next_activity;
-				// run the callback once immediately
-				(*next_activity->callback)();
-				// set the activity configuration
-				current_activity_cooldown = next_activity->cooldown;
-				current_activity_clock = 0;
-				current_activity_last_call = micros();
+				start_activity(next_activity);
 
 				break;
 			case 'R': // request
