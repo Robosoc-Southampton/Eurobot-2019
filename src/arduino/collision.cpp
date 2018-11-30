@@ -14,6 +14,7 @@ namespace robot {
 
 	void check_distance_sensors() {
 		if (!are_distance_sensors_enabled) return;
+		if (!drive::is_moving) return;
 
 		bool is_collision_detected = false;
 
@@ -23,8 +24,9 @@ namespace robot {
 		}
 
 		if (is_collision_detected) {
-			drive::stop();
-			robot::send_message('c', drive::get_average_distance_travelled());
+			int16_t distance = drive::get_average_distance_travelled();
+			drive::reset();
+			robot::send_message('c', distance);
 		}
 	}
 

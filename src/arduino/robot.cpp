@@ -72,12 +72,13 @@ namespace robot {
 			case 'F': // forward
 				enable_distance_sensors();
 				drive::forward(message.payload);
-				disable_distance_sensors();
 				break;
 			case 'T': // turn
+				disable_distance_sensors();
 				drive::turn(message.payload);
 				break;
 			case 'A': // align
+				disable_distance_sensors();
 				drive::forward(-drive::ALIGN_DISTANCE);
 				// TODO: spec requires to drive forward by message.payload after aligning
 				break;
