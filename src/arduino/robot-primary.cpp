@@ -2,10 +2,10 @@
 #include "robot-primary.h"
 
 MD25 md25;
-Activity blinkLED;
 
 auto ledOn = LOW;
-void toggleLED() {
+
+ACTIVITY(toggleLED, 500000, 5000000) {
 	digitalWrite(LED_BUILTIN, ledOn);
 	ledOn ^= HIGH;
 }
@@ -15,7 +15,7 @@ uint16_t readComponentValue(uint16_t component_ID) {
 }
 
 Activity* lookupActivity(uint16_t activity_ID) {
-	return &blinkLED;
+	return &toggleLED;
 }
 
 Sensor *sensors;
@@ -29,9 +29,7 @@ void primary_setup() {
 
 	sensors = malloc(1);
 
-	blinkLED.callback = &toggleLED;
-	blinkLED.cooldown = 500000;
-	blinkLED.timeout = 5000000;
+	toggleLED_setup();
 
 	robot::set_component_value_reader(&readComponentValue);
 	robot::set_activity_lookup(&lookupActivity);

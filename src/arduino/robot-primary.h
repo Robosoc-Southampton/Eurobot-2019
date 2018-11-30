@@ -4,6 +4,7 @@
 #include <arduino.h>
 #include "MD25.h"
 #include "robot.h"
+#include "activities.h"
 
 uint16_t readComponentValue(uint16_t component_ID);
 

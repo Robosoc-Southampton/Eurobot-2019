@@ -3,6 +3,19 @@
 
 #include <arduino.h>
 
+#define ACTIVITY3(name, c, t) \
+Activity name;\
+void name##_callback();\
+void name##_setup() {\
+	name.timeout = t;\
+	name.cooldown = c;\
+	name.callback = &name##_callback;\
+}\
+void name##_callback()
+#define ACTIVITY2(name, cooldown) ACTIVITY3(name, cooldown, 0)
+#define GET_ACTIVITY_MACRO(_1,_2,_3,NAME,...) NAME
+#define ACTIVITY(...) GET_ACTIVITY_MACRO(__VA_ARGS__, ACTIVITY3, ACTIVITY2)(__VA_ARGS__)
+
 struct Activity;
 
 typedef void (*ActivityCallback)();
