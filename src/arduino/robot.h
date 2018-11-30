@@ -6,13 +6,18 @@
 #include "debug.h"
 
 namespace robot {
+	struct Activity;
+
 	typedef void (*ActivityCallback)();
 	typedef bool (*ActivityPredicate)();
 	typedef uint16_t (*ReadComponentValue)(uint16_t);
+	typedef Activity* (*ActivityLookup)(uint16_t);
 
 	// an activity represents an action that can execute on the robot
+	// note that all times related to activities are in microseconds
 	struct Activity {
 		// function to run when activity is triggered
+		// the function should not be significantly blocking (no delay()s, pretty much)
 		ActivityCallback callback;
 		// predicate must return true for activity to continue
 		ActivityPredicate predicate;
@@ -30,8 +35,14 @@ namespace robot {
 	extern bool is_moving;
 
 	extern ReadComponentValue component_value_reader;
+	extern ActivityLookup lookup_activity;
 
+	// sets the function to read a component value
+	// this function should not be significantly blocking (no delay()s, pretty much)
 	void set_component_value_reader(ReadComponentValue reader);
+
+	// sets the function to lookup an activity
+	void set_activity_lookup(ActivityLookup lookup);
 
 	void setup();
 	void loop();

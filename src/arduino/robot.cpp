@@ -2,17 +2,27 @@
 #include "robot.h"
 
 namespace robot {
-	robot::Activity *current_activity = nullptr;
+	Activity *current_activity = nullptr;
 	uint32_t current_activity_cooldown = 0;
 	uint32_t current_activity_clock = 0;
 	uint32_t current_activity_last_call = 0;
 
 	bool is_moving = false;
 
-	robot::ReadComponentValue component_value_reader = nullptr;
+	ReadComponentValue component_value_reader = nullptr;
+	ActivityLookup lookup_activity = nullptr;
+
+	void set_component_value_reader(ReadComponentValue reader) {
+		component_value_reader = reader;
+	}
+
+	void set_activity_lookup(ActivityLookup lookup) {
+		lookup_activity = lookup;
+	}
 
 	void setup() {
 		rassert(component_value_reader != nullptr, "Component value reader has not been set");
+		rassert(lookup_activity != nullptr, "Activity lookup has not been set");
 	}
 
 	void loop() {
@@ -72,6 +82,7 @@ namespace robot {
 		bool is_activity_running = current_activity != nullptr;
 		bool is_readable = false;
 		Message message;
+		Activity *next_activity;
 
 		// test the command char to determine if the message is ready to be read
 		switch ((char) Serial.peek()) {
@@ -112,17 +123,28 @@ namespace robot {
 				// TODO: implement align
 				break;
 			case 'D': // do
-				// TODO: implement do
+				next_activity = (*lookup_activity)(message.payload);
+
+				if (next_activity == nullptr) {
+					// TODO: what to do here? error?
+					break;
+				}
+
+				// set the current activity
+				current_activity = next_activity;
+				// run the callback once immediately
+				(*next_activity->callback)();
+				// set the activity configuration
+				current_activity_cooldown = next_activity->cooldown;
+				current_activity_clock = 0;
+				current_activity_last_call = micros();
+
 				break;
 			case 'R': // request
 				uint16_t value = (*component_value_reader)(message.payload);
 				send_message('r', value);
 				break;
 		}
-	}
-
-	void set_component_value_reader(ReadComponentValue reader) {
-		component_value_reader = reader;
 	}
 
 	void send_message(char command, uint16_t payload) {
