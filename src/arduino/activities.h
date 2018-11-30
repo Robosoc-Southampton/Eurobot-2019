@@ -14,20 +14,20 @@ typedef Activity* (*ActivityLookup)(uint16_t);
 struct Activity {
 	// function to run when activity is triggered
 	// the function should not be significantly blocking (no delay()s, pretty much)
-	ActivityCallback callback;
+	ActivityCallback callback = nullptr;
 	// predicate must return true for activity to continue
-	ActivityPredicate predicate;
+	ActivityPredicate predicate = nullptr;
 	// time to wait between calling activity callback
-	uint32_t cooldown;
+	uint32_t cooldown = 1;
 	// time to wait before stopping activity
-	uint32_t timeout;
+	uint32_t timeout = 0;
 };
 
 namespace robot {
 	extern Activity *current_activity;
 	extern uint32_t current_activity_cooldown;
 	extern uint32_t current_activity_clock;
-	extern uint32_t current_activity_last_call;
+	extern uint32_t current_activity_last_cycle;
 
 	extern ActivityLookup lookup_activity;
 	

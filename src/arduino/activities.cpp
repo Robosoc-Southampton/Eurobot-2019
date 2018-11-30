@@ -6,7 +6,7 @@ namespace robot {
 	Activity *current_activity = nullptr;
 	uint32_t current_activity_cooldown = 0;
 	uint32_t current_activity_clock = 0;
-	uint32_t current_activity_last_call = 0;
+	uint32_t current_activity_last_cycle = 0;
 
 	ActivityLookup lookup_activity = nullptr;
 
@@ -18,11 +18,11 @@ namespace robot {
 		if (current_activity == nullptr) return;
 
 		uint32_t current_time = micros();
-		uint32_t delta_time = current_time - current_activity_last_call;
+		uint32_t delta_time = current_time - current_activity_last_cycle;
 
-		// update clock and cooldown
-		current_activity_cooldown -= delta_time;
-		current_activity_clock += delta_time;
+		// update clock and cycle
+		current_activity_clock     += delta_time;
+		current_activity_last_cycle = current_time;
 
 		// if activity has timed out then stop it
 		if (current_activity_clock > current_activity->timeout && current_activity->timeout != 0) {
@@ -37,27 +37,31 @@ namespace robot {
 		}
 
 		// if cooldown is satisfied
-		if (delta_time >= current_activity_cooldown) {
+		if (current_activity_cooldown <= delta_time) {
 			// run the activity
 			current_activity->callback();
-			// note the last call time
-			current_activity_last_call = current_time;
 			// reset the cooldown (TODO: review this)
 			current_activity_cooldown = delta_time >= current_activity->cooldown
 			                          ? current_activity->cooldown
 			                          : current_activity->cooldown - delta_time + current_activity_cooldown;
+		}
+		else {
+			// otherwise, update cooldown
+			current_activity_cooldown -= delta_time;
 		}
 	}
 
 	void start_activity(Activity* activity) {
 		// set the current activity
 		current_activity = activity;
-		// run the callback once immediately
-		(*activity->callback)();
 		// set the activity configuration
 		current_activity_cooldown = activity->cooldown;
+		// reset the clock
 		current_activity_clock = 0;
-		current_activity_last_call = micros();
+		// run the callback once immediately
+		(*activity->callback)();
+		// reset the last cycle
+		current_activity_last_cycle = micros();
 	}
 	
 }

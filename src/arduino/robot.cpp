@@ -86,6 +86,7 @@ namespace robot {
 				next_activity = (*lookup_activity)(message.payload);
 
 				if (next_activity == nullptr) {
+					Serial.println("Oh noes"); // DEBUG
 					// TODO: what to do here? error?
 					break;
 				}
