@@ -1,8 +1,14 @@
 
 #include "robot.h"
 
+Message::Message(uint8_t bytes[]) {
+	command = (char) bytes[0];
+	payload = ((uint16_t) bytes[1] << 8) + (uint16_t) bytes[2];
+}
+
+Message::Message() { /* do nothing */ }
+
 namespace robot {
-	bool is_moving = false;
 
 	ReadComponentValue component_value_reader = nullptr;
 
@@ -10,28 +16,17 @@ namespace robot {
 		component_value_reader = reader;
 	}
 
-	void set_activity_lookup(ActivityLookup lookup) {
-		lookup_activity = lookup;
-	}
-
 	void setup() {
 		rassert(component_value_reader != nullptr, "Component value reader has not been set");
 		rassert(lookup_activity != nullptr, "Activity lookup has not been set");
+		rassert(distance_sensors != nullptr, "Distance sensors have not been set");
 	}
 
 	void loop() {
 		check_distance_sensors();
-		update_motor_speeds();
+		drive::update_motor_speeds();
 		run_activity();
 		read_message_buffer();
-	}
-
-	void check_distance_sensors() {
-		
-	}
-
-	void update_motor_speeds() {
-
 	}
 
 	void read_message_buffer() {
@@ -47,7 +42,7 @@ namespace robot {
 		switch ((char) Serial.peek()) {
 			case 'F': case 'T': case 'A': // forward, turn and align commands
 				// can only run next movement command if not currently moving
-				is_readable = !is_moving;
+				is_readable = !drive::is_moving;
 				break;
 			case 'D': // can only run next activity if the current one has finished
 				is_readable = !is_activity_running;
@@ -103,4 +98,5 @@ namespace robot {
 		Serial.write(command);
 		Serial.write((uint8_t*) &payload, 2); // this is beautifully hacky right?
 	}
+
 }

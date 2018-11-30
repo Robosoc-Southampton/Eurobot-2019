@@ -30,6 +30,9 @@ namespace robot {
 	extern uint32_t current_activity_last_call;
 
 	extern ActivityLookup lookup_activity;
+	
+	// sets the function to lookup an activity
+	void set_activity_lookup(ActivityLookup lookup);
 
 	// calls activity callback and cancels it if necessary
 	void run_activity();

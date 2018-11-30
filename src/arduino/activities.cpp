@@ -2,12 +2,17 @@
 #include "activities.h"
 
 namespace robot {
+
 	Activity *current_activity = nullptr;
 	uint32_t current_activity_cooldown = 0;
 	uint32_t current_activity_clock = 0;
 	uint32_t current_activity_last_call = 0;
 
 	ActivityLookup lookup_activity = nullptr;
+
+	void set_activity_lookup(ActivityLookup lookup) {
+		lookup_activity = lookup;
+	}
 	
 	void run_activity() {
 		if (current_activity == nullptr) return;
@@ -54,4 +59,5 @@ namespace robot {
 		current_activity_clock = 0;
 		current_activity_last_call = micros();
 	}
+	
 }
