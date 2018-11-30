@@ -37,6 +37,9 @@ namespace robot {
 		void stop() {
 			is_moving = false;
 
+			target_left_encoder_value  -= md25->readLeftEncoder();
+			target_right_encoder_value -= md25->readRightEncoder();
+
 			md25->resetEncoders();
 			md25->stopMotors();
 		}
@@ -47,10 +50,27 @@ namespace robot {
 
 		void update_motor_speeds() {
 			// TODO
+
+			bool has_finished_movement = false;
+
+			if (has_finished_movement) {
+				stop();
+				robot::send_message('s', 0); // send a status(0) message
+			}
+		}
+
+		int16_t get_average_distance_travelled() {
+			return encoder_reading_to_distance(( md25->readLeftEncoder()
+				                               + md25->readRightEncoder() )
+			                                   / 2);
 		}
 
 		int32_t distance_to_encoder_reading(int16_t distance) {
 			return distance * _3600_DIV_2PI / robot::configuration::wheel_radius / 10;
+		}
+
+		int16_t encoder_reading_to_distance(int32_t encoder_value) {
+			return (int16_t) (encoder_value * robot::configuration::wheel_radius / _3600_DIV_2PI * 10);
 		}
 
 	}

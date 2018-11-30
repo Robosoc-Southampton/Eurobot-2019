@@ -70,7 +70,9 @@ namespace robot {
 		// act on message
 		switch (message.command) {
 			case 'F': // forward
+				enable_distance_sensors();
 				drive::forward(message.payload);
+				disable_distance_sensors();
 				break;
 			case 'T': // turn
 				drive::turn(message.payload);

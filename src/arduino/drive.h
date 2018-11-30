@@ -4,6 +4,7 @@
 #include <arduino.h>
 #include "configuration.h"
 #include "MD25.h"
+#include "robot.h"
 
 namespace robot {
 	namespace drive {
@@ -24,6 +25,9 @@ namespace robot {
 		// update motor speeds for MD25 stuff
 		void update_motor_speeds();
 
+		int16_t get_average_distance_travelled();
+
 		int32_t distance_to_encoder_reading(int16_t distance);
+		int16_t encoder_reading_to_distance(int32_t encoder_value);
 	}
 }
