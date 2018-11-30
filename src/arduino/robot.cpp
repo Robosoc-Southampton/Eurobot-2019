@@ -17,9 +17,11 @@ namespace robot {
 	}
 
 	void setup() {
-		rassert(component_value_reader != nullptr, "Component value reader has not been set");
-		rassert(lookup_activity != nullptr, "Activity lookup has not been set");
-		rassert(distance_sensors != nullptr, "Distance sensors have not been set");
+		rassert(component_value_reader != nullptr, "Component value reader not set");
+		rassert(lookup_activity != nullptr, "Activity lookup not set");
+		rassert(distance_sensors != nullptr, "Distance sensors not set");
+		rassert(drive::md25 != nullptr, "Drive MD25 not set");
+		rassert(configuration::radii_set, "Radii not set");
 	}
 
 	void loop() {
@@ -68,13 +70,14 @@ namespace robot {
 		// act on message
 		switch (message.command) {
 			case 'F': // forward
-				// TODO: implement forward
+				drive::forward(message.payload);
 				break;
 			case 'T': // turn
-				// TODO: implement turn
+				drive::turn(message.payload);
 				break;
 			case 'A': // align
-				// TODO: implement align
+				drive::forward(-drive::ALIGN_DISTANCE);
+				// TODO: spec requires to drive forward by message.payload after aligning
 				break;
 			case 'D': // do
 				next_activity = (*lookup_activity)(message.payload);
