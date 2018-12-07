@@ -16,8 +16,14 @@ namespace robot {
 
 		void error(const char* error_message, const char* function) {
 			log(error_message, function);
-			delay(100);
-			exit(1);
+			pinMode(LED_BUILTIN, OUTPUT);
+			
+			while (1) {
+				digitalWrite(LED_BUILTIN, HIGH);
+				delay(200);
+				digitalWrite(LED_BUILTIN, LOW);
+				delay(200);
+			}
 		}
 
 		bool assert(bool value, const char* error_message, const char* function) {
