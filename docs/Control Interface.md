@@ -29,3 +29,4 @@ struct Message {
 | collision | c | distance | Fired during `forward`/`align` action by the arduino, sending distance travelled. |
 | status | s | error | Returns an error code for some arbitrary action. If `error` is `0`, no error was encountered (success). |
 | return | r | data | Response to a `request` message. |
+| log | l | length | Notifies the pi that the arduino is about to send a debug message. `length` is the length of the message. |
