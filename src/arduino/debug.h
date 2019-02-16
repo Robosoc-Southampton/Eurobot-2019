@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <arduino.h>
+#include <Arduino.h>
 
 // use rerror(message) to error with a message
 #define rerror(s) robot::debug::error(s, __FUNCTION__);

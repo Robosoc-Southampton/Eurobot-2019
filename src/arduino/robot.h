@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <arduino.h>
+#include <Arduino.h>
 #include "activities.h"
 #include "collision.h"
 #include "debug.h"

@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+USAGE="Usage: \"bin/upload\" PORT MODE\n  where MODE = primary or secondary\n  note: find PORT using \"bin/ports\"\n"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+if [ -z "$1" ]; then
+	printf "$USAGE"
+	exit
+fi
+
+if [ -z "$2" ]; then
+	printf "$USAGE"
+	exit
+fi
+
+$DIR/prep $2
+$DIR/arduino-cmd --upload --port "/dev/tty$1"

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <arduino.h>
+#include <Arduino.h>
 #include "MD25.h"
 #include "robot.h"
 #include "activities.h"

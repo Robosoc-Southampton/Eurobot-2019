@@ -1,7 +1,7 @@
 
 @echo off
 
-set @usage=Usage: "bin/verify" PORT MODE;  where MODE = primary or secondary;  note: find PORT using "bin/ports"
+set @usage=Usage: "bin/upload" PORT MODE;  where MODE = primary or secondary;  note: find PORT using "bin/ports"
 
 if "%1" == "" (
 	echo %@usage:;=&echo.%
