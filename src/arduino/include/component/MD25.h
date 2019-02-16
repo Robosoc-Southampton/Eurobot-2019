@@ -1,9 +1,9 @@
 
 #pragma once
 
-#include <arduino.h>
+#include <Arduino.h>
 #include <Wire.h>
-#include "debug.h"
+#include "../debug.h"
 
 class MD25 {
 public:

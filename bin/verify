@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+USAGE="Usage: \"bin/verify\" MODE\n  where MODE = primary or secondary\n"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+if [ -z "$1" ]; then
+	printf "$USAGE"
+	exit
+fi
+
+$DIR/prep $1
+$DIR/arduino-cmd --verify --preserve-temp-files

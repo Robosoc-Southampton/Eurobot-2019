@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <arduino.h>
+#include <Arduino.h>
 
 // use rlog(message) to log a message
 #define rlog(s) robot::debug::log(s, __FUNCTION__)
@@ -11,8 +11,6 @@
 
 // use rassert(condition, message) to error with a message if `condition` is false
 #define rassert(v, s) robot::debug::assert(v, s, __FUNCTION__)
-
-// inline __attribute__((always_inline))
 
 namespace robot {
 	namespace debug {

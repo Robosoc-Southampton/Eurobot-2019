@@ -1,5 +1,5 @@
 
-#include "debug.h"
+#include "include/debug.h"
 
 namespace robot {
 	namespace debug {
