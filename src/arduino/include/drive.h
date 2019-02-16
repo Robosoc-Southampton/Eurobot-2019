@@ -3,8 +3,8 @@
 
 #include <Arduino.h>
 #include "configuration.h"
-#include "MD25.h"
 #include "robot.h"
+#include "component/MD25.h"
 
 namespace robot {
 	namespace drive {
@@ -19,7 +19,7 @@ namespace robot {
 		void forward(int16_t distance);
 		// turn by `angle` degrees counterclockwise
 		void turn(int16_t angle);
-		// resets target encoder values and md25 encoder readings
+		// reset target encoder values and md25 encoder readings
 		void reset();
 		// stop
 		void stop();
@@ -29,12 +29,19 @@ namespace robot {
 		// update motor speeds for MD25 stuff
 		void update_motor_speeds();
 
+		// return the mean average of the distance travelled by both motors
 		int16_t get_average_distance_travelled();
 
-		uint8_t encoder_delta_to_speed(int32_t delta); // takes positive delta and returns speed (0 -> 127)
+		// take a positive distance delta and returns speed (0 -> 127)
+		uint8_t encoder_delta_to_speed(int32_t delta);
+
+		// return the encoder value equivalent to a given distance
 		int32_t distance_to_encoder_reading(int16_t distance);
+
+		// return the distance equivalent to a given encoder value
 		int16_t encoder_reading_to_distance(int32_t encoder_value);
 
+		// return the absolute difference between two values
 		uint8_t diff(uint8_t a, uint8_t b);
 	}
 }

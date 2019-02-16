@@ -9,4 +9,4 @@ if [ -z "$1" ]; then
 fi
 
 $DIR/prep $1
-$DIR/arduino-cmd --verify
+$DIR/arduino-cmd --verify --preserve-temp-files

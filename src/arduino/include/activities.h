@@ -3,34 +3,13 @@
 
 #include <Arduino.h>
 
-/* For defining an activity:
-
-	ACTIVITY(name, cooldown=C, timeout=T) {
-		// code to run
-	}
-
-or
-
-	ACTIVITY(name, cooldown=C) {
-		// code to run
-	}
-
-then to assign a predicate
-
-	PREDICATE(name) {
-		return true;
-	}
-
-then to reference
-
-	Activity *the_activity = ACTIVITY(name)
-
-*/
-
 struct Activity;
 
+// a callback that runs the activity
 typedef void (*ActivityCallback)();
+// a callback that returns true if the activity should continue
 typedef bool (*ActivityPredicate)();
+// a callback that returns the activity from an activity ID
 typedef Activity* (*ActivityLookup)(uint16_t);
 
 // an activity represents an action that can execute on the robot
@@ -63,6 +42,34 @@ namespace robot {
 	// starts an activity running
 	void start_activity(Activity* activity);
 }
+
+/*
+code below defines macros allowing the following:
+
+to define an activity...
+
+	ACTIVITY(name, cooldown=C, timeout=T) {
+		// code to run
+	}
+
+or
+
+	ACTIVITY(name, cooldown=C) {
+		// code to run
+	}
+
+then, to assign a predicate...
+
+	PREDICATE(name) {
+		return true;
+	}
+
+then, to reference it...
+
+	Activity *the_activity = ACTIVITY(name)
+
+*/
+
 
 #define ACTIVITY3(name, c, t) \
 Activity name;\

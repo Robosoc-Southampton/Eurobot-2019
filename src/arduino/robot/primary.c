@@ -1,5 +1,5 @@
 
-#include "robot-primary.h"
+#include "include/robot/primary.h"
 
 MD25 md25;
 
@@ -18,13 +18,13 @@ uint16_t readComponentValue(uint16_t component_ID) {
 	return 0u;
 }
 
-Activity* lookupActivity(uint16_t activity_ID) {
+struct Activity* lookupActivity(uint16_t activity_ID) {
 	return ACTIVITY(toggleLED);
 }
 
-Sensor *sensors;
+DistanceSensor *sensors;
 
-void primary_setup() {
+void setup() {
 	Serial.begin(9600);
 
 	pinMode(LED_BUILTIN, OUTPUT);
@@ -42,6 +42,6 @@ void primary_setup() {
 	robot::setup();
 }
 
-void primary_loop() {
+void loop() {
 	robot::loop();
 }

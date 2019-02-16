@@ -1,13 +1,13 @@
 
-#include "collision.h"
+#include "include/collision.h"
 
 namespace robot {
 
-	Sensor *distance_sensors = nullptr;
+	DistanceSensor *distance_sensors = nullptr;
 	uint8_t distance_sensor_count = 0;
 	bool are_distance_sensors_enabled = false;
 
-	void set_distance_sensors(uint8_t count, Sensor *sensors) {
+	void set_distance_sensors(uint8_t count, DistanceSensor *sensors) {
 		distance_sensors = sensors;
 		distance_sensor_count = count;
 	}
@@ -19,7 +19,7 @@ namespace robot {
 		bool is_collision_detected = false;
 
 		// check distance sensors in parallel
-		for (Sensor *sensor = distance_sensors; sensor != distance_sensors + distance_sensor_count; ++sensor) {
+		for (DistanceSensor *sensor = distance_sensors; sensor != distance_sensors + distance_sensor_count; ++sensor) {
 			// ...
 		}
 

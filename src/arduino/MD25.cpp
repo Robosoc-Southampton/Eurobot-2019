@@ -1,5 +1,5 @@
 
-#include "MD25.h"
+#include "include/component/MD25.h"
 
 const char* MD25::MD25_NOT_SETUP = "MD25 not setup - call setup() first";
 

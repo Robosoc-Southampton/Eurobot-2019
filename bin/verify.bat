@@ -9,4 +9,4 @@ if "%1" == "" (
 )
 
 call "%~dp0prep" %1
-call "%~dp0arduino-cmd" --verify
+call "%~dp0arduino-cmd" --verify --preserve-temp-files

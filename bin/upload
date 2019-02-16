@@ -14,4 +14,4 @@ if [ -z "$2" ]; then
 fi
 
 $DIR/prep $2
-$DIR/arduino-cmd --upload --port "/dev/tty$1"
+$DIR/arduino-cmd --upload --port "/dev/tty$1" --preserve-temp-files

@@ -1,4 +1,7 @@
 
+// for inlining:
+//  inline __attribute__((always_inline))
+
 #pragma once
 
 #include <Arduino.h>
@@ -26,7 +29,10 @@ namespace robot {
 	// this function should not be significantly blocking (no delay()s, pretty much)
 	void set_component_value_reader(ReadComponentValue reader);
 
+	// sets up and validates the configuration of the robot
 	void setup();
+
+	// runs the update loop
 	void loop();
 
 	// checks for a message from the message buffer and acts on it if possible

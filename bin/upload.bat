@@ -14,4 +14,4 @@ if "%2" == "" (
 )
 
 call "%~dp0prep" %2
-call "%~dp0arduino-cmd" --upload --port %1
+call "%~dp0arduino-cmd" --upload --port %1 --preserve-temp-files
