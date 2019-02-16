@@ -6,6 +6,7 @@ class Node:
     def __init__(self, Name, Position):
         self.Name = Name
         self.Position = Position
+        self.Wall = False
 
 #The graph class which defines where nodes are, who they are connected to and how far away they are from another node
 class Graph:
@@ -42,6 +43,65 @@ class ExampleGraph:
             self.G: [self.A, self.B, self.C, self.D, self.E, self.F]
         }
 
+class Grid:
+    def __init__(self):
+        self.x = 1
+        self.y = 1
+        self.NodeList = {}
+        self.GraphGrid = Graph()
+
+    def CreateNodeGrid(self):
+        while(self.y < 101):
+            if self.x < 101:
+                self.NodeList["Node x = " + str(self.x) + " y = " + str(self.y)] = Node(str("Node x = " + str(self.x) + " y = " + str(self.y)), (self.x, self.y))
+                self.x += 1
+            else:
+                self.x = 1
+                self.y += 1
+
+class GeneralGrid:
+    def __init__(self):
+        self.x = 1
+        self.y = 1
+        self.NodeList = {}
+        self.weights = {}
+        self.GraphGrid = Graph()
+
+    def CreateNodeGrid(self, SizeX, SizeY):
+        while(self.y < SizeY):
+            if self.x < SizeX:
+                self.NodeList["Node x = " + str(self.x) + " y = " + str(self.y)] = Node(str("Node x = " + str(self.x) + " y = " + str(self.y)), (self.x, self.y))
+                self.x += 1
+            else:
+                self.x = 1
+                self.y += 1
+
+    def Neighbors(self, id):
+        Results = []
+        Pos = id.Position
+        NeighborLeft = self.NodeList.get("Node x = " + str((Pos[0] - 1)) + " y = " + str(Pos[1]))
+        NeighborRight = self.NodeList.get("Node x = " + str((Pos[0] + 1)) + " y = " + str(Pos[1]))
+        NeighborBelow = self.NodeList.get("Node x = " + str(Pos[0]) + " y = " + str(Pos[1] - 1))
+        NeighborAbove = self.NodeList.get("Node x = " + str(Pos[0]) + " y = " + str(Pos[1] + 1))
+        if isinstance(NeighborLeft, Node):
+            Results.append(NeighborLeft)
+        if isinstance(NeighborRight, Node):
+            Results.append(NeighborRight)
+        if isinstance(NeighborBelow, Node):
+            Results.append(NeighborBelow)
+        if isinstance(NeighborAbove, Node):
+            Results.append(NeighborAbove)
+        return Results
+
+    def Weight(self, Node1, Node2):
+        Cost = sqrt(((Node1.Position[0] - Node2.Position[0])**2) + ((Node1.Position[1] - Node2.Position[0])**2))
+        return self.weights.get(Node2, Cost)
+
+    def Wall(self, Node):
+        Node.wall = True
+
+
+
 #A queue class which allows us to store where we have been
 class Queue:
         def __init__(self):
@@ -73,12 +133,13 @@ def AStartSearch(Graph , Start, Goal):
             break
 
         for Next in Graph.Neighbors(Current):
-            NewCost = CostSoFar + Graph.Weight(Current, Next)
-            if Next not in CameFrom or NewCost < CostSoFar:
-                CostSoFar += NewCost
-                frontier.put(Next)
-                CameFrom[Next] = Current
-                print("Visiting %r" % Current.Name)
+            if Next.Wall == False:
+                NewCost = CostSoFar + Graph.Weight(Current, Next)
+                if Next not in CameFrom or NewCost < CostSoFar:
+                    CostSoFar += NewCost
+                    frontier.put(Next)
+                    CameFrom[Next] = Current
+                    print("Visiting %r" % Current.Name)
 
     return  CameFrom
 
@@ -127,3 +188,11 @@ print(Path)
 
 ListOfThings = TellRobot(Path)
 print(ListOfThings)
+
+TBT = GeneralGrid()
+TBT.CreateNodeGrid(10,10)
+print(len(list((TBT.NodeList.values()))))
+TBTTest = AStartSearch(TBT, list(TBT.NodeList.values())[0], list(TBT.NodeList.values())[70])
+PathTBT = ReconstructPath(TBTTest, list(TBT.NodeList.values())[0], list(TBT.NodeList.values())[70])
+ListOfThings3 = TellRobot(PathTBT)
+print(ListOfThings3)
