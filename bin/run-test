@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+USAGE="Usage: \"bin/run-test\" TEST PORT\n  where TEST is the test to run\n  note: find PORT using \"bin/ports\"\n"
+
+if [ -z "$1" ]; then
+	printf "$USAGE"
+	exit
+fi
+
+if [ -z "$2" ]; then
+	printf "$USAGE"
+	exit
+fi
+
+arduino test/$1 --board arduino:avr:uno --pref build.path=./out --upload --port "/dev/tty$2" --preserve-temp-files
