@@ -17,4 +17,4 @@ while True:
 	if inp == "": continue
 	parsed = messages.parse_message(inp)
 	conn.send(messages.encode_message(parsed[0], parsed[1]))
-	time.sleep(0.1)
+	time.sleep(0.5)
