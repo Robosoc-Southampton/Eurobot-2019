@@ -21,7 +21,7 @@ class Connection:
 		self.receive_log_handler = handler
 
 	def check_message_buffer(self):
-		while self.receive_log_length > 0 or len(self.receive_message_buffer) >= 3:
+		while len(self.receive_message_buffer) >= 1 and self.receive_log_length > 0 or len(self.receive_message_buffer) >= 3:
 			if self.receive_log_length > 0:
 				self.receive_log_buffer = self.receive_log_buffer + self.receive_message_buffer[0:self.receive_log_length]
 
@@ -73,7 +73,7 @@ class BTConnectionListener(threading.Thread):
 			while True:
 				data = self.conn.sock.recv(1024)
 				if len(data) == 0: break
-				self.conn.receive_message_buffer = self.conn.receive_message_buffer + data
+				self.conn.receive_message_buffer += data
 				self.conn.check_message_buffer()
 		except IOError:
 			pass
@@ -84,7 +84,7 @@ def find_bt_addr():
 	nearby_devices = bluetooth.discover_devices()
 
 	for bdaddr in nearby_devices:
-		if bluetooth.lookup_name(bdaddr).endswith("RS"):
+		if bluetooth.lookup_name(bdaddr) != None and bluetooth.lookup_name(bdaddr).endswith("RS"):
 			return bdaddr
 
 	return None

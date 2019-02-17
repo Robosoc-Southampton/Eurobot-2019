@@ -1,2 +1,3 @@
 src/arduino/robot.ino
+src/pi/__pycache__
 out

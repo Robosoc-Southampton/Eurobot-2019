@@ -2,6 +2,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include "messages.h"
 
 // use rlog(message) to log a message
 #define rlog(s) robot::debug::log(s, __FUNCTION__)

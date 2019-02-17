@@ -9,18 +9,9 @@
 #include "collision.h"
 #include "debug.h"
 #include "drive.h"
-
-#define MESSAGE_SIZE 3
+#include "messages.h"
 
 typedef uint16_t (*ReadComponentValue)(uint16_t);
-
-struct Message {
-	char command;
-	uint16_t payload;
-
-	Message(uint8_t bytes[3]);
-	Message();
-};
 
 namespace robot {
 	extern ReadComponentValue component_value_reader;
@@ -34,10 +25,4 @@ namespace robot {
 
 	// runs the update loop
 	void loop();
-
-	// checks for a message from the message buffer and acts on it if possible
-	void read_message_buffer();
-
-	// sends a message to the pi
-	void send_message(char command, uint16_t payload);
 }
