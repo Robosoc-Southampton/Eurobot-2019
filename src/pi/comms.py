@@ -11,15 +11,19 @@ class Connection:
 	receive_message_handler = None
 	receive_log_length = 0
 
+	# sends a message to the arduino
 	def send(self, data):
 		raise
 
+	# sets the message handler callback
 	def on_message(self, handler):
 		self.receive_message_handler = handler
 
+	# sets the log handler callback
 	def on_log(self, handler):
 		self.receive_log_handler = handler
 
+	# internal use only
 	def check_message_buffer(self):
 		while len(self.receive_message_buffer) >= 1 and self.receive_log_length > 0 or len(self.receive_message_buffer) >= 3:
 			if self.receive_log_length > 0:
@@ -89,28 +93,8 @@ def find_bt_addr():
 
 	return None
 
-def connect(bdaddr):
+def connect_bluetooth(bdaddr):
 	return BTConnection(bdaddr)
 
-# conn = Connection()
-
-# conn.on_message(lambda opcode, data:
-# 	print("(" + opcode + " " + str(data) + ")")
-# )
-
-# conn.on_log(lambda msg:
-# 	print("(log message: " + msg + ")")
-# )
-
-# msgs = messages.MessageSequence.load_from("""
-# forward 800
-# turn -90""")
-
-# conn.receive_message_buffer = messages.encode_message(msgs.messages[0][0], msgs.messages[0][1]) + messages.encode_message(msgs.messages[1][0], msgs.messages[1][1])
-# print("Should print (forward 800) and (turn -90):")
-# conn.check_message_buffer()
-# assert len(conn.receive_message_buffer) == 0
-
-# conn.receive_message_buffer = messages.encode_message("log", 11) + b"Hello world" + messages.encode_message("do", 0)
-# print("Should print log message and (do 0)")
-# conn.check_message_buffer()
+def connect_serial():
+	raise

@@ -31,21 +31,17 @@ def parse_message(message):
 	data = int(split[1])
 	return (opcode, data)
 
-class MessageSequence:
+def parse_messages(messages):
 	messages = []
 
-	def __init__(self, messages):
-		self.messages = messages
+	for line in str.splitlines():
+		if line != "":
+			messages.append(parse_message(line))
 
-	def send_via(conn):
-		for message in self.messages:
-			conn.send(encode_message(message[0], message[1]))
+	return messages
 
-	def load_from(str):
-		messages = []
-
-		for line in str.splitlines():
-			if line != "":
-				messages.append(parse_message(line))
-
-		return MessageSequence(messages)
+def parse_message_file(file):
+	h = open(file, "r")
+	content = h.read()
+	h.close()
+	return parse_messages(content)
