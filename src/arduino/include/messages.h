@@ -2,6 +2,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include "debug.h"
 
 #define MESSAGE_SIZE 3
 
@@ -20,6 +21,9 @@ namespace robot {
 
 	// checks for a message from the message buffer and acts on it if possible
 	Message *read_message_buffer();
+
+	// waits for a connection from the pi
+	void wait_for_connection();
 
 	// sends a message to the pi
 	void send_message(char opcode, int16_t payload);

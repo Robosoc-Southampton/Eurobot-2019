@@ -7,6 +7,7 @@ opcodes = {
 	"do": 'D',
 	"align": 'A',
 	"request": 'R',
+	"message": 'M',
 	"collision": 'c',
 	"status": 's',
 	"return": 'r',

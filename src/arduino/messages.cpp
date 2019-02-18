@@ -32,6 +32,13 @@ namespace robot {
 		return msgptr;
 	}
 
+	void wait_for_connection() {
+		while (peek_next_opcode() == '\0') {
+			rblink(500);
+		}
+		read_message_buffer();
+	}
+
 	void send_message(char opcode, int16_t payload) {
 		Serial.write(opcode);
 		Serial.write((byte) (payload));

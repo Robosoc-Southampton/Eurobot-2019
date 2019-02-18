@@ -107,7 +107,7 @@ namespace robot {
 		}
 
 		uint8_t encoder_delta_to_speed(int32_t delta) {
-			return delta > 100 ? 100 : 0;
+			return delta > 30 ? 100 : 0;
 		}
 
 		int32_t distance_to_encoder_reading(int16_t distance) {
