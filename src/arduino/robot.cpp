@@ -69,6 +69,9 @@ namespace robot {
 				// TODO: spec requires to drive forward by message.payload after aligning
 				break;
 			case 'D': // do
+				if (message->payload == 0) // skip activity 0 (do nothing activity)
+					break;
+
 				next_activity = (*lookup_activity)(message->payload);
 
 				if (next_activity == nullptr) {

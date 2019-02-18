@@ -1,0 +1,4 @@
+
+message 1
+do 1
+forward 500

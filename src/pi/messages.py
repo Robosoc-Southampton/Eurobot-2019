@@ -33,13 +33,15 @@ def parse_message(message):
 	return (opcode, data)
 
 def parse_messages(messages):
-	messages = []
+	msgs = []
 
-	for line in str.splitlines():
+	for line in messages.splitlines():
+		if line.find("//") != -1:
+			line = line[0:line:indexof("//")]
 		if line != "":
-			messages.append(parse_message(line))
+			msgs.append(parse_message(line))
 
-	return messages
+	return msgs
 
 def parse_message_file(file):
 	h = open(file, "r")

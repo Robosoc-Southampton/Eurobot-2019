@@ -46,10 +46,15 @@ conn.on_message(lambda opcode, data: print("Message received (%s %s)" % (opcode,
 
 start_time = time.clock()
 
+if options["file"] != None:
+	print("Loading file %s" % options["file"])
+	for msg in messages.parse_message_file(options["file"]):
+		conn.send(messages.encode_message(msg[0], msg[1]))
+
 while True:
 	if options["read"] == "true":
 		inp = input("enter message: ")
-		if inp == "": continue
+		if inp.find(" ") == -1: continue
 		parsed = messages.parse_message(inp)
 		conn.send(messages.encode_message(parsed[0], parsed[1]))
 		time.sleep(0.5)
