@@ -1,13 +1,6 @@
 
 #include "include/robot.h"
 
-Message::Message(uint8_t bytes[]) {
-	command = (char) bytes[0];
-	payload = ((uint16_t) bytes[1] << 8) + (uint16_t) bytes[2];
-}
-
-Message::Message() { /* do nothing */ }
-
 namespace robot {
 
 	ReadComponentValue component_value_reader = nullptr;
@@ -28,22 +21,21 @@ namespace robot {
 		check_distance_sensors();
 		drive::update_motor_speeds();
 		run_activity();
-		read_message_buffer();
-	}
-
-	void read_message_buffer() {
-		// if no message is available, stop
-		if (Serial.available() < MESSAGE_SIZE) return;
-
+	
+		char buffer[6] = {};
+		char opcode;
 		bool is_activity_running = current_activity != nullptr;
 		bool is_readable = false;
-		Message message;
+		Message *message;
 		Activity *next_activity;
 
-		// test the command char to determine if the message is ready to be read
-		switch ((char) Serial.peek()) {
+		if ((opcode = peek_next_opcode()) == '\0')
+			return;
+
+		// test the opcode char to determine if the message is ready to be read
+		switch (opcode) {
 			case 'F': case 'T': case 'A': // forward, turn and align commands
-				// can only run next movement command if not currently moving
+				// can only run next movement opcode if not currently moving
 				is_readable = !drive::is_moving;
 				break;
 			case 'D': // can only run next activity if the current one has finished
@@ -56,26 +48,20 @@ namespace robot {
 		}
 
 		// if can't read next message, stop
-		if (!is_readable) return;
+		if (!is_readable)
+			return;
 
-		// read message from serial buffer
-		uint8_t bytes[MESSAGE_SIZE];
-
-		for (uint8_t i = 0; i < MESSAGE_SIZE; ++i) {
-			bytes[i] = Serial.read();
-		}
-
-		message = Message(bytes);
+		message = read_message_buffer();
 
 		// act on message
-		switch (message.command) {
+		switch (message->opcode) {
 			case 'F': // forward
 				enable_distance_sensors();
-				drive::forward(message.payload);
+				drive::forward(message->payload);
 				break;
 			case 'T': // turn
 				disable_distance_sensors();
-				drive::turn(message.payload);
+				drive::turn(message->payload);
 				break;
 			case 'A': // align
 				disable_distance_sensors();
@@ -83,11 +69,12 @@ namespace robot {
 				// TODO: spec requires to drive forward by message.payload after aligning
 				break;
 			case 'D': // do
-				next_activity = (*lookup_activity)(message.payload);
+				next_activity = (*lookup_activity)(message->payload);
 
 				if (next_activity == nullptr) {
-					Serial.println("Oh noes"); // DEBUG
-					// TODO: what to do here? error?
+					itoa(message->payload, (char*) &buffer[0], 10);
+					rlog("Activity lookup failed");
+					rlog(buffer);
 					break;
 				}
 
@@ -95,15 +82,10 @@ namespace robot {
 
 				break;
 			case 'R': // request
-				uint16_t value = (*component_value_reader)(message.payload);
+				uint16_t value = (*component_value_reader)(message->payload);
 				send_message('r', value);
 				break;
 		}
-	}
-
-	void send_message(char command, uint16_t payload) {
-		Serial.write(command);
-		Serial.write((uint8_t*) &payload, 2); // this is beautifully hacky right?
 	}
 
 }

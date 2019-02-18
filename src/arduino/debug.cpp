@@ -6,8 +6,9 @@ namespace robot {
 		void log(const char* message, const char* function) {
 			size_t message_len = strlen(message);
 			size_t function_len = strlen(function);
-			Serial.write('l');
-			Serial.write(message_len + function_len + 5 + 2); // + 5 + 2 bytes for the " [in " and "]\n" strings
+			uint16_t len = message_len + function_len + 5 + 2; // + 5 + 2 bytes for the " [in " and "]\n" strings
+
+			robot::send_message('l', len);
 			Serial.write(message, message_len);
 			Serial.print(" [in "); // TODO: should check that this is actually writing 5 bytes, not 6 (including \0)
 			Serial.write(function, function_len);

@@ -10,10 +10,6 @@ ACTIVITY(toggleLED, cooldown=500000, timeout=5000000) {
 	ledOn ^= HIGH;
 }
 
-PREDICATE(toggleLED) {
-	return false;
-}
-
 uint16_t readComponentValue(uint16_t component_ID) {
 	return 0u;
 }
@@ -25,9 +21,10 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 DistanceSensor *sensors;
 
 void setup() {
+	pinMode(LED_BUILTIN, OUTPUT);
 	Serial.begin(9600);
 
-	pinMode(LED_BUILTIN, OUTPUT);
+	robot::wait_for_connection();
 
 	md25.setup();
 

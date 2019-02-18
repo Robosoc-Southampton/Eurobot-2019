@@ -2,6 +2,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include "messages.h"
 
 // use rlog(message) to log a message
 #define rlog(s) robot::debug::log(s, __FUNCTION__)
@@ -11,6 +12,8 @@
 
 // use rassert(condition, message) to error with a message if `condition` is false
 #define rassert(v, s) robot::debug::assert(v, s, __FUNCTION__)
+
+#define rblink(d) digitalWrite(LED_BUILTIN, HIGH); delay(d/2); digitalWrite(LED_BUILTIN, LOW); delay(d/2);
 
 namespace robot {
 	namespace debug {
