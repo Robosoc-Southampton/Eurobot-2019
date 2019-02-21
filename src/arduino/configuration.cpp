@@ -4,25 +4,23 @@
 namespace robot {
 	namespace configuration {
 
-		int32_t wheel_radius = 10;
-		int32_t robot_radius = 10;
+		int16_t wheel_radius = 10
+		      , robot_radius = 10
+		      , peak_speed = 10
+		      ;
 
-		bool radii_set = false;
+		int16_t config_key = 0;
 
-		void set_wheel_radius(int32_t w_radius) {
-			wheel_radius = w_radius;
-			rlog("Wheel radius was set");
+		void set_config_key(int16_t key) {
+			config_key = key;
 		}
 
-		void set_robot_radius(int32_t r_radius) {
-			robot_radius = r_radius;
-			rlog("Robot radius was set");
-		}
-
-		void set_radii(int32_t w_radius, int32_t r_radius) {
-			wheel_radius = w_radius;
-			robot_radius = r_radius;
-			radii_set = true;
+		void set_config_value(int16_t value) {
+			switch (config_key) {
+				case 1: robot_radius = value; break;
+				case 2: wheel_radius = value; break;
+				case 3: peak_speed = value; break;
+			}
 		}
 
 	}

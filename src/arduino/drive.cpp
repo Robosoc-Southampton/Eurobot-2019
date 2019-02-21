@@ -1,15 +1,13 @@
 
 #include "include/drive.h"
 
-#define _3600_DIV_2PI 573l
-
 namespace robot {
 	namespace drive {
 
 		int32_t target_left_encoder_value = 0, target_right_encoder_value = 0;
 		MD25 *md25;
 		bool is_moving = false;
-		int16_t ALIGN_DISTANCE = -100; // 10cm
+		int16_t ALIGN_DISTANCE = 100;
 		uint8_t SPEED_THRESHOLD = 10u;
 		int32_t ENCODER_DELTA_THRESHOLD = 10;
 
@@ -27,7 +25,7 @@ namespace robot {
 		}
 
 		void turn(int16_t angle) {
-			int16_t distance = angle * configuration::robot_radius * 10 / _3600_DIV_2PI;
+			int32_t distance = 31415l * (int32_t) angle * (int32_t) configuration::robot_radius / 1800000l;
 			int32_t encoder_value = distance_to_encoder_reading(distance);
 
 			target_left_encoder_value  -= encoder_value;
@@ -116,15 +114,15 @@ namespace robot {
 		}
 
 		uint8_t encoder_delta_to_speed(int32_t delta) {
-			return delta > 50 ? 100 : delta;
+			return delta > robot::configuration::peak_speed ? robot::configuration::peak_speed : delta;
 		}
 
-		int32_t distance_to_encoder_reading(int16_t distance) {
-			return (int32_t) distance * _3600_DIV_2PI / robot::configuration::wheel_radius / 10l;
+		int32_t distance_to_encoder_reading(int32_t distance) {
+			return distance * 180000l / (int32_t) robot::configuration::wheel_radius / 3141l;
 		}
 
 		int16_t encoder_reading_to_distance(int32_t encoder_value) {
-			return (int16_t) (encoder_value * robot::configuration::wheel_radius / _3600_DIV_2PI * 10);
+			return (int16_t) (encoder_value * (int32_t) robot::configuration::wheel_radius / 573l * 10l);
 		}
 
 		uint8_t diff(uint8_t a, uint8_t b) {

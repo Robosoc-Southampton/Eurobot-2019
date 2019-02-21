@@ -8,6 +8,8 @@ opcodes = {
 	"align": 'A',
 	"request": 'R',
 	"message": 'M',
+	"config-key": "K",
+	"config-set": "S",
 	"collision": 'c',
 	"status": 's',
 	"return": 'r',

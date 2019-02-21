@@ -10,7 +10,7 @@ ACTIVITY(toggleLED, cooldown=500000, timeout=5000000) {
 	ledOn ^= HIGH;
 }
 
-uint16_t readComponentValue(uint16_t component_ID) {
+int16_t readComponentValue(int16_t component_ID) {
 	return 0u;
 }
 
@@ -37,7 +37,6 @@ void setup() {
 	robot::set_component_value_reader(&readComponentValue);
 	robot::set_activity_lookup(&lookupActivity);
 	robot::set_distance_sensors(0, sensors);
-	robot::configuration::set_radii(50u, 150u);
 	robot::drive::set_md25(&md25);
 
 	rlog("Initialisation complete");

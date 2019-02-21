@@ -29,17 +29,17 @@ namespace robot {
 		// update motor speeds for MD25 stuff
 		void update_motor_speeds();
 
-		// return the mean average of the distance travelled by both motors
+		// take a positive distance delta and returns speed (0 -> 127)
 		int16_t get_average_distance_travelled();
 
 		// take a positive distance delta and returns speed (0 -> 127)
 		uint8_t encoder_delta_to_speed(int32_t delta);
 
 		// return the encoder value equivalent to a given distance
-		int32_t distance_to_encoder_reading(int16_t distance);
+		int32_t distance_to_encoder_reading(int32_t distance);
 
-		// return the distance equivalent to a given encoder value
-		int16_t encoder_reading_to_distance(int32_t encoder_value);
+		// return the encoder value equivalent to a given distance
+		int16_t encoder_reading_to_distance(int32_t distance);
 
 		// return the absolute difference between two values
 		uint8_t diff(uint8_t a, uint8_t b);

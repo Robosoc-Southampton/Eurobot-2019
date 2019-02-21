@@ -22,6 +22,8 @@ do | D | task | Starts an activity on the arduino (e.g. moving a servo). `task` 
 align | A | distance | Moves backwards into the wall to align, then forwards by `distance`, similar to `forward`.
 request | R | component | Reads a value from a component (e.g. servo rotation). `component` is a number representing that component.
 message | M | mode | Message buffer related messages, `mode` will be one of [`1` for connection established]
+config-key | K | key | Sets the config key to write to next
+config-set | S | value | Sets the configuration value given by the current config key
 
 ### Arduino to Pi
 

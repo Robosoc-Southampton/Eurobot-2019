@@ -7,11 +7,12 @@
 #include <Arduino.h>
 #include "activities.h"
 #include "collision.h"
+#include "configuration.h"
 #include "debug.h"
 #include "drive.h"
 #include "messages.h"
 
-typedef uint16_t (*ReadComponentValue)(uint16_t);
+typedef int16_t (*ReadComponentValue)(int16_t);
 
 namespace robot {
 	extern ReadComponentValue component_value_reader;

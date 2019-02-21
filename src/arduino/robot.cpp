@@ -14,7 +14,6 @@ namespace robot {
 		rassert(lookup_activity != nullptr, "Activity lookup not set");
 		rassert(distance_sensors != nullptr, "Distance sensors not set");
 		rassert(drive::md25 != nullptr, "Drive MD25 not set");
-		rassert(configuration::radii_set, "Radii not set");
 	}
 
 	void loop() {
@@ -37,13 +36,16 @@ namespace robot {
 			case 'F': case 'T': case 'A': // forward, turn and align commands
 				// can only run next movement opcode if not currently moving
 				is_readable = !drive::is_moving;
-				if (!is_readable) rlog("Can't drive, still moving");
 				break;
 			case 'D': // can only run next activity if the current one has finished
 				is_readable = !is_activity_running;
 				break;
-			case 'R':
-				// can always read a component value
+			case 'R': case 'K': case 'S':
+				// can always read a component value or set config stuff
+				is_readable = true;
+				break;
+			case 'M':
+				rlog("Unexpected 'M' message");
 				is_readable = true;
 				break;
 		}
@@ -52,7 +54,7 @@ namespace robot {
 		if (!is_readable)
 			return;
 
-		rlogd("There's message");
+		rlogd("There's a message");
 
 		message = read_message_buffer();
 
@@ -91,8 +93,14 @@ namespace robot {
 				start_activity(next_activity);
 
 				break;
+			case 'K':
+				robot::configuration::set_config_key(message->payload);
+				break;
+			case 'S':
+				robot::configuration::set_config_value(message->payload);
+				break;
 			case 'R': // request
-				uint16_t value = (*component_value_reader)(message->payload);
+				int16_t value = (*component_value_reader)(message->payload);
 				send_message('r', value);
 				break;
 		}
