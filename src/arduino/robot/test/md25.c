@@ -14,4 +14,8 @@ void setup() {
 void loop() {
 	md25.setLeftMotorSpeed(200);
 	md25.setRightMotorSpeed(200);
+	md25.readLeftEncoder();
+	md25.readRightEncoder();
+
+	rlog("Read the encoder value");
 }

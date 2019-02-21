@@ -4,8 +4,11 @@
 #include <Arduino.h>
 #include "messages.h"
 
+#define DEBUG true
+
 // use rlog(message) to log a message
 #define rlog(s) robot::debug::log(s, __FUNCTION__)
+#define rlogd(s) if (DEBUG) robot::debug::log(s, __FUNCTION__)
 
 // use rerror(message) to error with a message
 #define rerror(s) robot::debug::error(s, __FUNCTION__)

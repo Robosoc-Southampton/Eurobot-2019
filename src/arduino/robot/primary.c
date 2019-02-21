@@ -26,7 +26,11 @@ void setup() {
 
 	robot::wait_for_connection();
 
+	rlog("Connection established");
+
 	md25.setup();
+
+	rlog("MD25 set-up");
 
 	sensors = malloc(1);
 
@@ -35,6 +39,8 @@ void setup() {
 	robot::set_distance_sensors(0, sensors);
 	robot::configuration::set_radii(50u, 150u);
 	robot::drive::set_md25(&md25);
+
+	rlog("Initialisation complete");
 
 	robot::setup();
 }

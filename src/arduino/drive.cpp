@@ -22,6 +22,8 @@ namespace robot {
 
 			md25->resetEncoders();
 			update_motor_speeds();
+
+			rlogd("Driving forward");
 		}
 
 		void turn(int16_t angle) {
@@ -34,6 +36,8 @@ namespace robot {
 
 			md25->resetEncoders();
 			update_motor_speeds();
+
+			rlogd("Turning");
 		}
 
 		void reset() {
@@ -44,6 +48,8 @@ namespace robot {
 
 			md25->stopMotors();
 			md25->resetEncoders();
+
+			rlogd("Resetting encoder values");
 		}
 
 		void stop() {
@@ -54,6 +60,8 @@ namespace robot {
 
 			md25->resetEncoders();
 			md25->stopMotors();
+
+			rlogd("Stopping");
 		}
 
 		void set_md25(MD25 *_md25) {
@@ -86,6 +94,7 @@ namespace robot {
 
 			if (diff(left_speed, 128u) < SPEED_THRESHOLD && diff(right_speed, 128u) < SPEED_THRESHOLD) {
 				if (abs(left_delta) < ENCODER_DELTA_THRESHOLD && abs(right_delta) < ENCODER_DELTA_THRESHOLD) {
+					rlogd("Finished movement");
 					has_finished_movement = true;
 				}
 			}
@@ -107,7 +116,7 @@ namespace robot {
 		}
 
 		uint8_t encoder_delta_to_speed(int32_t delta) {
-			return delta > 30 ? 100 : 0;
+			return delta > 50 ? 100 : delta;
 		}
 
 		int32_t distance_to_encoder_reading(int16_t distance) {

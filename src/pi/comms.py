@@ -94,7 +94,9 @@ def find_bt_addr():
 	return None
 
 def connect_bluetooth(bdaddr):
-	return BTConnection(bdaddr)
+	conn = BTConnection(bdaddr)
+	conn.send(messages.encode_message("message", 1))
+	return conn
 
 def connect_serial():
 	raise

@@ -2,6 +2,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include "debug.h"
 
 struct Activity;
 

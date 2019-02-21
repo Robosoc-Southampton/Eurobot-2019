@@ -37,6 +37,7 @@ namespace robot {
 			case 'F': case 'T': case 'A': // forward, turn and align commands
 				// can only run next movement opcode if not currently moving
 				is_readable = !drive::is_moving;
+				if (!is_readable) rlog("Can't drive, still moving");
 				break;
 			case 'D': // can only run next activity if the current one has finished
 				is_readable = !is_activity_running;
@@ -51,7 +52,13 @@ namespace robot {
 		if (!is_readable)
 			return;
 
+		rlogd("There's message");
+
 		message = read_message_buffer();
+
+		char msg[2] = {'\0', '\0'};
+		msg[0] = message->opcode;
+		rlogd((const char*) msg);
 
 		// act on message
 		switch (message->opcode) {
