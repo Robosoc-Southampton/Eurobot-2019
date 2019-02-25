@@ -3,6 +3,16 @@
 
 This document defines the structure and parameters of messages sent between the Arduino microcontroller on either robot, and the Raspberry Pi on the secondary robot which handles high level logic and control
 
+### Special tasks
+
+Task name | Task ID range | Description
+-|-|-
+Nothing | `0` | Does nothing
+Enable all distance sensors | `1000` | Enables all distance sensors
+Disable all distance sensors | `1100` | Disables all distance sensors
+Enable distance sensor | `1001` - `1100` | Enables distance sensor `t - 1000`, i.e. `1005` enables distance sensor 5.
+Disable distance sensor | `1101` - `1200` | Disables distance sensor `t - 1100`, i.e. `1105` disables distance sensor 5.
+
 ### Message structure
 
 ```c++

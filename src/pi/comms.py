@@ -23,6 +23,9 @@ class Connection:
 	def on_log(self, handler):
 		self.receive_log_handler = handler
 
+	def close(self):
+		pass
+
 	# internal use only
 	def check_message_buffer(self):
 		while len(self.receive_message_buffer) >= 1 and self.receive_log_length > 0 or len(self.receive_message_buffer) >= 3:
@@ -64,6 +67,9 @@ class BTConnection(Connection):
 
 	def send(self, data):
 		self.sock.send(data)
+
+	def close(self):
+		self.sock.close()
 
 class BTConnectionListener(threading.Thread):
 	conn = None

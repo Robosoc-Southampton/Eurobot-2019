@@ -51,13 +51,20 @@ if options["file"] != None:
 	for msg in messages.parse_message_file(options["file"]):
 		conn.send(messages.encode_message(msg[0], msg[1]))
 
+if options["read"] == "true":
+	print("Enter 'q' to quit")
+
 while True:
+	if options["timeout"] != None and time.clock() - start_time >= options["timeout"]:
+		break
+
 	if options["read"] == "true":
 		inp = input("enter message: ")
-		if inp.find(" ") == -1: continue
+		if inp == "q":
+			conn.close()
+			break
+		if inp.find(" ") == -1:
+			continue
 		parsed = messages.parse_message(inp)
 		conn.send(messages.encode_message(parsed[0], parsed[1]))
 		time.sleep(0.5)
-
-	if options["timeout"] != None and time.clock() - start_time >= options["timeout"]:
-		break

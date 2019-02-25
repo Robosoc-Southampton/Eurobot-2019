@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "../component/MD25.h"
+#include "../component/SharpIR.h"
 #include "../robot.h"
 #include "../activities.h"
 #include "../debug.h"

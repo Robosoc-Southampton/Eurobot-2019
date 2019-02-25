@@ -5,13 +5,4 @@ config-key 2
 config-set 47
 config-key 3
 config-set 10
-do 1
-forward 500
-config-set 50
-turn 90
-forward 500
-turn 90
-config-set 30
-forward 500
-turn 90
-forward 500
+

@@ -18,7 +18,7 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 	return ACTIVITY(toggleLED);
 }
 
-DistanceSensor *sensors;
+SharpIR *sensors;
 
 void setup() {
 	pinMode(LED_BUILTIN, OUTPUT);
@@ -32,7 +32,7 @@ void setup() {
 
 	rlog("MD25 set-up");
 
-	sensors = malloc(1);
+	sensors = (SharpIR*) malloc(1);
 
 	robot::set_component_value_reader(&readComponentValue);
 	robot::set_activity_lookup(&lookupActivity);

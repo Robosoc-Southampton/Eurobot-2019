@@ -17,7 +17,12 @@ namespace robot {
 	}
 
 	void loop() {
-		check_distance_sensors();
+		if (check_distance_sensors()) {
+			drive::reset();
+			int16_t distance = drive::get_average_distance_travelled();
+			robot::send_message('c', distance);
+		}
+
 		drive::update_motor_speeds();
 		run_activity();
 	
@@ -78,20 +83,44 @@ namespace robot {
 				// TODO: spec requires to drive forward by message.payload after aligning
 				break;
 			case 'D': // do
-				if (message->payload == 0) // skip activity 0 (do nothing activity)
-					break;
+				switch (message->payload) {
+					case 0: // skip activity 0 (do nothing activity)
+						break;
+					case 1000: // activity 1000 enables sensors
+						rlog("Enabling all distance sensors");
+						robot::enable_distance_sensors();
+						break;
+					case 1100: // activity 1100 disables sensors
+						rlog("Disabling all distance sensors");
+						robot::enable_distance_sensors();
+						break;
+					default: // run another activity
+						if (message->payload > 1000) {
+							if (message->payload < 1200) { // enable/disable a specific sensor
+								if (message->payload < 1100) {
+									rlog("Enabling distance sensor");
+									robot::enable_distance_sensor(message->payload - 1000);
+								}
+								else {
+									rlog("Disabling distance sensor");
+									robot::disable_distance_sensor(message->payload - 1100);
+								}
+								break;
+							}
+						}
+						next_activity = (*lookup_activity)(message->payload);
 
-				next_activity = (*lookup_activity)(message->payload);
+						if (next_activity == nullptr) {
+							itoa(message->payload, (char*) &buffer[0], 10);
+							rlog("Activity lookup failed");
+							rlog(buffer);
+							break;
+						}
 
-				if (next_activity == nullptr) {
-					itoa(message->payload, (char*) &buffer[0], 10);
-					rlog("Activity lookup failed");
-					rlog(buffer);
-					break;
+						start_activity(next_activity);
+
+						break;
 				}
-
-				start_activity(next_activity);
-
 				break;
 			case 'K':
 				robot::configuration::set_config_key(message->payload);
