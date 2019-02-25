@@ -99,11 +99,11 @@ namespace robot {
 							if (message->payload < 1200) { // enable/disable a specific sensor
 								if (message->payload < 1100) {
 									rlog("Enabling distance sensor");
-									robot::enable_distance_sensor(message->payload - 1000);
+									robot::enable_distance_sensor(message->payload - 1001);
 								}
 								else {
 									rlog("Disabling distance sensor");
-									robot::disable_distance_sensor(message->payload - 1100);
+									robot::disable_distance_sensor(message->payload - 1101);
 								}
 								break;
 							}
@@ -129,8 +129,16 @@ namespace robot {
 				robot::configuration::set_config_value(message->payload);
 				break;
 			case 'R': // request
-				int16_t value = (*component_value_reader)(message->payload);
-				send_message('r', value);
+				int16_t value;
+
+				if (message->payload > 1000 && message->payload < 1100) {
+					value = robot::read_distance_sensor(message->payload - 1001);
+				}
+				else {
+					value = (*component_value_reader)(message->payload);
+				}
+
+				robot::send_message('r', value);
 				break;
 		}
 	}

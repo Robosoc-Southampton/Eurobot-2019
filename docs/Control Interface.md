@@ -13,6 +13,12 @@ Disable all distance sensors | `1100` | Disables all distance sensors
 Enable distance sensor | `1001` - `1100` | Enables distance sensor `t - 1000`, i.e. `1005` enables distance sensor 5.
 Disable distance sensor | `1101` - `1200` | Disables distance sensor `t - 1100`, i.e. `1105` disables distance sensor 5.
 
+### Special readings
+
+Reading name | Reading ID range | Description
+-|-|-
+Distance sensor reading | `1001` - `1100` | Reads a distance sensor value
+
 ### Message structure
 
 ```c++
