@@ -1,4 +1,6 @@
 
+#include "include/robot/test/md25.h"
+
 MD25 md25;
 
 void setup() {
