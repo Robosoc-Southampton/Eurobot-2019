@@ -1,6 +1,2 @@
 
-if [ -z $1 ]; then
-	python3 src/pi/console.py $*
-else
-	python3 src/pi/console.py -file $*
-fi
+python3 src/pi/console.py $*

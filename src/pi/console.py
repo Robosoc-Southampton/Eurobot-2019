@@ -8,21 +8,24 @@ import traceback
 
 options = {
 	"addr": "20:17:03:08:60:45",
-	"file": None,
+	"files": [],
 	"read": "true",
 	"timeout": None,
 	"serial": "false"
 }
 next_opt = None
 
-for opt in sys.argv:
+for opt in sys.argv[1:]:
 	if next_opt:
 		options[next_opt] = opt
+		next_opt = None
 	elif opt.startswith("-"):
 		if opt[1:] in options:
 			next_opt = opt[1:]
 		else:
 			raise "nope"
+	else:
+		options["files"].append(opt)
 
 bdaddr = options["addr"]
 
@@ -48,9 +51,9 @@ conn.on_message(lambda opcode, data: print("Message received (%s %s)" % (opcode,
 
 start_time = time.clock()
 
-if options["file"] != None:
-	print("Loading file %s" % options["file"])
-	for msg in messages.parse_message_file(options["file"]):
+for file in options["files"]:
+	print("Loading file %s" % file)
+	for msg in messages.parse_message_file(file):
 		conn.send(messages.encode_message(msg[0], msg[1]))
 
 if options["read"] == "true":
