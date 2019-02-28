@@ -18,9 +18,9 @@ namespace robot {
 			target_left_encoder_value  += encoder_value;
 			target_right_encoder_value += encoder_value;
 
-			rlogfd("Driving forward");
+			md25->setAcceleration(robot::configuration::acceleration);
 
-			update_motor_speeds();
+			rlogfd("Driving forward");
 		}
 
 		void turn(int16_t angle) {
@@ -30,14 +30,10 @@ namespace robot {
 			is_moving = true;
 			target_left_encoder_value  -= encoder_value;
 			target_right_encoder_value += encoder_value;
-
-			target_left_encoder_value  += md25->readLeftEncoder();
-			target_right_encoder_value += md25->readRightEncoder();
-			md25->resetEncoders();
+			
+			md25->setAcceleration(robot::configuration::acceleration);
 
 			rlogfd("Turning");
-
-			update_motor_speeds();
 		}
 
 		void stop() {

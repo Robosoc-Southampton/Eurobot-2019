@@ -7,9 +7,10 @@
 namespace robot {
 	namespace configuration {
 
-		extern int16_t wheel_radius
-		             , robot_radius
-		             , peak_speed
+		extern int16_t wheel_radius // distance from wheel centre to circumference
+		             , robot_radius // distance from robot centre to wheel centre
+		             , peak_speed   // maximum speed of the robot, speeds are otherwise scaled
+		             , acceleration // acceleration of the robot/MD25
 		             ;
 
 		extern int16_t config_key;

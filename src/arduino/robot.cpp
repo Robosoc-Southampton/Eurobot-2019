@@ -36,7 +36,7 @@ namespace robot {
 
 		// test the opcode char to determine if the message is ready to be read
 		switch (opcode) {
-			case 'F': case 'T':: // forward and turn commands
+			case 'F': case 'T': // forward and turn commands
 				// can only run next movement opcode if not currently moving
 				is_readable = !drive::is_moving;
 				break;

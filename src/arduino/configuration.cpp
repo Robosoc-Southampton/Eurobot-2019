@@ -7,6 +7,7 @@ namespace robot {
 		int16_t wheel_radius = 10
 		      , robot_radius = 10
 		      , peak_speed = 10
+		      , acceleration = 1
 		      ;
 
 		int16_t config_key = 0;
@@ -20,6 +21,7 @@ namespace robot {
 				case 1: robot_radius = value; break;
 				case 2: wheel_radius = value; break;
 				case 3: peak_speed = value; break;
+				case 4: acceleration = value; break;
 			}
 		}
 
