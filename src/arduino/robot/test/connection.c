@@ -6,6 +6,8 @@ void setup() {
 
 	pinMode(LED_BUILTIN, OUTPUT);
 
+	robot::wait_for_connection();
+
 	rlog("Hello");
 	rlogf("Hello (flash)");
 }

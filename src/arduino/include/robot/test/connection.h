@@ -3,7 +3,7 @@
  *     requires connection for meaningful output
  *
  * Tests the bluetooth/serial connection from the Pi to the Arduino
- * Should log "Connected" and "Connected (flash)" when connected
+ * Should log "Hello" and "Hello (flash)" when connected
  * Should log "Forward" or "Backward" for 'forward' messages
  * Should log "Turn" for 'turn' messages
  * Should log "Do" for 'do' messages

@@ -94,7 +94,7 @@ while True:
 				continue
 
 			parsed = messages.parse_message(inp)
-			print("Sending " + parsed[0] + " with " + str(parsed[1]))
+			print("Sending (" + messages.opcodes[parsed[0]] + " " + str(parsed[1]) + ")")
 			conn.send(messages.encode_message(parsed[0], parsed[1]))
 			time.sleep(1)
 	except KeyboardInterrupt:
