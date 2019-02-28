@@ -14,52 +14,44 @@ namespace robot {
 		void forward(int16_t distance) {
 			int32_t encoder_value = distance_to_encoder_reading(distance);
 
+			is_moving = true;
 			target_left_encoder_value  += encoder_value;
 			target_right_encoder_value += encoder_value;
-			is_moving = true;
-
-			md25->resetEncoders();
-			update_motor_speeds();
 
 			rlogd("Driving forward");
+
+			update_motor_speeds();
 		}
 
 		void turn(int16_t angle) {
 			int32_t distance = 31415l * (int32_t) angle * (int32_t) configuration::robot_radius / 1800000l;
 			int32_t encoder_value = distance_to_encoder_reading(distance);
 
+			is_moving = true;
 			target_left_encoder_value  -= encoder_value;
 			target_right_encoder_value += encoder_value;
-			is_moving = true;
 
+			target_left_encoder_value  += md25->readLeftEncoder();
+			target_right_encoder_value += md25->readRightEncoder();
 			md25->resetEncoders();
-			update_motor_speeds();
 
 			rlogd("Turning");
-		}
 
-		void reset() {
-			is_moving = false;
-
-			target_left_encoder_value = 0;
-			target_right_encoder_value = 0;
-
-			md25->stopMotors();
-			md25->resetEncoders();
-
-			rlogd("Resetting encoder values");
+			update_motor_speeds();
 		}
 
 		void stop() {
-			is_moving = false;
+			rlogd("Stopping");
+			
+			md25->stopMotors();
 
+			delay(10); // TODO: test this, it might break stuff?
+
+			is_moving = false;
 			target_left_encoder_value  -= md25->readLeftEncoder();
 			target_right_encoder_value -= md25->readRightEncoder();
 
 			md25->resetEncoders();
-			md25->stopMotors();
-
-			rlogd("Stopping");
 		}
 
 		void set_md25(MD25 *_md25) {

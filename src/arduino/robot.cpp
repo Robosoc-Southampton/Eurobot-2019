@@ -18,7 +18,7 @@ namespace robot {
 
 	void loop() {
 		if (check_distance_sensors()) {
-			drive::reset();
+			drive::stop();
 			int16_t distance = drive::get_average_distance_travelled();
 			robot::send_message('c', distance);
 		}

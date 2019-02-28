@@ -19,8 +19,6 @@ namespace robot {
 		void forward(int16_t distance);
 		// turn by `angle` degrees counterclockwise
 		void turn(int16_t angle);
-		// reset target encoder values and md25 encoder readings
-		void reset();
 		// stop
 		void stop();
 
