@@ -11,8 +11,6 @@ MD25::MD25() {
 void MD25::setup() {
 	Wire.begin();
 
-	// note: might need delays here
-
 	i2c_write(MODE_SELECTOR, 0);
 	i2c_write(ACCELERATION_REGISTER, acceleration);
 	
