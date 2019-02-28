@@ -29,12 +29,12 @@ namespace robot {
 	}
 
 	void enable_distance_sensors() {
-		for (int sensor = 0; sensor < distance_sensor_count; ++sensor)
+		for (uint8_t sensor = 0; sensor < distance_sensor_count; ++sensor)
 			distance_sensors[sensor].enabled = true;
 	}
 
 	void disable_distance_sensors() {
-		for (int sensor = 0; sensor < distance_sensor_count; ++sensor)
+		for (uint8_t sensor = 0; sensor < distance_sensor_count; ++sensor)
 			distance_sensors[sensor].enabled = false;
 	}
 

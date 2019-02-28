@@ -1,7 +1,7 @@
 
-config-key 1
-config-set 136
-config-key 2
-config-set 47
-config-key 3
+config-key robot-radius
+config-set 139
+config-key wheel-radius
+config-set 50
+config-key peak-speed
 config-set 10

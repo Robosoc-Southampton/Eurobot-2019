@@ -24,7 +24,7 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 }
 
 SharpIR sensors[] = {
-	SharpIR(A5)
+	SharpIR(A0)
 };
 
 void setup() {
