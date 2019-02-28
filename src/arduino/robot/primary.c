@@ -33,18 +33,18 @@ void setup() {
 
 	robot::wait_for_connection();
 
-	rlog("Connection established");
+	rlogf("Connection established");
 
 	md25.setup();
 
-	rlog("MD25 set-up");
+	rlogf("MD25 set-up");
 
 	robot::set_component_value_reader(&readComponentValue);
 	robot::set_activity_lookup(&lookupActivity);
 	robot::set_distance_sensors(1, sensors);
 	robot::drive::set_md25(&md25);
 
-	rlog("Initialisation complete");
+	rlogf("Initialisation complete");
 
 	robot::setup();
 }

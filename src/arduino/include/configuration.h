@@ -14,7 +14,10 @@ namespace robot {
 
 		extern int16_t config_key;
 
+		// sets the key to be written to
 		void set_config_key(int16_t key);
+
+		// sets the configuration value for the currently selected key
 		void set_config_value(int16_t value);
 
 	}

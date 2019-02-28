@@ -29,7 +29,7 @@ namespace robot {
 		if (msgptr == nullptr) msgptr = (Message*) malloc(sizeof(Message));
 		*msgptr = Message(bytes);
 
-		rlogd("Read message");
+		rlogfd("Read message");
 		
 		return msgptr;
 	}
@@ -41,7 +41,7 @@ namespace robot {
 
 		read_message_buffer();
 
-		rlogd("Connection established");
+		rlogf("Connection established");
 	}
 
 	void send_message(char opcode, int16_t payload) {

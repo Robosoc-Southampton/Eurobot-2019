@@ -27,14 +27,14 @@ namespace robot {
 		// if activity has timed out then stop it
 		if (current_activity_clock > current_activity->timeout && current_activity->timeout != 0) {
 			current_activity = nullptr;
-			rlogd("Stopping activity due to timeout");
+			rlogfd("Stopping activity due to timeout");
 			return;
 		}
 
 		// if activity predicate exists and returns false, stop activity
 		if (current_activity->predicate != nullptr && !(*current_activity->predicate)()) {
 			current_activity = nullptr;
-			rlogd("Stopping activity due to predicate");
+			rlogfd("Stopping activity due to predicate");
 			return;
 		}
 
@@ -54,7 +54,7 @@ namespace robot {
 	}
 
 	void start_activity(Activity* activity) {
-		rlogd("Starting activity");
+		rlogfd("Starting activity");
 		// set the current activity
 		current_activity = activity;
 		// set the activity configuration

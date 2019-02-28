@@ -16,10 +16,13 @@ namespace robot {
 	// checks distance sensors, returns true if a collision is detected
 	bool check_distance_sensors();
 
+	// reads the value of distance sensor at index `sensor`
 	int16_t read_distance_sensor(uint8_t sensor);
 
+	// enables and disables all distance sensors
 	void enable_distance_sensors();
 	void disable_distance_sensors();
+	// enables and distables specific distance sensors
 	void enable_distance_sensor(uint8_t sensor);
 	void disable_distance_sensor(uint8_t sensor);
 }

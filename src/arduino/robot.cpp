@@ -48,7 +48,7 @@ namespace robot {
 				is_readable = true;
 				break;
 			case 'M':
-				rlog("Unexpected 'M' message");
+				rlogf("Unexpected 'M' message");
 				is_readable = true;
 				break;
 		}
@@ -57,7 +57,7 @@ namespace robot {
 		if (!is_readable)
 			return;
 
-		rlogd("There's a message");
+		rlogfd("There's a message");
 
 		message = read_message_buffer();
 
@@ -117,22 +117,22 @@ namespace robot {
 			case 0: // skip activity 0 (do nothing activity)
 				break;
 			case 1000: // activity 1000 enables sensors
-				rlog("Enabling all distance sensors");
+				rlogf("Enabling all distance sensors");
 				robot::enable_distance_sensors();
 				break;
 			case 1100: // activity 1100 disables sensors
-				rlog("Disabling all distance sensors");
+				rlogf("Disabling all distance sensors");
 				robot::enable_distance_sensors();
 				break;
 			default: // run another activity
 				if (payload > 1000) {
 					if (payload < 1200) { // enable/disable a specific sensor
 						if (payload < 1100) {
-							rlog("Enabling distance sensor");
+							rlogf("Enabling distance sensor");
 							robot::enable_distance_sensor(payload - 1001);
 						}
 						else {
-							rlog("Disabling distance sensor");
+							rlogf("Disabling distance sensor");
 							robot::disable_distance_sensor(payload - 1101);
 						}
 						break;
@@ -143,7 +143,7 @@ namespace robot {
 
 				if (next_activity == nullptr) {
 					itoa(payload, (char*) &failure_buffer[0], 10);
-					rlog("Activity lookup failed");
+					rlogf("Activity lookup failed");
 					rlog(failure_buffer);
 					break;
 				}

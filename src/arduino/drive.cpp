@@ -18,7 +18,7 @@ namespace robot {
 			target_left_encoder_value  += encoder_value;
 			target_right_encoder_value += encoder_value;
 
-			rlogd("Driving forward");
+			rlogfd("Driving forward");
 
 			update_motor_speeds();
 		}
@@ -35,13 +35,13 @@ namespace robot {
 			target_right_encoder_value += md25->readRightEncoder();
 			md25->resetEncoders();
 
-			rlogd("Turning");
+			rlogfd("Turning");
 
 			update_motor_speeds();
 		}
 
 		void stop() {
-			rlogd("Stopping");
+			rlogfd("Stopping");
 			
 			md25->stopMotors();
 
@@ -84,7 +84,7 @@ namespace robot {
 
 			if (diff(left_speed, 128u) < SPEED_THRESHOLD && diff(right_speed, 128u) < SPEED_THRESHOLD) {
 				if (abs(left_delta) < ENCODER_DELTA_THRESHOLD && abs(right_delta) < ENCODER_DELTA_THRESHOLD) {
-					rlogd("Finished movement");
+					rlogfd("Finished movement");
 					has_finished_movement = true;
 				}
 			}
