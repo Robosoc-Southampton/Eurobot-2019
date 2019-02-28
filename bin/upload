@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 
-USAGE="Usage: \"bin/upload\" MAIN PORT\n  where MAIN = primary, secondary or test/*\n  note: find PORT using \"bin/ports\"\n"
+USAGE="Usage: \"bin/upload\" ENTRY PORT\n\twhere ENTRY = primary, secondary or <test>\n\tnote: find PORT using \"bin/ports\"\n"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 PORT=$2
 
 if [ -z "$1" ]; then
 	printf "$USAGE"
+	printf "Available entry points:\n"
+	ls src/arduino/robot | grep -v 'test' | awk '{ gsub("\.c","",$0); print "\t" $0 }'
+	ls src/arduino/robot/test | awk '{ gsub("\.c","",$0); print "\ttest/" $0 }'
 	exit
 fi
 

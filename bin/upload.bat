@@ -1,7 +1,7 @@
 
 @echo off
 
-set @usage=Usage: "bin/upload" MAIN PORT;  where MAIN = primary, secondary or test/*;  note: find PORT using "bin/ports"
+set @usage=Usage: "bin/upload" MAIN PORT;  where MAIN = primary, secondary or <test>;  note: find PORT using "bin/ports"
 
 if "%1" == "" (
 	echo %@usage:;=&echo.%

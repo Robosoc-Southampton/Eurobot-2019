@@ -1,7 +1,7 @@
 
 @echo off
 
-set @usage=Usage: "bin/verify" MAIN;  where MAIN = primary, secondary or test/*
+set @usage=Usage: "bin/verify" MAIN;  where MAIN = primary, secondary or <test>
 
 if "%1" == "" (
 	echo %@usage:;=&echo.%

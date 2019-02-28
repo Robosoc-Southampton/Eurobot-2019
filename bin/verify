@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 
-USAGE="Usage: \"bin/upload\" MAIN\n  where MAIN = primary, secondary or test/*\n"
+USAGE="Usage: \"bin/upload\" MAIN\n\twhere MAIN = primary, secondary or <test>\n"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 if [ -z "$1" ]; then
 	printf "$USAGE"
+	printf "Available files:\n"
+	ls src/arduino/robot | grep -v 'test' | awk '{ gsub("\.c","",$0); print "\t" $0 }'
+	ls src/arduino/robot/test | awk '{ gsub("\.c","",$0); print "\ttest/" $0 }'
 	exit
 fi
 

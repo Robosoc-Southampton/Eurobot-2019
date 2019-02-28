@@ -138,7 +138,7 @@ namespace robot {
 						break;
 					}
 				}
-				
+
 				next_activity = (*lookup_activity)(payload);
 
 				if (next_activity == nullptr) {
