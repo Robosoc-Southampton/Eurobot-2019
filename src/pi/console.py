@@ -3,6 +3,8 @@ import comms
 import messages
 import sys
 import time
+import readline
+import traceback
 
 options = {
 	"addr": "20:17:03:08:60:45",
@@ -53,18 +55,55 @@ if options["file"] != None:
 
 if options["read"] == "true":
 	print("Enter 'q' to quit")
+	readline.set_auto_history(True)
+
+	def complete(options, begin, text, state):
+		values = []
+
+		for s in options:
+			if (s.startswith(text)):
+				values.append(s)
+
+		if state < len(values):
+			return begin + values[state]
+
+	def completer(text, state):
+		if text.find(" ") == -1:
+			return complete(messages.opcodes.keys(), "", text, state)
+
+		if text.startswith("config-key "):
+			return complete(messages.config_keys.keys(), "config-key ", text[11:], state)
+
+	readline.set_completer_delims("")
+	readline.parse_and_bind("tab: complete")
+	readline.set_completer(completer)
 
 while True:
-	if options["timeout"] != None and time.clock() - start_time >= options["timeout"]:
-		break
-
-	if options["read"] == "true":
-		inp = input("enter message: ")
-		if inp == "q":
-			conn.close()
+	try:
+		if options["timeout"] != None and time.clock() - start_time >= options["timeout"]:
 			break
-		if inp.find(" ") == -1:
-			continue
-		parsed = messages.parse_message(inp)
-		conn.send(messages.encode_message(parsed[0], parsed[1]))
-		time.sleep(0.5)
+
+		if options["read"] == "true":
+			inp = input("enter message: ")
+
+			if inp == "q":
+				break
+
+			if inp.find(" ") == -1:
+				print("Invalid command")
+				continue
+
+			parsed = messages.parse_message(inp)
+			print("Sending " + parsed[0] + " with " + str(parsed[1]))
+			conn.send(messages.encode_message(parsed[0], parsed[1]))
+			time.sleep(1)
+	except KeyboardInterrupt:
+		print("")
+		break
+	except ValueError:
+		print("Enter a number parameter")
+	except:
+		print("An error occurred!")
+		print(repr(sys.exc_info()[1]))
+
+conn.close()
