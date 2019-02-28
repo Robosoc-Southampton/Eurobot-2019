@@ -31,6 +31,8 @@ void setup() {
 	pinMode(LED_BUILTIN, OUTPUT);
 	Serial.begin(9600);
 
+	rlogf("Waiting for connection");
+
 	robot::wait_for_connection();
 
 	rlogf("Connection established");
