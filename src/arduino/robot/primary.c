@@ -6,8 +6,13 @@ MD25 md25;
 auto ledOn = LOW;
 
 ACTIVITY(toggleLED, cooldown=500000, timeout=5000000) {
-	digitalWrite(LED_BUILTIN, ledOn);
 	ledOn ^= HIGH;
+	digitalWrite(LED_BUILTIN, ledOn);
+}
+
+INIT(toggleLED) {
+	ledOn = LOW;
+	digitalWrite(LED_BUILTIN, LOW);
 }
 
 int16_t readComponentValue(int16_t component_ID) {

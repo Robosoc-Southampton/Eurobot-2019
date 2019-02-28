@@ -17,6 +17,9 @@ typedef Activity* (*ActivityLookup)(uint16_t);
 // note that all times related to activities are in microseconds
 struct Activity {
 	// function to run when activity is triggered
+	// note that this function calls irrespective of the predicate
+	ActivityCallback init = nullptr;
+	// function to run while activity is running
 	// the function should not be significantly blocking (no delay()s, pretty much)
 	ActivityCallback callback = nullptr;
 	// predicate must return true for activity to continue
@@ -59,6 +62,12 @@ or
 		// code to run
 	}
 
+then, to assign an init function
+
+	INIT(name) {
+		// code to run
+	}
+
 then, to assign a predicate...
 
 	PREDICATE(name) {
@@ -98,3 +107,13 @@ struct name##_init_predicate_struct {\
 };\
 name##_init_predicate_struct name##_init_predicate_struct_instance;\
 bool name##_predicate()
+
+#define INIT(name) \
+void name##_init();\
+struct name##_init_init_struct {\
+	name##_init_init_struct() {\
+		name.init = &name##_init;\
+	}\
+};\
+name##_init_init_struct name##_init_init_struct_instance;\
+void name##_init()

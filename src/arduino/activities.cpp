@@ -61,10 +61,13 @@ namespace robot {
 		current_activity_cooldown = activity->cooldown;
 		// reset the clock
 		current_activity_clock = 0;
-		// run the callback once immediately
-		(*activity->callback)();
 		// reset the last cycle
 		current_activity_last_cycle = micros();
+
+		// run the activity's init function if applicable
+		if (current_activity->init != nullptr) {
+			(*current_activity->init)();
+		}
 	}
 	
 }
