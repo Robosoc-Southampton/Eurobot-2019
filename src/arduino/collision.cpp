@@ -13,17 +13,19 @@ namespace robot {
 
 	bool check_distance_sensors() {
 		bool is_collision_detected = false;
-		int16_t THRESHOLD = 100;
+		int16_t THRESHOLD = 0;
 
 		for (SharpIR *sensor = distance_sensors; sensor != distance_sensors + distance_sensor_count; ++sensor) {
 			if (sensor->enabled && sensor->read() < THRESHOLD) {
 				return true;
 			}
 		}
+
+		return false;
 	}
 
 	int16_t read_distance_sensor(uint8_t sensor) {
-		return distance_sensors[sensor].last_reading;
+		return distance_sensors[sensor].read();
 	}
 
 	void enable_distance_sensors() {

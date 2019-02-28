@@ -14,6 +14,8 @@ void setup() {
 void loop() {
 	const char str[23] = "Sensor reading: \0\0\0\0\0\0";
 
-	itoa(sensor.read(), (char*) str + 12, 10);
+	itoa(sensor.read(), (char*) str + 16, 10);
 	rlog(&str[0]);
+
+	delay(200);
 }

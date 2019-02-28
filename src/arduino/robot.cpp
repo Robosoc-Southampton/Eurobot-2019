@@ -17,7 +17,7 @@ namespace robot {
 	}
 
 	void loop() {
-		if (check_distance_sensors()) {
+		if (drive::is_moving && check_distance_sensors()) {
 			drive::stop();
 			int16_t distance = drive::get_average_distance_travelled();
 			robot::send_message('c', distance);
@@ -98,9 +98,11 @@ namespace robot {
 
 				// requests to 1001-1099 are distance sensor requests
 				if (message->payload > 1000 && message->payload < 1100) {
+					rlogfd("Reading distance sensor");
 					value = robot::read_distance_sensor(message->payload - 1001);
 				}
 				else {
+					rlogfd("Reading component");
 					value = (*component_value_reader)(message->payload);
 				}
 
