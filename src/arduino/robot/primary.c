@@ -1,8 +1,6 @@
 
 #include "include/robot/primary.h"
 
-MD25 md25;
-
 auto ledOn = LOW;
 
 ACTIVITY(toggleLED, cooldown=500000, timeout=5000000) {
@@ -28,25 +26,11 @@ SharpIR sensors[] = {
 };
 
 void setup() {
-	pinMode(LED_BUILTIN, OUTPUT);
 	Serial.begin(9600);
-
-	rlogf("Waiting for connection");
-
-	robot::wait_for_connection();
-
-	rlogf("Connection established");
-
-	md25.setup();
-
-	rlogf("MD25 set-up");
 
 	robot::set_component_value_reader(&readComponentValue);
 	robot::set_activity_lookup(&lookupActivity);
 	robot::set_distance_sensors(1, sensors);
-	robot::drive::set_md25(&md25);
-
-	rlogf("Initialisation complete");
 
 	robot::setup();
 }

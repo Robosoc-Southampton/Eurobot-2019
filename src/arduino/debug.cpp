@@ -44,13 +44,5 @@ namespace robot {
 				delay(200);
 			}
 		}
-
-		bool assert(bool value, const char* error_message, const char* function) {
-			if (!value) {
-				robot::debug::error(error_message, function);
-			}
-
-			return value;
-		}
 	}
 }

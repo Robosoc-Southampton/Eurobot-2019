@@ -10,10 +10,25 @@ namespace robot {
 	}
 
 	void setup() {
-		rassert(component_value_reader != nullptr, "Component value reader not set");
-		rassert(lookup_activity != nullptr, "Activity lookup not set");
-		rassert(distance_sensors != nullptr, "Distance sensors not set");
-		rassert(drive::md25 != nullptr, "Drive MD25 not set");
+		pinMode(LED_BUILTIN, OUTPUT);
+		MD25 *md25 = new MD25();
+
+		rlogf("Waiting for connection");
+		robot::wait_for_connection();
+		rlogf("Connection established");
+
+		rlogf("Setting up MD25");
+		md25->setup();
+		rlogf("MD25 set up");
+
+		robot::drive::set_md25(md25);
+
+		rassert(component_value_reader != nullptr, rlogf("Component value reader not set"));
+		rassert(lookup_activity != nullptr, rlogf("Activity lookup not set"));
+		rassert(distance_sensors != nullptr, rlogf("Distance sensors not set"));
+		rassert(drive::md25 != nullptr, rlogf("MD25 allocation failed"));
+
+		rlogf("Initialisation complete");
 	}
 
 	void loop() {
