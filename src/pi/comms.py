@@ -5,11 +5,12 @@ import threading
 import messages
 
 class Connection:
-	receive_log_buffer = b""
-	receive_message_buffer = b""
-	receive_log_handler = None
-	receive_message_handler = None
-	receive_log_length = 0
+	def __init__(self):
+		self.receive_log_buffer = b""
+		self.receive_message_buffer = b""
+		self.receive_log_handler = None
+		self.receive_message_handler = None
+		self.receive_log_length = 0
 
 	# sends a message to the arduino
 	def send(self, data):
@@ -58,6 +59,8 @@ class BTConnection(Connection):
 	sock = None
 
 	def __init__(self, bdaddr, port=1):
+		Connection.__init__(self)
+		
 		self.sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
 		self.sock.connect((bdaddr, port))
 

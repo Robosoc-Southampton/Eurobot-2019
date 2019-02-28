@@ -17,6 +17,12 @@ opcodes = {
 	# "": '',
 }
 
+config_keys = {
+	"robot-radius": 1,
+	"wheel-radius": 2,
+	"peak-speed": 3
+}
+
 opcodes_inverse = {}
 
 for k, v in opcodes.items():
@@ -34,6 +40,10 @@ def decode_message(data):
 def parse_message(message):
 	split = message.split(" ")
 	opcode = split[0]
+
+	if opcode == "config-key" && split[1] in config_keys:
+		return (opcode, config_keys[split[1]])
+	
 	data = int(split[1])
 	return (opcode, data)
 
