@@ -5,7 +5,6 @@ opcodes = {
 	"forward": 'F',
 	"turn": 'T',
 	"do": 'D',
-	"align": 'A',
 	"request": 'R',
 	"message": 'M',
 	"config-key": "K",

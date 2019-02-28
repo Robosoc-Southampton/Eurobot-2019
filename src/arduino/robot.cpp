@@ -36,7 +36,7 @@ namespace robot {
 
 		// test the opcode char to determine if the message is ready to be read
 		switch (opcode) {
-			case 'F': case 'T': case 'A': // forward, turn and align commands
+			case 'F': case 'T':: // forward and turn commands
 				// can only run next movement opcode if not currently moving
 				is_readable = !drive::is_moving;
 				break;
@@ -78,11 +78,6 @@ namespace robot {
 			case 'T': // turn
 				disable_distance_sensors();
 				drive::turn(message->payload);
-				break;
-			case 'A': // align
-				disable_distance_sensors();
-				drive::forward(-drive::ALIGN_DISTANCE);
-				// TODO: spec requires to drive forward by message.payload after aligning
 				break;
 			case 'D': // do
 				perform_do_command(message->payload);
