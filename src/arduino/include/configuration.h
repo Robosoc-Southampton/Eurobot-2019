@@ -1,4 +1,12 @@
 
+/* configuration.h (internal)
+ *
+ * This file contains code related to runtime configuration of the robot
+ * - functions used by `robot.*`
+ * 
+ * See `docs/Configuration.md`
+ */
+
 #pragma once
 
 #include <Arduino.h>

@@ -20,9 +20,9 @@ If a particular component/feature isn't working, or the setup isn't completing, 
 
 ---
 
-## LED flashing (+-500ms)
+## LED flashing (500ms)
 
-The LED flashing with a total period of `1` second indicates that an initial message has not been received from the controller.
+The LED flashing with a total period of `500ms` indicates that an initial message has not been received from the controller.
 
 ### Next steps
 
@@ -31,9 +31,9 @@ The LED flashing with a total period of `1` second indicates that an initial mes
 * Check for debug messages on the controller
 * Run `test/connection` for more info
 
-## LED flashing (+-200ms)
+## LED flashing (200ms)
 
-The LED flashing with a total period of `0.4` seconds indicates that an error has been encountered. It will definitely have been sent as a log message. If no log message has been received, it's likely an issue with the connection.
+The LED flashing with a total period of `200ms` indicates that an error has been encountered. It will definitely have been sent as a log message. If no log message has been received, it's likely an issue with the connection.
 
 ### Next steps (if no log message)
 

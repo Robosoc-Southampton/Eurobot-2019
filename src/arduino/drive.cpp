@@ -7,7 +7,6 @@ namespace robot {
 		int32_t target_left_encoder_value = 0, target_right_encoder_value = 0;
 		MD25 *md25;
 		bool is_moving = false;
-		int16_t ALIGN_DISTANCE = 100;
 		uint8_t SPEED_THRESHOLD = 10u;
 		int32_t ENCODER_DELTA_THRESHOLD = 10;
 
@@ -30,7 +29,7 @@ namespace robot {
 			is_moving = true;
 			target_left_encoder_value  -= encoder_value;
 			target_right_encoder_value += encoder_value;
-			
+
 			md25->setAcceleration(robot::configuration::acceleration);
 
 			rlogfd("Turning");

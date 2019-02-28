@@ -5,7 +5,7 @@ This folder contains all the code that runs on the Arduinos.
 
 Headers are located in `./include`, robot and test source files in `./robot` and `./robot/test` respectively, and library/component sources in `.`.
 
-Headers are commented with descriptions of functions, classes, and general code. Source files are largely undocumented.
+Headers are commented with descriptions of functions, classes, and general code. Source files are largely undocumented. Things marked "internal" are used internally by core code and shouldn't be referenced in the entry point code.
 
 ## Compiling/uploading.
 

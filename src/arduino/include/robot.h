@@ -1,4 +1,11 @@
 
+/* robot.h
+ *
+ * This file contains code related to overall robot control
+ * - setup functions used in entry point setup
+ * - setup/loop functions called from entry point code
+ */
+
 // for inlining:
 //  inline __attribute__((always_inline))
 
@@ -28,9 +35,9 @@ namespace robot {
 	// runs the update loop
 	void loop();
 
-	// consume and act on next message
+	// consume and act on next message (internal)
 	void consume_message(Message *message);
 
-	// performs a 'do' command, e.g. enabling sensors, rotating a motor, or waiting
+	// performs a 'do' command, e.g. enabling sensors, rotating a motor, or waiting (internal)
 	void perform_do_command(int16_t payload);
 }

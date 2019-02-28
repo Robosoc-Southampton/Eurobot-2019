@@ -9,6 +9,7 @@ public:
 	int16_t last_reading;
 	bool enabled;
 
+	// creates the SharpIR object, with the analogue pin it's connected to
 	SharpIR(uint8_t pin);
 
 	// reads a value, updating `last_reading`, and returning the value

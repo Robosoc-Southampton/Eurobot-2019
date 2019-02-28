@@ -1,4 +1,11 @@
 
+/* messages.h
+ *
+ * This file contains code related to reading messages
+ * - the Message type
+ * - setup/loop functions used by `robot.*`
+ */
+
 #pragma once
 
 #include <Arduino.h>
@@ -22,9 +29,9 @@ namespace robot {
 	// checks for a message from the message buffer and acts on it if possible
 	Message *read_message_buffer();
 
-	// waits for a connection from the pi
+	// waits for a connection from the controller, flashing the LED while it waits
 	void wait_for_connection();
 
-	// sends a message to the pi
+	// sends a message to the controller
 	void send_message(char opcode, int16_t payload);
 }
