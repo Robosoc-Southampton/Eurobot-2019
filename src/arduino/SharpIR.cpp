@@ -6,6 +6,10 @@ SharpIR::SharpIR(uint8_t pin) {
 }
 
 int16_t SharpIR::read() {
-	last_reading = analogRead(pin);
+	last_reading = convertVoltageToDistance(analogRead(pin));
 	return last_reading;
+}
+
+int16_t SharpIR::convertVoltageToDistance(int16_t voltage) {
+	return voltage;
 }
