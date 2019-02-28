@@ -11,5 +11,5 @@ int16_t SharpIR::read() {
 }
 
 int16_t SharpIR::convertVoltageToDistance(int16_t voltage) {
-	return voltage;
+	return voltage; // TODO: perform actual conversion
 }

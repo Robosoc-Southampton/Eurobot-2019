@@ -26,4 +26,10 @@ namespace robot {
 
 	// runs the update loop
 	void loop();
+
+	// consume and act on next message
+	void consume_message(Message *message);
+
+	// performs a 'do' command, e.g. enabling sensors, rotating a motor, or waiting
+	void perform_do_command(int16_t payload);
 }

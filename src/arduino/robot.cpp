@@ -26,12 +26,10 @@ namespace robot {
 		drive::update_motor_speeds();
 		run_activity();
 	
-		char buffer[6] = {};
 		char opcode;
 		bool is_activity_running = current_activity != nullptr;
 		bool is_readable = false;
 		Message *message;
-		Activity *next_activity;
 
 		if ((opcode = peek_next_opcode()) == '\0')
 			return;
@@ -68,6 +66,10 @@ namespace robot {
 		rlogd((const char*) msg);
 
 		// act on message
+		consume_message(message);
+	}
+
+	void consume_message(Message *message) {
 		switch (message->opcode) {
 			case 'F': // forward
 				enable_distance_sensors();
@@ -83,44 +85,7 @@ namespace robot {
 				// TODO: spec requires to drive forward by message.payload after aligning
 				break;
 			case 'D': // do
-				switch (message->payload) {
-					case 0: // skip activity 0 (do nothing activity)
-						break;
-					case 1000: // activity 1000 enables sensors
-						rlog("Enabling all distance sensors");
-						robot::enable_distance_sensors();
-						break;
-					case 1100: // activity 1100 disables sensors
-						rlog("Disabling all distance sensors");
-						robot::enable_distance_sensors();
-						break;
-					default: // run another activity
-						if (message->payload > 1000) {
-							if (message->payload < 1200) { // enable/disable a specific sensor
-								if (message->payload < 1100) {
-									rlog("Enabling distance sensor");
-									robot::enable_distance_sensor(message->payload - 1001);
-								}
-								else {
-									rlog("Disabling distance sensor");
-									robot::disable_distance_sensor(message->payload - 1101);
-								}
-								break;
-							}
-						}
-						next_activity = (*lookup_activity)(message->payload);
-
-						if (next_activity == nullptr) {
-							itoa(message->payload, (char*) &buffer[0], 10);
-							rlog("Activity lookup failed");
-							rlog(buffer);
-							break;
-						}
-
-						start_activity(next_activity);
-
-						break;
-				}
+				perform_do_command(message->payload);
 				break;
 			case 'K':
 				robot::configuration::set_config_key(message->payload);
@@ -131,6 +96,7 @@ namespace robot {
 			case 'R': // request
 				int16_t value;
 
+				// requests to 1001-1099 are distance sensor requests
 				if (message->payload > 1000 && message->payload < 1100) {
 					value = robot::read_distance_sensor(message->payload - 1001);
 				}
@@ -139,6 +105,51 @@ namespace robot {
 				}
 
 				robot::send_message('r', value);
+				break;
+		}
+	}
+
+	void perform_do_command(int16_t payload) {
+		char failure_buffer[6] = {};
+		Activity *next_activity;
+
+		switch (payload) {
+			case 0: // skip activity 0 (do nothing activity)
+				break;
+			case 1000: // activity 1000 enables sensors
+				rlog("Enabling all distance sensors");
+				robot::enable_distance_sensors();
+				break;
+			case 1100: // activity 1100 disables sensors
+				rlog("Disabling all distance sensors");
+				robot::enable_distance_sensors();
+				break;
+			default: // run another activity
+				if (payload > 1000) {
+					if (payload < 1200) { // enable/disable a specific sensor
+						if (payload < 1100) {
+							rlog("Enabling distance sensor");
+							robot::enable_distance_sensor(payload - 1001);
+						}
+						else {
+							rlog("Disabling distance sensor");
+							robot::disable_distance_sensor(payload - 1101);
+						}
+						break;
+					}
+				}
+				
+				next_activity = (*lookup_activity)(payload);
+
+				if (next_activity == nullptr) {
+					itoa(payload, (char*) &failure_buffer[0], 10);
+					rlog("Activity lookup failed");
+					rlog(failure_buffer);
+					break;
+				}
+
+				start_activity(next_activity);
+
 				break;
 		}
 	}
