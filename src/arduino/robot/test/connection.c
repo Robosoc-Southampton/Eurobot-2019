@@ -13,8 +13,10 @@ void setup() {
 }
 
 void loop() {
-	if (robot::peek_next_opcode() != '\0') {
-		Message *message = robot::read_message_buffer();
+	robot::update_message_buffer();
+	Message *message = robot::read_message_buffer();
+
+	if (message != nullptr) {
 		const char buffer[8] = {'0', 'x'};
 
 		switch (message->opcode) {

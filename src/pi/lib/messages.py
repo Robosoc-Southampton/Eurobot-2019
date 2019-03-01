@@ -29,9 +29,9 @@ for k, v in opcodes.items():
 
 def encode_message(opcode, data):
 	if len(opcode) == 1:
-		return struct.pack(">ch", opcode[0].encode("ASCII"), data)
+		return struct.pack("<ch", opcode[0].encode("ASCII"), data)
 	else:
-		return struct.pack(">ch", opcodes[opcode][0].encode("ASCII"), data)
+		return struct.pack("<ch", opcodes[opcode][0].encode("ASCII"), data)
 
 def decode_message(data):
 	return (opcodes_inverse[data[0]], struct.unpack("<h", data[1:3])[0])

@@ -45,6 +45,8 @@ namespace robot {
 		bool is_readable = false;
 		Message *message;
 
+		update_message_buffer();
+
 		if ((opcode = peek_next_opcode()) == '\0')
 			return;
 

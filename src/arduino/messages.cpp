@@ -11,37 +11,111 @@ Message::Message(uint8_t bytes[]) {
 Message::Message() { /* do nothing */ }
 
 namespace robot {
+	const uint8_t message_buffer[MESSAGE_BUFFER_SIZE * 3] = {};
+	Message *message_buffer_start_ptr = (Message*) &message_buffer[0],
+	        *message_buffer_end_ptr = (Message*) &message_buffer[0],
+	        *message_buffer_eof_ptr = (Message*) &message_buffer[MESSAGE_BUFFER_SIZE];
+	size_t message_buffer_length = 0;
+	int16_t message_buffer_consume_length = 0;
+	bool message_buffer_consuming = false;
+
+	void update_message_buffer() {
+		if (Serial.available() < MESSAGE_SIZE)
+			return;
+		
+		uint8_t bytes[MESSAGE_SIZE];
+		uint8_t *bytes_ptr = &bytes[0];
+
+		for (uint8_t i = MESSAGE_SIZE; i; --i)
+			*(bytes_ptr++) = Serial.read();
+
+		if (bytes[0] == 'M') {
+			switch (*((int16_t*) (bytes + 1))) {
+				case 2:
+					message_buffer_consuming = true;
+					message_buffer_consume_length = 0;
+
+					rlogfd("Start of message batch");
+
+					break;
+				case 3:
+					message_buffer_consuming = true;
+					message_buffer_length += message_buffer_consume_length;
+					message_buffer_consume_length = 0;
+					send_message('M', 5);
+
+					rlogfd("Break in message batch");
+
+					break;
+				case 4:
+					message_buffer_consuming = false;
+					message_buffer_length += message_buffer_consume_length;
+					message_buffer_consume_length = 0;
+
+					rlogfd("End of message batch");
+
+					break;
+				case 1: case 7:
+					message_buffer_start_ptr = (Message*) &message_buffer[0];
+					message_buffer_end_ptr = message_buffer_start_ptr;
+					message_buffer_length = 0;
+					message_buffer_consume_length = 0;
+					message_buffer_consuming = false;
+
+					rlogfd("Resetting message batch");
+
+					break;
+				default:
+					rlogfd("Unknown message command");
+					rlogid(*((int16_t*) (bytes + 1)));
+
+					break;
+			}
+		}
+		else if (message_buffer_end_ptr != message_buffer_eof_ptr) {
+			*(message_buffer_end_ptr++) = *(Message*) bytes;
+
+			if (message_buffer_consuming) {
+				message_buffer_consume_length++;
+				rlogfd("Message read into consume message buffer");
+			}
+			else {
+				message_buffer_length++;
+				rlogfd("Message read directly into message buffer");
+			}
+		}
+		else {
+			send_message('M', 6);
+			message_buffer_end_ptr -= message_buffer_consume_length;
+			message_buffer_length -= message_buffer_consume_length;
+			
+			rlogfd("Overflow of message buffer");
+		}
+	}
 
 	char peek_next_opcode() {
-		if (Serial.available() < MESSAGE_SIZE) return '\0';
-		return (char) Serial.peek();
+		if (message_buffer_length == 0) return '\0';
+		return *((char*) message_buffer_start_ptr);
 	}
 
 	Message *read_message_buffer() {
-		uint8_t bytes[MESSAGE_SIZE];
-
-		if (Serial.available() < MESSAGE_SIZE) return nullptr;
-
-		for (uint8_t i = 0; i < MESSAGE_SIZE; ++i) {
-			bytes[i] = Serial.read();
+		if (message_buffer_length) {
+			message_buffer_length--;
+			return message_buffer_start_ptr++;
 		}
 
-		if (msgptr == nullptr) msgptr = (Message*) malloc(sizeof(Message));
-		*msgptr = Message(bytes);
-
-		rlogfd("Read message");
-		
-		return msgptr;
+		return nullptr;
 	}
 
 	void wait_for_connection() {
-		send_message('M', 0); // send an init message
+		send_message('M', 0);
 		rlogf("Waiting for connection");
 
-		while (peek_next_opcode() == '\0') {
+		while (Serial.available() < 3) {
 			rblink(500);
 		}
 
+		update_message_buffer();
 		read_message_buffer();
 
 		rlogf("Connection established");
