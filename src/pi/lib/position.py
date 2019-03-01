@@ -12,9 +12,6 @@ class RobotPosition:
 	def __str__(self):
 		return "(" + str(self.x) + ", " + str(self.y) + ")"
 
-	def __len__(self):
-		return sqrt(self.x ^ 2 + self.y ^ 2)
-
 	def __repr__(self):
 		return str(self)
 
@@ -28,7 +25,7 @@ class RobotPosition:
 		return RobotPosition(self.x + other.x * s, self.y + other.y * s)
 
 	def length(self):
-		return len(self)
+		return sqrt(self.x ** 2 + self.y ** 2)
 
 	def normalise(self):
 		l = 1/self.length()

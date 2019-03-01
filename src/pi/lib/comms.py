@@ -2,7 +2,7 @@
 
 import bluetooth
 import threading
-import messages
+import lib.messages
 
 class Connection:
 	def __init__(self):

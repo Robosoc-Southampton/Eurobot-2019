@@ -1,20 +1,35 @@
 
-from math import floor, pi
+import lib.controller
+import lib.messages
+import lib.state
+from lib.position import RobotPosition
+import sys
 
-class PathFinder:
-	def pathfind(self, from_position, from_facing, to_position, to_facing):
-		return [
-			("turn", floor((to_facing.to_angle() - from_facing.to_angle()) * 180 / pi)),
-			("forward", floor((to_position - from_position).length()))
-		]
+files = sys.argv[1:]
 
-class Controller:
-	def __init__(self, pathfinder):
-		self.pathfinder = pathfinder
-		self.init()
+position = RobotPosition(0, 0)
+facing = RobotPosition(0, 1)
+state = lib.state.RobotState(position, facing)
+pathfinder = lib.controller.PathFinder()            # TODO: add other pathfinders
+controller = lib.controller.Controller(pathfinder)  # TODO: add other controllers
 
-	def init(self):
-		pass
+controller.begin(state)
 
-	def run_from(self, state):
-		return []
+for file in files:
+	h = open(file, "r")
+	content = h.read()
+	h.close()
+
+	for line in content.splitlines():
+		if line.startswith("goto "):
+			parts = line[5:].split(",")
+			controller.goto(RobotPosition(int(parts[0].strip()), int(parts[1].strip())))
+		elif line.startswith("face"):
+			parts = line[5:].split(",")
+			controller.face(RobotPosition(int(parts[0].strip()), int(parts[1].strip())))
+		else:
+			controller.append(lib.messages.parse_messages(line))
+
+controller.run()
+
+print(lib.messages.serialise_messages(controller.finish()))

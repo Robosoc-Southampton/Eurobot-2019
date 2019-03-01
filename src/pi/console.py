@@ -1,6 +1,7 @@
 
-import comms
-import messages
+import lib.comms
+import lib.messages
+import bluetooth
 import sys
 import time
 import readline
@@ -33,17 +34,28 @@ if bdaddr == "auto":
 	bdaddr = comms.find_bt_addr()
 
 	if bdaddr == None:
-		print("couldn't find bluetooth device")
+		print("Couldn't find bluetooth device")
 		sys.exit()
 
-print("connecting bluetooth")
-print("addr: " + bdaddr)
-conn = comms.connect_serial() if options["serial"] == "true" else comms.connect_bluetooth(bdaddr)
+
+if options["serial"] == "true":
+	print("Connecting serial")
+
+	conn = lib.comms.connect_serial()
+else:
+	print("Connecting bluetooth")
+	print("Addr: " + bdaddr)
+
+	try:
+		conn = lib.comms.connect_bluetooth(bdaddr)
+	except bluetooth.btcommon.BluetoothError as e:
+		print("Failed to connect bluetooth: " + str(e))
+		sys.exit()
 
 if conn:
-	print("connected")
+	print("Connected")
 else:
-	print("failed to connect!")
+	print("Failed to connect!")
 	sys.exit()
 
 conn.on_log(lambda msg: print("Log message received: " + msg.strip()))
@@ -58,6 +70,7 @@ for file in options["files"]:
 
 if options["read"] == "true":
 	print("Enter 'q' to quit")
+
 	readline.set_auto_history(True)
 
 	def complete(options, begin, text, state):
