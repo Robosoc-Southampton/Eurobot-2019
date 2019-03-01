@@ -9,6 +9,7 @@ import traceback
 
 options = {
 	"addr": "20:17:03:08:60:45",
+	"port": "/dev/ttyACM0",
 	"files": [],
 	"read": "true",
 	"timeout": None,
@@ -41,32 +42,34 @@ if bdaddr == "auto":
 if options["serial"] == "true":
 	print("Connecting serial")
 
-	conn = lib.comms.connect_serial()
+	conn = lib.comms.SerialConnection(options["port"])
 else:
 	print("Connecting bluetooth")
 	print("Addr: " + bdaddr)
 
 	try:
-		conn = lib.comms.connect_bluetooth(bdaddr)
+		conn = lib.comms.BluetoothConnection(bdaddr)
 	except bluetooth.btcommon.BluetoothError as e:
 		print("Failed to connect bluetooth: " + str(e))
 		sys.exit()
 
-if conn:
-	print("Connected")
-else:
+if not conn:
 	print("Failed to connect!")
 	sys.exit()
 
 conn.on_log(lambda msg: print("Log message received: " + msg.strip()))
 conn.on_message(lambda opcode, data: print("Message received (%s %s)" % (opcode, data)))
+conn.connect()
+conn.send(lib.messages.encode_message("message", 1))
+
+print("Connected")
 
 start_time = time.clock()
 
 for file in options["files"]:
 	print("Loading file %s" % file)
-	for msg in messages.parse_message_file(file):
-		conn.send(messages.encode_message(msg[0], msg[1]))
+	for msg in lib.messages.parse_message_file(file):
+		conn.send(lib.messages.encode_message(msg[0], msg[1]))
 
 if options["read"] == "true":
 	print("Enter 'q' to quit")
@@ -85,10 +88,10 @@ if options["read"] == "true":
 
 	def completer(text, state):
 		if text.find(" ") == -1:
-			return complete(messages.opcodes.keys(), "", text, state)
+			return complete(lib.messages.opcodes.keys(), "", text, state)
 
 		if text.startswith("config-key "):
-			return complete(messages.config_keys.keys(), "config-key ", text[11:], state)
+			return complete(lib.messages.config_keys.keys(), "config-key ", text[11:], state)
 
 	readline.set_completer_delims("")
 	readline.parse_and_bind("tab: complete")
@@ -109,9 +112,9 @@ while True:
 				print("Invalid command")
 				continue
 
-			parsed = messages.parse_message(inp)
-			print("Sending (" + messages.opcodes[parsed[0]] + " " + str(parsed[1]) + ")")
-			conn.send(messages.encode_message(parsed[0], parsed[1]))
+			parsed = lib.messages.parse_message(inp)
+			print("Sending (" + lib.messages.opcodes[parsed[0]] + " " + str(parsed[1]) + ")")
+			conn.send(lib.messages.encode_message(parsed[0], parsed[1]))
 			time.sleep(1)
 	except KeyboardInterrupt:
 		print("")

@@ -2,6 +2,7 @@
 
 import bluetooth
 import threading
+import serial
 import lib.messages
 
 class Connection:
@@ -12,10 +13,6 @@ class Connection:
 		self.receive_message_handler = None
 		self.receive_log_length = 0
 
-	# sends a message to the arduino
-	def send(self, data):
-		raise
-
 	# sets the message handler callback
 	def on_message(self, handler):
 		self.receive_message_handler = handler
@@ -24,6 +21,15 @@ class Connection:
 	def on_log(self, handler):
 		self.receive_log_handler = handler
 
+	# establishes the connection
+	def connect(self):
+		pass
+
+	# sends a message to the arduino
+	def send(self, data):
+		pass
+
+	# closes the connection
 	def close(self):
 		pass
 
@@ -47,7 +53,7 @@ class Connection:
 					self.receive_log_buffer = b""
 
 			if len(self.receive_message_buffer) >= 3:
-				decoded = messages.decode_message(self.receive_message_buffer)
+				decoded = lib.messages.decode_message(self.receive_message_buffer)
 				if decoded[0] == "log":
 					self.receive_log_length = decoded[1]
 				elif self.receive_message_handler != None:
@@ -56,13 +62,14 @@ class Connection:
 				self.receive_message_buffer = self.receive_message_buffer[3:]
 
 class BTConnection(Connection):
-	sock = None
-
 	def __init__(self, bdaddr, port=1):
 		Connection.__init__(self)
+		self.bdaddr = bdaddr
+		self.port = port
 		
+	def connect(self):
 		self.sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-		self.sock.connect((bdaddr, port))
+		self.sock.connect((self.bdaddr, self.port))
 
 		listener = BTConnectionListener(self)
 		listener.setDaemon(True)
@@ -75,8 +82,6 @@ class BTConnection(Connection):
 		self.sock.close()
 
 class BTConnectionListener(threading.Thread):
-	conn = None
-
 	def __init__ (self, conn):
 		threading.Thread.__init__(self)
 		self.conn = conn
@@ -91,7 +96,56 @@ class BTConnectionListener(threading.Thread):
 		except IOError:
 			pass
 
-		self.conn.sock.close()
+		self.conn.close()
+
+class SerialConnection(Connection):
+	def __init__(self, port):
+		Connection.__init__(self)
+
+		self.port = port
+
+	def connect(self):
+		self.ser = serial.Serial(self.port,
+			baudrate=9600,
+			bytesize=serial.EIGHTBITS,
+			parity=serial.PARITY_NONE,
+			stopbits=serial.STOPBITS_ONE,
+			xonxoff=0,
+			rtscts=0
+			)
+		self.ser.setDTR(False)
+
+		# wait for initial message from wait_for_connection()
+		while self.ser.in_waiting < 3:
+			pass
+
+		self.ser.read(3)
+		
+		listener = SerialConnectionListener(self)
+		listener.setDaemon(True)
+		listener.start()
+
+	def send(self, data):
+		self.ser.write(data)
+
+	def close(self):
+		self.ser.close()
+
+class SerialConnectionListener(threading.Thread):
+	def __init__ (self, conn):
+		threading.Thread.__init__(self)
+		self.conn = conn
+
+	def run(self):
+		try:
+			while True:
+				data = self.conn.ser.read()
+				self.conn.receive_message_buffer += data
+				self.conn.check_message_buffer()
+		except IOError:
+			pass
+
+		self.conn.close()
 
 def find_bt_addr():
 	nearby_devices = bluetooth.discover_devices()
@@ -101,11 +155,3 @@ def find_bt_addr():
 			return bdaddr
 
 	return None
-
-def connect_bluetooth(bdaddr):
-	conn = BTConnection(bdaddr)
-	conn.send(messages.encode_message("message", 1))
-	return conn
-
-def connect_serial():
-	raise
