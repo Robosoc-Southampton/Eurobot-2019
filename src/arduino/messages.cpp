@@ -35,6 +35,9 @@ namespace robot {
 	}
 
 	void wait_for_connection() {
+		send_message('M', 0); // send an init message
+		rlogf("Waiting for connection");
+
 		while (peek_next_opcode() == '\0') {
 			rblink(500);
 		}

@@ -13,7 +13,6 @@ namespace robot {
 		pinMode(LED_BUILTIN, OUTPUT);
 		MD25 *md25 = new MD25();
 
-		rlogf("Waiting for connection");
 		robot::wait_for_connection();
 		rlogf("Connection established");
 
