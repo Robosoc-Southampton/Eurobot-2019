@@ -24,6 +24,7 @@
 #define rlogd(s) if (DEBUG) robot::debug::log(s, __FUNCTION__)
 #define rlogf(s) robot::debug::logf(F(s), __FUNCTION__)
 #define rlogfd(s) if (DEBUG) robot::debug::logf(F(s), __FUNCTION__)
+#define rlogid(i) if (DEBUG) robot::debug::logi(i, __FUNCTION__)
 
 // use rerror(message) to error with a message
 #define rerror(s) robot::debug::error(s, __FUNCTION__)
@@ -41,6 +42,7 @@ namespace robot {
 		// use rlog*, rerror, and rassert macros defined above
 		void log(const char* message, const char* function);
 		void logf(const __FlashStringHelper* message, const char* function);
+		void logi(const int16_t message, const char* function);
 		void error(const char* error_message, const char* function);
 	}
 }

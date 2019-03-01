@@ -33,6 +33,12 @@ namespace robot {
 			Serial.print("]\n"); // TODO: should check that this is actually writing 2 bytes, not 3 (including \0)
 		}
 
+		void logi(const int16_t message, const char* function) {
+			char str[8] = {};
+			itoa(message, str, 10);
+			log(str, function);
+		}
+
 		void error(const char* error_message, const char* function) {
 			log(error_message, function);
 			pinMode(LED_BUILTIN, OUTPUT);
