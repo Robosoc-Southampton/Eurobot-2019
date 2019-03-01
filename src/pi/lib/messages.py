@@ -62,3 +62,11 @@ def parse_message_file(file):
 	content = h.read()
 	h.close()
 	return parse_messages(content)
+
+def serialise_messages(messages):
+	result = []
+
+	for message in messages:
+		result.append(message[0] + " " + str(message[1]))
+
+	return '\n'.join(result)
