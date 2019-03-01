@@ -56,7 +56,7 @@ namespace robot {
 				is_readable = !drive::is_moving;
 				break;
 			case 'D': // can only run next activity if the current one has finished
-				is_readable = !is_activity_running;
+				is_readable = !is_activity_running && !drive::is_moving;
 				break;
 			case 'R': case 'K': case 'S':
 				// can always read a component value or set config stuff
