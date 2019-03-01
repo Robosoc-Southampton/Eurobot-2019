@@ -26,12 +26,26 @@ class Connection:
 		pass
 
 	# sends a message to the arduino
-	def send(self, data):
+	def send(self, message):
 		pass
 
 	# closes the connection
 	def close(self):
 		pass
+
+	def send_batched(self, messages, batchsize=10, cont=False):
+		if not cont:
+			self.send(("message", 2))
+
+		for message in messages[0:batchsize]:
+			self.send(message)
+
+		if len(messages) <= batchsize:
+			self.send(("message", 4))
+			self.batch_src = None
+		else:
+			self.send(("message", 3))
+			self.batch_src = lambda self : self.send_batched(messages[batchsize:], batchsize, True)
 
 	# internal use only
 	def check_message_buffer(self):
@@ -57,7 +71,10 @@ class Connection:
 				if decoded[0] == "log":
 					self.receive_log_length = decoded[1]
 				elif self.receive_message_handler != None:
-					self.receive_message_handler(decoded[0], decoded[1])
+					if decoded[0] == "message" and decoded[1] == 5 and self.batch_src != None:
+						self.batch_src(self)
+					else:
+						self.receive_message_handler(decoded[0], decoded[1])
 
 				self.receive_message_buffer = self.receive_message_buffer[3:]
 
@@ -75,8 +92,8 @@ class BluetoothConnection(Connection):
 		listener.setDaemon(True)
 		listener.start()
 
-	def send(self, data):
-		self.sock.send(data)
+	def send(self, message):
+		self.sock.send(lib.messages.encode_message(message))
 
 	def close(self):
 		self.sock.close()
@@ -105,15 +122,8 @@ class SerialConnection(Connection):
 		self.port = port
 
 	def connect(self):
-		self.ser = serial.Serial(self.port,
-			baudrate=9600,
-			bytesize=serial.EIGHTBITS,
-			parity=serial.PARITY_NONE,
-			stopbits=serial.STOPBITS_ONE,
-			xonxoff=0,
-			rtscts=0
-			)
-		self.ser.setDTR(False)
+		self.ser = serial.Serial(self.port, 9600)
+		self.ser.flushInput()
 
 		# wait for initial message from wait_for_connection()
 		while self.ser.in_waiting < 3:
@@ -125,8 +135,8 @@ class SerialConnection(Connection):
 		listener.setDaemon(True)
 		listener.start()
 
-	def send(self, data):
-		self.ser.write(data)
+	def send(self, message):
+		self.ser.write(lib.messages.encode_message(message))
 
 	def close(self):
 		self.ser.close()

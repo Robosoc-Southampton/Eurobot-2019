@@ -3,18 +3,13 @@
 
 Message *msgptr = nullptr;
 
-Message::Message(uint8_t bytes[]) {
-	opcode = (char) bytes[0];
-	payload = ((int16_t) bytes[1] << 8) + (int16_t) bytes[2];
-}
-
 Message::Message() { /* do nothing */ }
 
 namespace robot {
 	const uint8_t message_buffer[MESSAGE_BUFFER_SIZE * 3] = {};
 	Message *message_buffer_start_ptr = (Message*) &message_buffer[0],
 	        *message_buffer_end_ptr = (Message*) &message_buffer[0],
-	        *message_buffer_eof_ptr = (Message*) &message_buffer[MESSAGE_BUFFER_SIZE];
+	        *message_buffer_eof_ptr = &((Message*) &message_buffer[0])[MESSAGE_BUFFER_SIZE];
 	size_t message_buffer_length = 0;
 	int16_t message_buffer_consume_length = 0;
 	bool message_buffer_consuming = false;
@@ -66,7 +61,7 @@ namespace robot {
 
 					break;
 				default:
-					rlogfd("Unknown message command");
+					rlogf("Unknown message command");
 					rlogid(*((int16_t*) (bytes + 1)));
 
 					break;
@@ -76,20 +71,18 @@ namespace robot {
 			*(message_buffer_end_ptr++) = *(Message*) bytes;
 
 			if (message_buffer_consuming) {
-				message_buffer_consume_length++;
+				++message_buffer_consume_length;
 				rlogfd("Message read into consume message buffer");
 			}
 			else {
-				message_buffer_length++;
+				++message_buffer_length;
 				rlogfd("Message read directly into message buffer");
 			}
 		}
 		else {
-			send_message('M', 6);
-			message_buffer_end_ptr -= message_buffer_consume_length;
-			message_buffer_length -= message_buffer_consume_length;
-			
-			rlogfd("Overflow of message buffer");
+			rlogf("Overflow of message buffer");
+
+			while (1) { rblink(1000) }
 		}
 	}
 

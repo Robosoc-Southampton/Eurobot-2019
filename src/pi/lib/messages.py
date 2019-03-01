@@ -27,11 +27,11 @@ opcodes_inverse = {}
 for k, v in opcodes.items():
 	opcodes_inverse[ord(v)] = k
 
-def encode_message(opcode, data):
-	if len(opcode) == 1:
-		return struct.pack("<ch", opcode[0].encode("ASCII"), data)
+def encode_message(message):
+	if len(message[0]) == 1:
+		return struct.pack("<ch", message[0][0].encode("ASCII"), message[1])
 	else:
-		return struct.pack("<ch", opcodes[opcode][0].encode("ASCII"), data)
+		return struct.pack("<ch", opcodes[message[0]][0].encode("ASCII"), message[1])
 
 def decode_message(data):
 	return (opcodes_inverse[data[0]], struct.unpack("<h", data[1:3])[0])

@@ -40,3 +40,17 @@ The LED flashing with a total period of `200ms` indicates that an error has been
 * Check that the bluetooth module has connected (fixed lights)
 * Check that the bluetooth module is plugged in correctly
 * Run `test/connection` to debug connection
+
+## LED flashing (1000ms)
+
+The LED flashing with a total period of `1000ms` indicates a buffer overflow (this should've been logged).
+
+### Next steps
+
+* Debug the messages sent to the Arduino, and try to reduce the number of messages sent
+
+### Next steps (if no log message)
+
+* Check that the bluetooth module has connected (fixed lights)
+* Check that the bluetooth module is plugged in correctly
+* Run `test/connection` to debug connection

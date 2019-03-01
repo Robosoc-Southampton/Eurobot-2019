@@ -12,13 +12,12 @@
 #include "debug.h"
 
 #define MESSAGE_SIZE 3
-#define MESSAGE_BUFFER_SIZE 200
+#define MESSAGE_BUFFER_SIZE 13
 
 struct Message {
 	char opcode;
 	int16_t payload;
 
-	Message(uint8_t bytes[3]);
 	Message();
 };
 

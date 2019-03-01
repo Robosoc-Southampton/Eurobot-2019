@@ -34,7 +34,7 @@ Mode | Target | Description
 `3` | Arduino | A break in the message batch (more messages to be read)
 `4` | Arduino | The end of a message batch (no more messages to be read)
 `5` | Controller | Request for more messages (response to mode `3`)
-`6` | Controller | Buffer overflow occurred, last batch failed
+`6` | Controller | ~~Buffer overflow occurred, last batch failed~~ Removed
 `7` | Arduino | Reset the message buffer
 
 ### Message structure
