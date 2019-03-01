@@ -22,10 +22,10 @@ for file in files:
 
 	for line in content.splitlines():
 		if line.startswith("goto "):
-			parts = line[5:].split(",")
+			parts = line[5:].split(", ")
 			controller.goto(RobotPosition(int(parts[0].strip()), int(parts[1].strip())))
 		elif line.startswith("face"):
-			parts = line[5:].split(",")
+			parts = line[5:].split(", ")
 			controller.face(RobotPosition(int(parts[0].strip()), int(parts[1].strip())))
 		else:
 			controller.append(lib.messages.parse_messages(line))

@@ -3,6 +3,7 @@
 import bluetooth
 import threading
 import serial
+import time
 import lib.messages
 
 class Connection:
@@ -123,6 +124,9 @@ class SerialConnection(Connection):
 
 	def connect(self):
 		self.ser = serial.Serial(self.port, 9600)
+
+		time.sleep(0.2)
+		
 		self.ser.flushInput()
 
 		# wait for initial message from wait_for_connection()
