@@ -61,7 +61,7 @@ class Connection:
 
 				self.receive_message_buffer = self.receive_message_buffer[3:]
 
-class BTConnection(Connection):
+class BluetoothConnection(Connection):
 	def __init__(self, bdaddr, port=1):
 		Connection.__init__(self)
 		self.bdaddr = bdaddr
