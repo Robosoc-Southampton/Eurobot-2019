@@ -13,6 +13,8 @@ void MD25::setup() {
 
 	i2c_write(MODE_SELECTOR, 0);
 	i2c_write(ACCELERATION_REGISTER, acceleration);
+
+	readLeftEncoder();
 	
 	isSetup = true;
 
