@@ -21,6 +21,9 @@ class RobotPosition:
 	def add(self, other):
 		return RobotPosition(self.x + other.x, self.y + other.y)
 
+	def sub(self, other):
+		return RobotPosition(self.x - other.x, self.y - other.y)
+
 	def add_scaled(self, other, s):
 		return RobotPosition(self.x + other.x * s, self.y + other.y * s)
 
