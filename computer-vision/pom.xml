@@ -13,6 +13,11 @@
   </properties>
   <dependencies>
     <dependency>
+        <groupId>uk.co.caprica</groupId>
+        <artifactId>picam</artifactId>
+        <version>0.1.1</version>
+    </dependency>
+    <dependency>
       <groupId>org.openimaj</groupId>
       <artifactId>audio-processing</artifactId>
       <version>${openimaj.version}</version>

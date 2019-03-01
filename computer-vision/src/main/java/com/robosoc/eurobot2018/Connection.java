@@ -9,10 +9,28 @@ import java.util.Scanner;
 import org.openimaj.math.geometry.point.Point2d;
 import org.openimaj.video.capture.VideoCapture;
 
+/**
+ * Connection to the main python program.
+ * @author billy
+ *
+ */
 public class Connection {
 	
+	/**
+	 * Sole constructor. Blocks execution until connection drops, but this shouldn't
+	 * be a problem since there will only need to be one connection at a time.
+	 * @param socket Socket for communication with python
+	 * @param device Raspberry Pi camera if -1, otherwise specifies a usb webcam
+	 */
 	public Connection(Socket socket, int device) {
-		AtomDetector atoms = new AtomDetector(VideoCapture.getVideoDevices().get(device));
+		ImageSource source;
+		if(device == -1) {
+			source = new PiCam();
+		} else {
+			source = new WebCam(VideoCapture.getVideoDevices().get(device));
+		}
+		
+		AtomDetector atoms = new AtomDetector(source);
 		
 		try(Scanner sc = new Scanner(socket.getInputStream());
 				PrintWriter out = new PrintWriter(socket.getOutputStream())) {
@@ -29,6 +47,7 @@ public class Connection {
 					} else {
 						out.println("failed");
 					}
+					out.flush();
 					break;
 				case "findRedium":
 					sendPoints(out, atoms.findRedium());
@@ -47,6 +66,11 @@ public class Connection {
 		}
 	}
 	
+	/**
+	 * Send a list of points as comma separated values.
+	 * @param out PrintWriter to write to
+	 * @param points Points to send
+	 */
 	private static void sendPoints(PrintWriter out, List<Point2d> points) {
 		for(Point2d point : points) {
 			out.println(point.getX() + "," + point.getY());

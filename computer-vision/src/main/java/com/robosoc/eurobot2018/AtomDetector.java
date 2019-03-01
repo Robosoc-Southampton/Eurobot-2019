@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openimaj.math.geometry.line.Line2d;
 import org.openimaj.math.geometry.point.Point2d;
 import org.openimaj.math.geometry.point.Point2dImpl;
 import org.openimaj.util.pair.IndependentPair;
@@ -30,28 +31,42 @@ import org.openimaj.image.camera.calibration.ChessboardCornerFinder;
 import org.openimaj.image.camera.calibration.ChessboardCornerFinder.Options;
 import org.openimaj.image.colour.ColourSpace;
 import org.openimaj.image.processing.convolution.FFastGaussianConvolve;
-import org.openimaj.image.processing.convolution.CLSobel;
+import org.openimaj.image.processing.convolution.FSobel;
 import org.openimaj.image.processing.edges.CannyEdgeDetector;
 import org.openimaj.image.processing.resize.ResizeProcessor;
 
+/**
+ * Computer vision system for locating atoms.
+ * @author billy
+ *
+ */
 public class AtomDetector {
 	
+	// max allowable distance from hard-coded AB values when colour thresholding
 	private static final float COLOUR_TOLERANCE = 25f;
 
-	private static final float CIRCLE_THRESHOLD = 0.5f;
+	// minimum circle weight to count as a circle
+	private static final float CIRCLE_THRESHOLD = 0.01f;
 
+	// number of best circles to get from the Hough transform
 	private static final int MAX_CIRCLES = 10;
 
+	// number of angles to use from each point in the Hough transform
 	private static final int NUM_ANGLES = 1000;
 
+	// radius increment to use in Hough transform
 	private static final int RADIUS_INCREMENT = 1;
 
-	private static final int MAX_RADIUS = 20;
+	// maximum circle radius in Hough transform
+	private static final int MAX_RADIUS = 16;
 
-	private static final int MIN_RADIUS = 10;
+	// minimum circle radius in Hough transform
+	private static final int MIN_RADIUS = 14;
 
+	// number of chessboard exposures to calibrate camera instrinsic parameters
 	public static final int NUM_CALIBRATION_EXPOSURES = 10;
 
+	// chessboard parameters for calibration
 	private static final int CHESSBOARD_WIDTH = 9;
 	private static final int CHESSBOARD_HEIGHT = 6;
 	private static final double CHESSBOARD_SQUARE_SIDE_LENGTH = 10;
@@ -64,7 +79,7 @@ public class AtomDetector {
 
 	private static final long SLEEP_TIME = 2000;
 
-	private static final float BLUR_SIGMA = 5;
+	private static final float BLUR_SIGMA = 1;
 	
 	private static final float REDIUM_A = 13, REDIUM_B = 32;
 	private static final float BLUEIUM_A = -8, BLUEIUM_B = -30;
@@ -78,10 +93,10 @@ public class AtomDetector {
 
 	private ChessboardCornerFinder chessboardAnalyser;
 	
-	private Device videoDevice;
+	private ImageSource source;
 
-	public AtomDetector(Device device) {
-		this.videoDevice = device;
+	public AtomDetector(ImageSource source) {
+		this.source = source;
 		
 		DisplayUtilities.createNamedWindow("camera");
 		
@@ -165,26 +180,23 @@ public class AtomDetector {
 		
 		points = new ArrayList<List<? extends IndependentPair<? extends Point2d, ? extends Point2d>>>();
 		
-		try(VideoCapture vidCap = new VideoCapture(CAMERA_WIDTH, CAMERA_HEIGHT, 0.5, videoDevice)) {
+		try {
 			
 			while(points.size() < NUM_CALIBRATION_EXPOSURES) {
-				chessboardFromCurrentFrame(vidCap);
+				chessboardFromCurrentFrame();
 				if(chessboardAnalyser.isFound()) {
 					points.add(IndependentPair.pairList(model, chessboardAnalyser.getCorners()));
 					System.out.println("Image " + points.size() + " added.");
 					Thread.sleep(SLEEP_TIME);
 					long time = System.currentTimeMillis();
 					while(System.currentTimeMillis() < time + SLEEP_TIME) {
-						DisplayUtilities.displayName(vidCap.getNextFrame(), "camera");
+						DisplayUtilities.displayName(source.getImage(), "camera");
 					}
 				} else {
 					System.out.println("Make sure the chessboard is within the frame.");
 				}
 			}
 			
-		} catch (VideoCaptureException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -194,9 +206,9 @@ public class AtomDetector {
 		calibrate();
 	}
 
-	private void chessboardFromCurrentFrame(VideoCapture vidCap) throws InterruptedException {
+	private void chessboardFromCurrentFrame() {
 		System.out.println("Capturing image...");
-		MBFImage frame = vidCap.getNextFrame();
+		MBFImage frame = source.getImage();
 		
 		DisplayUtilities.displayName(frame, "camera");
 		
@@ -207,27 +219,18 @@ public class AtomDetector {
 	public boolean calibrateExtrinsics() {
 		// take 1 photo, overwrite the last pointset with its points and recalibrate
 
-		try(VideoCapture vidCap = new VideoCapture(CAMERA_WIDTH, CAMERA_HEIGHT, videoDevice)) {
-			
-			chessboardFromCurrentFrame(vidCap);
-			
-			if(chessboardAnalyser.isFound()) {
-				points.set(points.size() - 1, IndependentPair.pairList(model, chessboardAnalyser.getCorners()));
-				calibrate();
-				System.out.println("Extrinsic parameters calibrated.");
-				return true;
-			} else {
-				System.out.println("Chessboard not found.");
-			}
+		chessboardFromCurrentFrame();
 
-		} catch (VideoCaptureException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(chessboardAnalyser.isFound()) {
+			points.set(points.size() - 1, IndependentPair.pairList(model, chessboardAnalyser.getCorners()));
+			calibrate();
+			System.out.println("Extrinsic parameters calibrated.");
+			return true;
+		} else {
+			System.out.println("Chessboard not found.");
 		}
-		
+
+
 		return false;
 	}
 	
@@ -264,11 +267,7 @@ public class AtomDetector {
 	}
 	
 	private MBFImage getBirdsEye() throws VideoCaptureException {
-		MBFImage frame;
-		
-		try(VideoCapture vidCap = new VideoCapture(CHESSBOARD_WIDTH, CAMERA_HEIGHT, videoDevice)) {
-			frame = vidCap.getNextFrame();
-		}
+		MBFImage frame = source.getImage();
 		
 		DisplayUtilities.display(frame);
 		
@@ -282,25 +281,62 @@ public class AtomDetector {
 	private static List<Point2d> findGoodCircles(FImage img) {
 		DisplayUtilities.display(img);
 		img.processInplace(new FFastGaussianConvolve(BLUR_SIGMA, 5));
-		CLSobel sobel = new CLSobel();
+		FSobel sobel = new FSobel();
 		sobel.analyseImage(img);
-		FImage edges = sobel.getMagnitudes();
+		FImage edges = new FImage(sobel.dx.getWidth(), sobel.dx.getHeight());
+		
+		for(int i = 0; i < edges.getHeight(); i++) {
+			for(int j = 0; j < edges.getWidth(); j++) {
+				edges.pixels[i][j] = (float) Math.sqrt(
+						Math.pow(sobel.dx.pixels[i][j], 2)
+						+ Math.pow(sobel.dy.pixels[i][j], 2));
+			}
+		}
+		
+		edges.threshold(2.5f);
+		
 		DisplayUtilities.display(edges);
 		
 		HoughCircles houghCircles = new HoughCircles(MIN_RADIUS, MAX_RADIUS, RADIUS_INCREMENT, NUM_ANGLES);
 		edges.analyseWith(houghCircles);
 		List<WeightedCircle> bestCircles = houghCircles.getBest(MAX_CIRCLES);
 		
+		System.out.println("filtering circles");
+		
 		List<Point2d> goodCircles = new ArrayList<>();
 		for(WeightedCircle circle : bestCircles) {
+			System.out.println(circle.weight);
 			if(circle.weight > CIRCLE_THRESHOLD) {
 				goodCircles.add(circle.calculateCentroid());
 			}
 		}
 		
+		goodCircles = eliminateDuplicates(goodCircles);
+		
 		return goodCircles;
 	}
 	
+	private static List<Point2d> eliminateDuplicates(List<Point2d> goodCircles) {
+		
+		ArrayList<Point2d> unique = new ArrayList<>();
+		
+		for(Point2d circle : goodCircles) {
+			boolean exists = false;
+			for(Point2d existing : unique) {
+				if(Line2d.distance(existing, circle) < MIN_RADIUS) {
+					exists = true;
+					break;
+				}
+			}
+			
+			if(!exists) {
+				unique.add(circle);
+			}
+		}
+		
+		return unique;
+	}
+
 	public List<Point2d> findRedium() throws VideoCaptureException {
 		MBFImage birdsEye = getBirdsEye();
 		FImage red = colourThreshold(birdsEye, REDIUM_A, REDIUM_B, COLOUR_TOLERANCE);
