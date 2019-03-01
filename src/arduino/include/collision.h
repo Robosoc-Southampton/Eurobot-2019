@@ -15,6 +15,7 @@
 namespace robot {
 	extern SharpIR *distance_sensors;
 	extern uint8_t distance_sensor_count;
+	extern bool distance_sensor_enabled_mask;
 
 	// sets the list of distance sensors
 	// should be called prior to robot::setup()

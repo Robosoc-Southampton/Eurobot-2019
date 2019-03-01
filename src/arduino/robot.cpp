@@ -87,11 +87,11 @@ namespace robot {
 	void consume_message(Message *message) {
 		switch (message->opcode) {
 			case 'F': // forward
-				enable_distance_sensors();
+				robot::distance_sensor_enabled_mask = true;
 				drive::forward(message->payload);
 				break;
 			case 'T': // turn
-				disable_distance_sensors();
+				robot::distance_sensor_enabled_mask = false;
 				drive::turn(message->payload);
 				break;
 			case 'D': // do
