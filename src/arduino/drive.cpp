@@ -7,6 +7,7 @@ namespace robot {
 		int32_t target_left_encoder_value = 0, target_right_encoder_value = 0;
 		MD25 *md25;
 		bool is_moving = false;
+		bool is_moving_forward = false;
 		uint8_t SPEED_THRESHOLD = 10u;
 		int32_t ENCODER_DELTA_THRESHOLD = 10;
 
@@ -14,10 +15,11 @@ namespace robot {
 			int32_t encoder_value = distance_to_encoder_reading(distance);
 
 			is_moving = true;
+			is_moving_forward = false;
 			target_left_encoder_value  += encoder_value;
 			target_right_encoder_value += encoder_value;
 
-			md25->setAcceleration(robot::configuration::acceleration);
+			md25->setAcceleration(configuration::acceleration);
 
 			rlogfd("Driving forward");
 		}
@@ -27,10 +29,11 @@ namespace robot {
 			int32_t encoder_value = distance_to_encoder_reading(distance);
 
 			is_moving = true;
+			is_moving_forward = false;
 			target_left_encoder_value  -= encoder_value;
 			target_right_encoder_value += encoder_value;
 
-			md25->setAcceleration(robot::configuration::acceleration);
+			md25->setAcceleration(configuration::acceleration);
 
 			rlogfd("Turning");
 		}
@@ -43,6 +46,7 @@ namespace robot {
 			delay(10); // TODO: test this, it might break stuff?
 
 			is_moving = false;
+			is_moving_forward = false;
 			target_left_encoder_value  -= md25->readLeftEncoder();
 			target_right_encoder_value -= md25->readRightEncoder();
 
@@ -76,6 +80,8 @@ namespace robot {
 			else {
 				right_speed = 128u - encoder_delta_to_speed(-right_delta);
 			}
+
+			is_moving_forward = left_speed > 128u || right_speed > 128u;
 
 			if (diff(left_speed, 128u) < SPEED_THRESHOLD && diff(right_speed, 128u) < SPEED_THRESHOLD) {
 				if (abs(left_delta) < ENCODER_DELTA_THRESHOLD && abs(right_delta) < ENCODER_DELTA_THRESHOLD) {

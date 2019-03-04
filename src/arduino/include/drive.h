@@ -16,7 +16,7 @@ namespace robot {
 	namespace drive {
 		extern int32_t target_left_encoder_value, target_right_encoder_value;
 		extern MD25 *md25;
-		extern bool is_moving;
+		extern bool is_moving, is_moving_forward;
 		extern uint8_t SPEED_THRESHOLD;
 		extern int32_t ENCODER_DELTA_THRESHOLD;
 

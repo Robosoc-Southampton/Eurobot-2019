@@ -31,7 +31,7 @@ namespace robot {
 	}
 
 	void loop() {
-		if (drive::is_moving && check_distance_sensors()) {
+		if (drive::is_moving && drive::is_moving_forward && check_distance_sensors()) {
 			drive::stop();
 			int16_t distance = drive::get_average_distance_travelled();
 			robot::invalidate_message_buffer(distance);
