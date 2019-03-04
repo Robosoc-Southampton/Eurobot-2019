@@ -13,6 +13,17 @@ namespace robot {
 	size_t message_buffer_length = 0;
 	int16_t message_buffer_consume_length = 0;
 	bool message_buffer_consuming = false;
+	bool is_message_buffer_valid = true;
+
+	void invalidate_message_buffer(int16_t distance_travelled) {
+		// TODO: roll back the buffer start pointer to the last forward command, update the forward distance, and push it to the start of the buffer
+		//  hacky af
+		is_message_buffer_valid = false;
+	}
+
+	void validate_message_buffer() {
+		is_message_buffer_valid = true;
+	}
 
 	void update_message_buffer() {
 		if (Serial.available() < MESSAGE_SIZE)
@@ -56,6 +67,7 @@ namespace robot {
 					message_buffer_length = 0;
 					message_buffer_consume_length = 0;
 					message_buffer_consuming = false;
+					is_message_buffer_valid = true;
 
 					rlogfd("Resetting message batch");
 
@@ -88,10 +100,14 @@ namespace robot {
 
 	char peek_next_opcode() {
 		if (message_buffer_length == 0) return '\0';
+		if (!is_message_buffer_valid) return '\0';
 		return *((char*) message_buffer_start_ptr);
 	}
 
 	Message *read_message_buffer() {
+		if (!is_message_buffer_valid)
+			return nullptr;
+
 		if (message_buffer_length) {
 			message_buffer_length--;
 			return message_buffer_start_ptr++;

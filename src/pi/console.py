@@ -70,7 +70,7 @@ file_messages = []
 
 for file in options["files"]:
 	print("Loading file %s" % file)
-	for msg in lib.messages.parse_message_file(file):
+	for msg in lib.messages.parse_message_file("src/pi/msgs/" + file + ".txt"):
 		file_messages.append(msg)
 
 if len(file_messages) > 0:

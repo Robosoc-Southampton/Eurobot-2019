@@ -28,6 +28,11 @@ namespace robot {
 	extern size_t message_buffer_length;
 	extern int16_t message_buffer_consume_length;
 	extern bool message_buffer_consuming;
+	extern bool is_message_buffer_valid;
+
+	// invalidates and validates the buffer
+	void invalidate_message_buffer(int16_t distance_travelled);
+	void validate_message_buffer();
 
 	// checks for a message from the message buffer and acts on it if possible
 	void update_message_buffer();
