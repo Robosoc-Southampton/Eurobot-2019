@@ -4,4 +4,4 @@ config-set 139
 config-key wheel-radius
 config-set 50
 config-key peak-speed
-config-set 10
+config-set 80

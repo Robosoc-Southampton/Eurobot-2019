@@ -11,5 +11,4 @@ if [ -z "$1" ]; then
 	exit
 fi
 
-$DIR/prep $1
-$DIR/arduino-cmd --verify --preserve-temp-files
+$DIR/prep $1 && $DIR/arduino-cmd --verify --preserve-temp-files

@@ -26,6 +26,7 @@ SharpIR sensors[] = {
 };
 
 void setup() {
+	pinMode(LED_BUILTIN, OUTPUT);
 	Serial.begin(9600);
 
 	robot::set_component_value_reader(&readComponentValue);

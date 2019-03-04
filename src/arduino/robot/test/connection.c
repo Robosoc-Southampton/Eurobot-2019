@@ -4,8 +4,6 @@
 void setup() {
 	Serial.begin(9600);
 
-	pinMode(LED_BUILTIN, OUTPUT);
-
 	robot::wait_for_connection();
 
 	rlog("Hello");

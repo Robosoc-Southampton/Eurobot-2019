@@ -1,8 +1,6 @@
 
 #include "include/component/MD25.h"
 
-const char* MD25::MD25_NOT_SETUP = "MD25 not setup - call setup() first";
-
 MD25::MD25() {
 	acceleration = DEFAULT_ACCELERATION;
 	isSetup = false;
@@ -14,12 +12,10 @@ void MD25::setup() {
 	i2c_write(MODE_SELECTOR, 0);
 	i2c_write(ACCELERATION_REGISTER, acceleration);
 
-	readLeftEncoder();
-	
 	isSetup = true;
 
+	readLeftEncoder();
 	resetEncoders();
-
 }
 
 void MD25::setAcceleration(uint8_t acceleration) {

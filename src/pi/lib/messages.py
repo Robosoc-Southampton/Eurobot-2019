@@ -19,7 +19,8 @@ opcodes = {
 config_keys = {
 	"robot-radius": 1,
 	"wheel-radius": 2,
-	"peak-speed": 3
+	"peak-speed": 3,
+	"acceleration": 4,
 }
 
 opcodes_inverse = {}

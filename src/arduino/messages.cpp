@@ -103,8 +103,7 @@ namespace robot {
 		}
 		else {
 			rlogf("Overflow of message buffer");
-
-			while (1) { rblink(1000) }
+			rblink(1, 1000);
 		}
 	}
 
@@ -130,9 +129,7 @@ namespace robot {
 		send_message('M', 0);
 		rlogf("Waiting for connection");
 
-		while (Serial.available() < 3) {
-			rblink(500);
-		}
+		rblink(Serial.available() < 3, 500);
 
 		update_message_buffer();
 		read_message_buffer();

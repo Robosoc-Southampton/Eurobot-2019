@@ -41,9 +41,12 @@ namespace robot {
 
 		void error(const char* error_message, const char* function) {
 			log(error_message, function);
-			pinMode(LED_BUILTIN, OUTPUT);
-			
-			while (1) { rblink(200) };
+			rblink(1, 200);
+		}
+
+		void errorf(const __FlashStringHelper* error_message, const char* function) {
+			logf(error_message, function);
+			rblink(1, 200);
 		}
 	}
 }

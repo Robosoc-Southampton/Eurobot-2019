@@ -17,5 +17,4 @@ if [ -z "$PORT" ]; then
 	printf "\e[1;35mUsing detected port $PORT\e[0m\n"
 fi
 
-$DIR/prep $1
-$DIR/arduino-cmd --upload --port "/dev/tty$PORT" --preserve-temp-files
+$DIR/prep $1 && $DIR/arduino-cmd --upload --port "/dev/tty$PORT" --preserve-temp-files

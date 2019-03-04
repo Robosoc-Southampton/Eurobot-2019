@@ -28,14 +28,22 @@
 #define rlogid(i) if (DEBUG) rlog(i)
 
 // use rerror(message) to error with a message
+// 'f' variants use flash strings to save runtime memory usage, and must be used with a constant string
 #define rerror(s) robot::debug::error(s, __FUNCTION__)
+#define rerrord(s) if (DEBUG) rerror(s)
+#define rerrorf(s) robot::debug::errorf(F(s), __FUNCTION__)
+#define rerrorfd(s) if (DEBUG) rerrorf(s)
 
 // use rassert(condition, message) to error with a message if `condition` is false
-#define rassert(v, s) if (!(v)) s
+// 'f' variants use flash strings to save runtime memory usage, and must be used with a constant string
+#define rassert(v, s) if (!(v)) rerror(s)
+#define rassertd(v, s) if (DEBUG) { rassert(v, s); }
+#define rassertf(v, s) if (!(v)) rerrorf(s)
+#define rassertfd(v, s) if (DEBUG) { rassertf(v, s); }
 
 // blinks the LED with a given interval
 // note that usage of this function expands into multiple statements, so if references in a block, must be enclosed in `{}`
-#define rblink(d) digitalWrite(LED_BUILTIN, HIGH); delay(d/2); digitalWrite(LED_BUILTIN, LOW); delay(d/2);
+#define rblink(c, d) pinMode(LED_BUILTIN, OUTPUT); while (c) { digitalWrite(LED_BUILTIN, HIGH); delay(d/2); digitalWrite(LED_BUILTIN, LOW); delay(d/2); }
 
 namespace robot {
 	namespace debug {
@@ -45,5 +53,6 @@ namespace robot {
 		void logf(const __FlashStringHelper* message, const char* function);
 		void logi(const int16_t message, const char* function);
 		void error(const char* error_message, const char* function);
+		void errorf(const __FlashStringHelper* error_message, const char* function);
 	}
 }
