@@ -36,6 +36,7 @@ Mode | Target | Description
 `5` | Controller | Request for more messages (response to mode `3`)
 `6` | Controller | ~~Buffer overflow occurred, last batch failed~~ Removed
 `7` | Arduino | Reset the message buffer
+`8` | Arduino | Reset the message buffer iff the buffer is invalidated
 
 ### Message structure
 

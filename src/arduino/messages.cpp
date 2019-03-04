@@ -61,7 +61,16 @@ namespace robot {
 					rlogfd("End of message batch");
 
 					break;
-				case 1: case 7:
+				case 8:
+					if (is_message_buffer_valid) {
+						rlogfd("Buffer is not invalidated => not resetting");
+						send_message('s', 1);
+						break;
+					}
+					
+					rlogfd("Buffer is invalidated => resetting");
+					send_message('s', 0);
+				 case 1: case 7:
 					message_buffer_start_ptr = (Message*) &message_buffer[0];
 					message_buffer_end_ptr = message_buffer_start_ptr;
 					message_buffer_length = 0;
@@ -69,7 +78,7 @@ namespace robot {
 					message_buffer_consuming = false;
 					is_message_buffer_valid = true;
 
-					rlogfd("Resetting message batch");
+					rlogfd("Resetting message buffer");
 
 					break;
 				default:
