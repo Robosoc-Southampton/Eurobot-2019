@@ -127,7 +127,6 @@ namespace robot {
 	}
 
 	void perform_do_command(int16_t payload) {
-		char failure_buffer[6] = {};
 		Activity *next_activity;
 
 		switch (payload) {
@@ -159,9 +158,8 @@ namespace robot {
 				next_activity = (*lookup_activity)(payload);
 
 				if (next_activity == nullptr) {
-					itoa(payload, (char*) &failure_buffer[0], 10);
 					rlogf("Activity lookup failed");
-					rlog(failure_buffer);
+					rlogi(payload);
 					break;
 				}
 

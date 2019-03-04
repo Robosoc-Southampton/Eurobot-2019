@@ -21,10 +21,11 @@
 // 'f' variants use flash strings to save runtime memory usage, and must be used with a constant string
 // 'd' variants only log in 'DEBUG' mode, saving runtime memory usage for proper runs
 #define rlog(s) robot::debug::log(s, __FUNCTION__)
-#define rlogd(s) if (DEBUG) robot::debug::log(s, __FUNCTION__)
+#define rlogd(s) if (DEBUG) rlog(s)
 #define rlogf(s) robot::debug::logf(F(s), __FUNCTION__)
-#define rlogfd(s) if (DEBUG) robot::debug::logf(F(s), __FUNCTION__)
-#define rlogid(i) if (DEBUG) robot::debug::logi(i, __FUNCTION__)
+#define rlogfd(s) if (DEBUG) rlogf(s)
+#define rlogi(i) robot::debug::logi(i, __FUNCTION__)
+#define rlogid(i) if (DEBUG) rlog(i)
 
 // use rerror(message) to error with a message
 #define rerror(s) robot::debug::error(s, __FUNCTION__)

@@ -70,6 +70,7 @@ namespace robot {
 					
 					rlogfd("Buffer is invalidated => resetting");
 					send_message('s', 0);
+					// yes this is supposed to fall through
 				 case 1: case 7:
 					message_buffer_start_ptr = (Message*) &message_buffer[0];
 					message_buffer_end_ptr = message_buffer_start_ptr;
@@ -83,7 +84,7 @@ namespace robot {
 					break;
 				default:
 					rlogf("Unknown message command");
-					rlogid(*((int16_t*) (bytes + 1)));
+					rlogi(*((int16_t*) (bytes + 1)));
 
 					break;
 			}

@@ -15,8 +15,5 @@ void setup() {
 }
 
 void loop() {
-	const char str[6] = {0, 0, 0, 0, 0, 0};
-
-	itoa(md25.readLeftEncoder(), (char*) str, 10);
-	rlog(&str[0]);
+	rlogi(md25.readLeftEncoder());
 }
