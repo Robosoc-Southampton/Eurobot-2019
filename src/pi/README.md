@@ -76,5 +76,15 @@ A timeout for the program at which point it will close connections and exit. By 
 
 Whether to use a serial connection. If `true`, Bluetooth will not be used to connect. Used in conjunction with `-port`.
 
+### Dependencies
+
+`console.py` depends on the following python modules:
+
+* `pybluez`
+* `pyserial`
+* `readline`
+
+These can be installed using `pip` for python 3.
+
 ## controller.py
 
