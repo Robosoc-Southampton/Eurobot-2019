@@ -7,6 +7,7 @@ namespace robot {
 	uint32_t current_activity_cooldown = 0;
 	uint32_t current_activity_clock = 0;
 	uint32_t current_activity_last_cycle = 0;
+	uint16_t current_activity_call_countdown = 0;
 
 	ActivityLookup lookup_activity = nullptr;
 
@@ -24,13 +25,6 @@ namespace robot {
 		current_activity_clock     += delta_time;
 		current_activity_last_cycle = current_time;
 
-		// if activity has timed out then stop it
-		if (current_activity_clock > current_activity->timeout && current_activity->timeout != 0) {
-			current_activity = nullptr;
-			rlogfd("Stopping activity due to timeout");
-			return;
-		}
-
 		// if activity predicate exists and returns false, stop activity
 		if (current_activity->predicate != nullptr && !(*current_activity->predicate)()) {
 			current_activity = nullptr;
@@ -38,18 +32,18 @@ namespace robot {
 			return;
 		}
 
-		// if cooldown is satisfied
-		if (current_activity_cooldown <= delta_time) {
+		// while cooldown is satisfied
+		while (current_activity_call_countdown && current_activity_clock > current_activity->cooldown) {
 			// run the activity
 			current_activity->callback();
-			// reset the cooldown (TODO: review this)
-			current_activity_cooldown = delta_time >= current_activity->cooldown
-			                          ? current_activity->cooldown
-			                          : current_activity->cooldown - delta_time + current_activity_cooldown;
+			// decrement the countdown and update clock
+			--current_activity_call_countdown;
+			current_activity_clock -= current_activity->cooldown;
 		}
-		else {
-			// otherwise, update cooldown
-			current_activity_cooldown -= delta_time;
+
+		if (!current_activity_call_countdown) {
+			current_activity = nullptr;
+			rlogfd("Stopping activity due to countdown");
 		}
 	}
 
@@ -63,6 +57,8 @@ namespace robot {
 		current_activity_clock = 0;
 		// reset the last cycle
 		current_activity_last_cycle = micros();
+		// set the countdown
+		current_activity_call_countdown = activity->count;
 
 		// run the activity's init function if applicable
 		if (current_activity->init != nullptr) {
