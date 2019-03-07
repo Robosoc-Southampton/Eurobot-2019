@@ -42,8 +42,8 @@ struct Activity {
 	ActivityPredicate predicate = nullptr;
 	// time to wait between calling activity callback
 	uint32_t cooldown = 1;
-	// time to wait before stopping activity
-	uint32_t timeout = 0;
+	// total number of times to run activity callback
+	uint16_t count = 0;
 };
 
 namespace robot {
@@ -51,6 +51,7 @@ namespace robot {
 	extern uint32_t current_activity_cooldown;
 	extern uint32_t current_activity_clock;
 	extern uint32_t current_activity_last_cycle;
+	extern uint16_t current_activity_call_countdown;
 
 	extern ActivityLookup lookup_activity;
 	
@@ -69,7 +70,7 @@ namespace robot {
  *
  * to define an activity...
  *
- * 	ACTIVITY(name, cooldown=C, timeout=T) {
+ * 	ACTIVITY(name, cooldown=C, count=T) {
  * 		// code to run
  * 	}
  *
@@ -97,19 +98,19 @@ namespace robot {
  *
  */
 
-#define ACTIVITY3(name, c, t) \
+#define ACTIVITY3(name, c, n) \
 Activity name;\
 void name##_callback();\
 struct name##_init_struct {\
 	name##_init_struct() {\
-		name.t;\
+		name.n;\
 		name.c;\
 		name.callback = &name##_callback;\
 	}\
 };\
 name##_init_struct name##_init_struct_instance;\
 void name##_callback()
-#define ACTIVITY2(name, cooldown) ACTIVITY3(name, cooldown, timeout=0)
+#define ACTIVITY2(name, cooldown) ACTIVITY3(name, cooldown, count=0)
 #define ACTIVITY1(ref) &ref
 #define GET_ACTIVITY_MACRO(_1,_2,_3,NAME,...) NAME
 #define ACTIVITY(...) GET_ACTIVITY_MACRO(__VA_ARGS__, ACTIVITY3, ACTIVITY2, ACTIVITY1)(__VA_ARGS__)
