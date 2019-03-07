@@ -4,8 +4,6 @@
 void setup() {
 	Serial.begin(9600);
 
-	pinMode(LED_BUILTIN, OUTPUT);
-
 	robot::wait_for_connection();
 
 	rlog("Hello");
@@ -13,8 +11,10 @@ void setup() {
 }
 
 void loop() {
-	if (robot::peek_next_opcode() != '\0') {
-		Message *message = robot::read_message_buffer();
+	robot::update_message_buffer();
+	Message *message = robot::read_message_buffer();
+
+	if (message != nullptr) {
 		const char buffer[8] = {'0', 'x'};
 
 		switch (message->opcode) {

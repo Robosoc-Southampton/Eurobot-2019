@@ -20,9 +20,9 @@ If a particular component/feature isn't working, or the setup isn't completing, 
 
 ---
 
-## LED flashing (+-500ms)
+## LED flashing (500ms)
 
-The LED flashing with a total period of `1` second indicates that an initial message has not been received from the controller.
+The LED flashing with a total period of `500ms` indicates that an initial message has not been received from the controller.
 
 ### Next steps
 
@@ -31,9 +31,23 @@ The LED flashing with a total period of `1` second indicates that an initial mes
 * Check for debug messages on the controller
 * Run `test/connection` for more info
 
-## LED flashing (+-200ms)
+## LED flashing (200ms)
 
-The LED flashing with a total period of `0.4` seconds indicates that an error has been encountered. It will definitely have been sent as a log message. If no log message has been received, it's likely an issue with the connection.
+The LED flashing with a total period of `200ms` indicates that an error has been encountered. It will definitely have been sent as a log message. If no log message has been received, it's likely an issue with the connection.
+
+### Next steps (if no log message)
+
+* Check that the bluetooth module has connected (fixed lights)
+* Check that the bluetooth module is plugged in correctly
+* Run `test/connection` to debug connection
+
+## LED flashing (1000ms)
+
+The LED flashing with a total period of `1000ms` indicates a buffer overflow (this should've been logged).
+
+### Next steps
+
+* Debug the messages sent to the Arduino, and try to reduce the number of messages sent
 
 ### Next steps (if no log message)
 

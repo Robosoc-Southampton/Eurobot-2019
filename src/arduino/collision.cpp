@@ -5,6 +5,7 @@ namespace robot {
 
 	SharpIR *distance_sensors = nullptr;
 	uint8_t distance_sensor_count = 0;
+	bool distance_sensor_enabled_mask = true;
 
 	void set_distance_sensors(uint8_t count, SharpIR *sensors) {
 		distance_sensors = sensors;
@@ -14,6 +15,8 @@ namespace robot {
 	bool check_distance_sensors() {
 		bool is_collision_detected = false;
 		int16_t THRESHOLD = 0;
+
+		if (!distance_sensor_enabled_mask) return false;
 
 		for (SharpIR *sensor = distance_sensors; sensor != distance_sensors + distance_sensor_count; ++sensor) {
 			if (sensor->enabled && sensor->read() < THRESHOLD) {

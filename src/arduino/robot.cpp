@@ -10,17 +10,34 @@ namespace robot {
 	}
 
 	void setup() {
-		rassert(component_value_reader != nullptr, "Component value reader not set");
-		rassert(lookup_activity != nullptr, "Activity lookup not set");
-		rassert(distance_sensors != nullptr, "Distance sensors not set");
-		rassert(drive::md25 != nullptr, "Drive MD25 not set");
+		MD25 *md25 = new MD25();
+
+		robot::wait_for_connection();
+		rlogf("Connection established");
+
+		rlogf("Setting up MD25");
+		md25->setup();
+		rlogf("MD25 set up");
+
+		robot::drive::set_md25(md25);
+
+		rassertf(component_value_reader != nullptr, "Component value reader not set");
+		rassertf(lookup_activity != nullptr, "Activity lookup not set");
+		rassertf(distance_sensors != nullptr, "Distance sensors not set");
+		rassertf(drive::md25 != nullptr, "MD25 allocation failed");
+
+		rlogf("Initialisation complete");
 	}
 
 	void loop() {
-		if (drive::is_moving && check_distance_sensors()) {
+		if (drive::is_moving && drive::is_moving_forward && check_distance_sensors()) {
 			drive::stop();
 			int16_t distance = drive::get_average_distance_travelled();
+			robot::invalidate_message_buffer(distance);
 			robot::send_message('c', distance);
+		}
+		else {
+			robot::validate_message_buffer();
 		}
 
 		drive::update_motor_speeds();
@@ -30,6 +47,8 @@ namespace robot {
 		bool is_activity_running = current_activity != nullptr;
 		bool is_readable = false;
 		Message *message;
+
+		update_message_buffer();
 
 		if ((opcode = peek_next_opcode()) == '\0')
 			return;
@@ -41,7 +60,7 @@ namespace robot {
 				is_readable = !drive::is_moving;
 				break;
 			case 'D': // can only run next activity if the current one has finished
-				is_readable = !is_activity_running;
+				is_readable = !is_activity_running && !drive::is_moving;
 				break;
 			case 'R': case 'K': case 'S':
 				// can always read a component value or set config stuff
@@ -72,11 +91,11 @@ namespace robot {
 	void consume_message(Message *message) {
 		switch (message->opcode) {
 			case 'F': // forward
-				enable_distance_sensors();
+				robot::distance_sensor_enabled_mask = true;
 				drive::forward(message->payload);
 				break;
 			case 'T': // turn
-				disable_distance_sensors();
+				robot::distance_sensor_enabled_mask = false;
 				drive::turn(message->payload);
 				break;
 			case 'D': // do
@@ -107,7 +126,6 @@ namespace robot {
 	}
 
 	void perform_do_command(int16_t payload) {
-		char failure_buffer[6] = {};
 		Activity *next_activity;
 
 		switch (payload) {
@@ -139,9 +157,8 @@ namespace robot {
 				next_activity = (*lookup_activity)(payload);
 
 				if (next_activity == nullptr) {
-					itoa(payload, (char*) &failure_buffer[0], 10);
 					rlogf("Activity lookup failed");
-					rlog(failure_buffer);
+					rlogi(payload);
 					break;
 				}
 

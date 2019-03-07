@@ -5,7 +5,7 @@ class PathFinder:
 	def pathfind(self, from_position, from_facing, to_position):
 		return [
 			("turn", floor((to_position.sub(from_position).to_angle() - from_facing.to_angle()) * 180 / pi)),
-			("forward", floor((to_position - from_position).length()))
+			("forward", floor((to_position.sub(from_position)).length()))
 		]
 
 class Controller:
@@ -39,14 +39,16 @@ class Controller:
 				self.state.success()
 			elif message[0] == "turn":
 				self.state.turn(message[1])
+				while message[1] >  180: message = ("turn", message[1] - 360)
+				while message[1] < -180: message = ("turn", message[1] + 360)
 
 			self.messages.append(message)
 
 	def goto(self, position):
-		append(self.pathfinder.pathfind(self.state.position, self.state.facing, position))
+		self.append(self.pathfinder.pathfind(self.state.position, self.state.facing, position))
 
 	def face(self, facing):
-		append([("turn", floor((facing.to_angle() - self.state.facing.to_angle()) * 180 / pi))])
+		self.append([("turn", floor((facing.to_angle() - self.state.facing.to_angle()) * 180 / pi))])
 
 	def run(self):
 		if self.start:

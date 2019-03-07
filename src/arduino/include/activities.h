@@ -1,4 +1,20 @@
 
+/* activity.h
+ *
+ * This file contains code related to activities
+ * - the Activity type
+ * - macros for defining activities
+ * - setup functions used in entry point setup
+ * - setup/loop functions used by `robot.*`
+ *
+ * Note that only the macros need to be used for defining activities. See below code declarations.
+ *
+ * An activity is an action that will run over a period of time.
+ * Activities are invoked using 'do' messages.
+ * Activities are looked-up using the callback set with `robot::set_activity_lookup()`.
+ * Only one activity may be active at once, so queueing two activities, e.g. 'do 1; do 0', will halt reading further messages until the first has finished.
+ */
+
 #pragma once
 
 #include <Arduino.h>
@@ -39,47 +55,47 @@ namespace robot {
 	extern ActivityLookup lookup_activity;
 	
 	// sets the function to lookup an activity
+	// should be called prior to robot::setup()
 	void set_activity_lookup(ActivityLookup lookup);
 
-	// calls activity callback and cancels it if necessary
-	void run_activity();
 	// starts an activity running
 	void start_activity(Activity* activity);
+
+	// calls activity callback and cancels it if necessary (internal)
+	void run_activity();
 }
 
-/*
-code below defines macros allowing the following:
-
-to define an activity...
-
-	ACTIVITY(name, cooldown=C, timeout=T) {
-		// code to run
-	}
-
-or
-
-	ACTIVITY(name, cooldown=C) {
-		// code to run
-	}
-
-then, to assign an init function
-
-	INIT(name) {
-		// code to run
-	}
-
-then, to assign a predicate...
-
-	PREDICATE(name) {
-		return true;
-	}
-
-then, to reference it...
-
-	Activity *the_activity = ACTIVITY(name)
-
-*/
-
+/* The code below defines macros allowing the following:
+ *
+ * to define an activity...
+ *
+ * 	ACTIVITY(name, cooldown=C, timeout=T) {
+ * 		// code to run
+ * 	}
+ *
+ * or
+ * 
+ * 	ACTIVITY(name, cooldown=C) {
+ * 		// code to run
+ * 	}
+ *
+ * then, to assign an init function
+ *
+ * 	INIT(name) {
+ * 		// code to run
+ * 	}
+ *
+ * then, to assign a predicate...
+ * 
+ * 	PREDICATE(name) {
+ * 		return true;
+ * 	}
+ *
+ * then, to reference it...
+ *
+ * 	Activity *the_activity = ACTIVITY(name)
+ *
+ */
 
 #define ACTIVITY3(name, c, t) \
 Activity name;\

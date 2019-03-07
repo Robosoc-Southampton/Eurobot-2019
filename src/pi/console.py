@@ -60,16 +60,21 @@ if not conn:
 conn.on_log(lambda msg: print("Log message received: " + msg.strip()))
 conn.on_message(lambda opcode, data: print("Message received (%s %s)" % (opcode, data)))
 conn.connect()
-conn.send(lib.messages.encode_message("message", 1))
+conn.send(("message", 1))
 
 print("Connected")
 
 start_time = time.clock()
 
+file_messages = []
+
 for file in options["files"]:
 	print("Loading file %s" % file)
-	for msg in lib.messages.parse_message_file(file):
-		conn.send(lib.messages.encode_message(msg[0], msg[1]))
+	for msg in lib.messages.parse_message_file("src/pi/msgs/" + file + ".txt"):
+		file_messages.append(msg)
+
+if len(file_messages) > 0:
+	conn.send_batched(file_messages)
 
 if options["read"] == "true":
 	print("Enter 'q' to quit")
@@ -114,7 +119,7 @@ while True:
 
 			parsed = lib.messages.parse_message(inp)
 			print("Sending (" + lib.messages.opcodes[parsed[0]] + " " + str(parsed[1]) + ")")
-			conn.send(lib.messages.encode_message(parsed[0], parsed[1]))
+			conn.send(parsed)
 			time.sleep(1)
 	except KeyboardInterrupt:
 		print("")

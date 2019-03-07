@@ -4,7 +4,6 @@
 MD25 md25;
 
 void setup() {
-	pinMode(LED_BUILTIN, OUTPUT);
 	Serial.begin(9600);
 	robot::wait_for_connection();
 
@@ -15,8 +14,17 @@ void setup() {
 }
 
 void loop() {
-	const char str[6] = {0, 0, 0, 0, 0, 0};
+	Message *message;
 
-	itoa(md25.readLeftEncoder(), (char*) str, 10);
-	rlog(&str[0]);
+	robot::update_message_buffer();
+
+	if ((message = robot::read_message_buffer()) != nullptr) {
+		rlogf("Reset encoders");
+		md25.resetEncoders();
+	}
+
+	rlogi(md25.readLeftEncoder());
+	rlogi(md25.readRightEncoder());
+
+	delay(500);
 }

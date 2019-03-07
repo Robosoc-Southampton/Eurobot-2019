@@ -3,7 +3,7 @@ from math import sin, cos, sqrt, atan2, pi
 
 class RobotPosition:
 	def from_angle(angle):
-		return RobotPosition(sin(angle), cos(angle))
+		return RobotPosition(-sin(angle), cos(angle))
 
 	def __init__(self, x, y):
 		self.x = x
@@ -32,7 +32,7 @@ class RobotPosition:
 		return RobotPosition(self.x * l, self.y * l)
 
 	def to_angle(self):
-		angle = atan2(self.x, self.y)
+		angle = atan2(-self.x, self.y)
 		while angle < 0: angle += 2 * pi
 		return angle
 

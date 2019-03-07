@@ -5,6 +5,8 @@
 #include <Wire.h>
 #include "../debug.h"
 
+#define MD25_NOT_SETUP "MD25 not setup - call setup() first"
+
 class MD25 {
 public:
 	// creates the MD25 object
@@ -50,8 +52,6 @@ private:
 	static inline __attribute__((always_inline)) void i2c_write(uint8_t register, uint8_t data);
 	static inline __attribute__((always_inline)) int32_t i2c_read4(uint8_t register);
 	static inline __attribute__((always_inline)) uint8_t i2c_read1(uint8_t register);
-
-	static const char* MD25_NOT_SETUP;
 
 	uint8_t acceleration;
 	bool isSetup;
