@@ -29,7 +29,7 @@ This synchronises both robots, ensuring they're both reading to send/receive fur
 After this, further `message` messages will aid controlling the robots.
 
 Mode | Target | Description
--|-
+-|-|-
 `2` | Arduino | The start of a message batch to be read into the Arduino's message buffer.
 `3` | Arduino | A break in the message batch (more messages to be read)
 `4` | Arduino | The end of a message batch (no more messages to be read)

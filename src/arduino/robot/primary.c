@@ -14,7 +14,7 @@ INIT(toggleLED) {
 }
 
 int16_t readComponentValue(int16_t component_ID) {
-	return 0u;
+	return robot::drive::get_average_distance_travelled();
 }
 
 struct Activity* lookupActivity(uint16_t activity_ID) {
