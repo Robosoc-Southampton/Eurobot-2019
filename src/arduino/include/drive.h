@@ -14,11 +14,8 @@
 
 namespace robot {
 	namespace drive {
-		extern int32_t target_left_encoder_value, target_right_encoder_value;
 		extern MD25 *md25;
 		extern bool is_moving, is_moving_forward;
-		extern uint8_t SPEED_THRESHOLD;
-		extern int32_t ENCODER_DELTA_THRESHOLD;
 
 		// move forward `distance`mm
 		void forward(int16_t distance);
@@ -46,8 +43,5 @@ namespace robot {
 
 		// return the encoder value equivalent to a given distance (internal)
 		int16_t encoder_reading_to_distance(int32_t distance);
-
-		// return the absolute difference between two values (internal)
-		uint8_t diff(uint8_t a, uint8_t b);
 	}
 }

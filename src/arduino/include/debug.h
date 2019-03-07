@@ -25,7 +25,7 @@
 #define rlogf(s) robot::debug::logf(F(s), __FUNCTION__)
 #define rlogfd(s) if (DEBUG) rlogf(s)
 #define rlogi(i) robot::debug::logi(i, __FUNCTION__)
-#define rlogid(i) if (DEBUG) rlog(i)
+#define rlogid(i) if (DEBUG) rlogi(i)
 
 // use rerror(message) to error with a message
 // 'f' variants use flash strings to save runtime memory usage, and must be used with a constant string

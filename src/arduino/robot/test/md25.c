@@ -20,5 +20,5 @@ void loop() {
 	md25.readLeftEncoder();
 	md25.readRightEncoder();
 
-	rlog("Read the encoder value");
+	rlog("Read the encoder values");
 }

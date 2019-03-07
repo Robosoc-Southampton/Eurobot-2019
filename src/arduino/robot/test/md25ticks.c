@@ -14,5 +14,17 @@ void setup() {
 }
 
 void loop() {
+	Message *message;
+
+	robot::update_message_buffer();
+
+	if ((message = robot::read_message_buffer()) != nullptr) {
+		rlogf("Reset encoders");
+		md25.resetEncoders();
+	}
+
 	rlogi(md25.readLeftEncoder());
+	rlogi(md25.readRightEncoder());
+
+	delay(500);
 }
