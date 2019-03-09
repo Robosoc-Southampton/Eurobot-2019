@@ -30,13 +30,16 @@ After this, further `message` messages will aid controlling the robots.
 
 Mode | Target | Description
 -|-|-
-`2` | Arduino | The start of a message batch to be read into the Arduino's message buffer.
+`1` | Arduino | A connection ping (see above description)
+`2` | Arduino | The start of a message batch to be read into the Arduino's message buffer
 `3` | Arduino | A break in the message batch (more messages to be read)
 `4` | Arduino | The end of a message batch (no more messages to be read)
 `5` | Controller | Request for more messages (response to mode `3`)
 `6` | Controller | ~~Buffer overflow occurred, last batch failed~~ Removed
 `7` | Arduino | Reset the message buffer
 `8` | Arduino | Reset the message buffer iff the buffer is invalidated
+
+Note that the buffer should not be reset if a forward movement has potentially started and not yet returned a status code. If this happens, and a collision is encountered, the Arduino will not be able to recover without a further buffer being sent.
 
 ### Message structure
 
@@ -55,7 +58,7 @@ forward | F | distance | Moves the robot forward by the distance in `mm`. Fires 
 turn | T | angle | Fires `status(0)` message on completion |
 do | D | task | Starts an activity on the arduino (e.g. moving a servo). `task` is a number representing that activity.
 request | R | component | Reads a value from a component (e.g. servo rotation). `component` is a number representing that component.
-message | M | mode | Message buffer related messages, `mode` will be one of [`1` for connection established]
+message | M | mode | Message buffer related messages, for values of `mode`, see [above](#Message-communication).
 config-key | K | key | Sets the config key to write to next
 config-set | S | value | Sets the configuration value given by the current config key
 
