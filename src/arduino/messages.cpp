@@ -16,11 +16,28 @@ namespace robot {
 	bool is_message_buffer_valid = true;
 
 	void invalidate_message_buffer(int16_t distance_travelled) {
-		// TODO: roll back the buffer start pointer to the last forward command, update the forward distance, and push it to the start of the buffer
-		//  hacky af
-		is_message_buffer_valid = false;
-	}
+		Message *ptr = message_buffer_start_ptr;
+		bool found_forward_message = false;
 
+		is_message_buffer_valid = false;
+
+		while (ptr-- != (Message*) message_buffer) {
+			if (ptr->opcode == 'F') {
+				found_forward_message = true;
+				break;
+			}
+		}
+
+		if (!found_forward_message)
+			return;
+
+		rlogfd("Found forward message, rolling back");
+
+		message_buffer_start_ptr--;
+		message_buffer_start_ptr->opcode = 'F';
+		message_buffer_start_ptr->payload = ptr->payload - distance_travelled;
+	}
+ 
 	void validate_message_buffer() {
 		is_message_buffer_valid = true;
 	}
