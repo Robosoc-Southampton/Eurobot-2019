@@ -14,8 +14,12 @@ void MD25::setup() {
 
 	isSetup = true;
 
-	readLeftEncoder();
 	resetEncoders();
+}
+
+void MD25::testEncoders(bool *left, bool *right) {
+	*left = i2c_test_read4(ENCODER1_REGISTER);
+	*right = i2c_test_read4(ENCODER2_REGISTER);
 }
 
 void MD25::setAcceleration(uint8_t acceleration) {
@@ -87,6 +91,26 @@ int32_t MD25::i2c_read4(uint8_t reg) {
 	}
 
 	return value;
+}
+
+bool MD25::i2c_test_read4(uint8_t reg) {
+	uint8_t to_read = 4;
+	auto start_time = millis();
+
+	Wire.beginTransmission(MD25_ADDRESS);
+	Wire.write(reg);
+	Wire.endTransmission();
+
+	Wire.requestFrom(MD25_ADDRESS, 4u); // request 4 bytes
+
+	while (Wire.available() < 4 && millis() - start_time < 10000); // wait for 4 bytes
+
+	for (int i = 0; Wire.available() && to_read; ++i) {
+		Wire.read();
+		--to_read;
+	}
+
+	return to_read == 0;
 }
 
 uint8_t MD25::i2c_read1(uint8_t reg) {

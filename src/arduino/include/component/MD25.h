@@ -14,6 +14,8 @@ public:
 
 	// sets up the MD25 prior to calling any further functions
 	void setup();
+	// tests that both encoders can be read from
+	void testEncoders(bool *left, bool *right);
 
 	// sets and gets the acceleration of the MD25
 	// valid acceleration values are in the range 1 to 10
@@ -51,6 +53,7 @@ private:
 
 	static inline __attribute__((always_inline)) void i2c_write(uint8_t register, uint8_t data);
 	static inline __attribute__((always_inline)) int32_t i2c_read4(uint8_t register);
+	static inline __attribute__((always_inline)) bool i2c_test_read4(uint8_t register);
 	static inline __attribute__((always_inline)) uint8_t i2c_read1(uint8_t register);
 
 	uint8_t acceleration;

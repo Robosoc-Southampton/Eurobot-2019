@@ -11,6 +11,7 @@ namespace robot {
 
 	void setup() {
 		MD25 *md25 = new MD25();
+		bool left_encoder_okay, right_encoder_okay;
 
 		robot::wait_for_connection();
 		rlogf("Connection established");
@@ -18,6 +19,14 @@ namespace robot {
 		rlogf("Setting up MD25");
 		md25->setup();
 		rlogf("MD25 set up");
+
+		delay(500);
+
+		md25->testEncoders(&left_encoder_okay, &right_encoder_okay);
+
+		if (!left_encoder_okay) rlogf("Left encoder not readable");
+		if (!right_encoder_okay) rlogf("Right encoder not readable");
+		if (!left_encoder_okay || !right_encoder_okay) rerrorf("Failed to read encoder values");
 
 		robot::drive::set_md25(md25);
 
