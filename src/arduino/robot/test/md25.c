@@ -2,7 +2,7 @@
 #include "include/robot/test/md25.h"
 
 MD25 md25;
-bool left_encoder_okay, right_encoder_okay;
+bool left_encoder_okay = false, right_encoder_okay = false;
 
 void setup() {
 	Serial.begin(9600);

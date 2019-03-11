@@ -62,6 +62,7 @@ namespace robot {
 
 		// run the activity's init function if applicable
 		if (current_activity->init != nullptr) {
+			rlogfd("Running activity init function");
 			(*current_activity->init)();
 		}
 	}

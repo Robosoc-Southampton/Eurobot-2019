@@ -16,7 +16,7 @@ controller = lib.controller.Controller(pathfinder)  # TODO: add other controller
 controller.begin(state)
 
 for file in files:
-	h = open(file, "r")
+	h = open("src/pi/msgs/" + file + ".txt", "r")
 	content = h.read()
 	h.close()
 
