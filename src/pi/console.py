@@ -38,7 +38,6 @@ if bdaddr == "auto":
 		print("Couldn't find bluetooth device")
 		sys.exit()
 
-
 if options["serial"] == "true":
 	print("Connecting serial")
 
