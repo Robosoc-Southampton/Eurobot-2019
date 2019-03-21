@@ -5,12 +5,24 @@ import org.openimaj.video.capture.Device;
 import org.openimaj.video.capture.VideoCapture;
 import org.openimaj.video.capture.VideoCaptureException;
 
+/**
+ * Interface to webcam.
+ * @author billy
+ *
+ */
 public class WebCam implements ImageSource {
 	
+	// camera parameters
 	private static final int CAMERA_WIDTH = 640;
 	private static final int CAMERA_HEIGHT = 480;
+	
+	// webcam device
 	private Device videoDevice;
 	
+	/**
+	 * Sole constructor
+	 * @param videoDevice webcam device to use
+	 */
 	public WebCam(Device videoDevice) {
 		this.videoDevice = videoDevice;
 	}

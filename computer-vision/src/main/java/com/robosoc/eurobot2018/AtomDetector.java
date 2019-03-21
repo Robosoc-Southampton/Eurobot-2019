@@ -46,7 +46,7 @@ public class AtomDetector {
 	private static final float COLOUR_TOLERANCE = 25f;
 
 	// minimum circle weight to count as a circle
-	private static final float CIRCLE_THRESHOLD = 0.01f;
+	private static final float CIRCLE_THRESHOLD = 0.05f;
 
 	// number of best circles to get from the Hough transform
 	private static final int MAX_CIRCLES = 10;
@@ -58,10 +58,10 @@ public class AtomDetector {
 	private static final int RADIUS_INCREMENT = 1;
 
 	// maximum circle radius in Hough transform
-	private static final int MAX_RADIUS = 16;
+	private static final int MAX_RADIUS = 37;
 
 	// minimum circle radius in Hough transform
-	private static final int MIN_RADIUS = 14;
+	private static final int MIN_RADIUS = 33;
 
 	// number of chessboard exposures to calibrate camera instrinsic parameters
 	public static final int NUM_CALIBRATION_EXPOSURES = 10;
@@ -69,32 +69,50 @@ public class AtomDetector {
 	// chessboard parameters for calibration
 	private static final int CHESSBOARD_WIDTH = 9;
 	private static final int CHESSBOARD_HEIGHT = 6;
-	private static final double CHESSBOARD_SQUARE_SIDE_LENGTH = 10;
+	private static final double CHESSBOARD_SQUARE_SIDE_LENGTH = 22.25;
 	
+	// file where calibration data is stored
 	private static final String POINTS_FILENAME = "points.dat";
 
+	// camera parameters
 	private static final int CAMERA_WIDTH = 640;
-
 	private static final int CAMERA_HEIGHT = 480;
 
+	// time between image captures when calibrating intrinsic parameters
 	private static final long SLEEP_TIME = 2000;
 
+	// sigma for the Gaussian blur before edge detection
 	private static final float BLUR_SIGMA = 1;
 	
-	private static final float REDIUM_A = 13, REDIUM_B = 32;
-	private static final float BLUEIUM_A = -8, BLUEIUM_B = -30;
-	private static final float GREENIUM_A = -53, GREENIUM_B = 46;
+	/*
+	 *  LAB colour space values for the colours of atoms. 
+	 *  L value is not used, because it's the lightness. This changes lots with lighting,
+	 *  exposure, etc.
+	 */
+	private static final float REDIUM_A = 49, REDIUM_B = 30;
+	private static final float BLUEIUM_A = 2, BLUEIUM_B = -41;
+	private static final float GREENIUM_A = -18, GREENIUM_B = 42;
 	
+	
+	// Calibration points
 	private List<List<? extends IndependentPair<? extends Point2d, ? extends Point2d>>> points;
 
+	// positions of chessboard corners
 	private List<Point2dImpl> model;
 	
+	// calibration itself
 	private CameraCalibrationZhang calibration;
 
+	// finds and analyses chessboards in images
 	private ChessboardCornerFinder chessboardAnalyser;
 	
+	// either a webcam or the pi camera
 	private ImageSource source;
 
+	/**
+	 * Sole constructor.
+	 * @param source Camera interface.
+	 */
 	public AtomDetector(ImageSource source) {
 		this.source = source;
 		
@@ -134,6 +152,12 @@ public class AtomDetector {
 		
 	}
 	
+	/**
+	 * Takes a list of serialisable PointPairs and converts it to
+	 * a list of OpenImaj IndependentPairs.
+	 * @param pointPairs PointPairs
+	 * @return IndependentPairs
+	 */
 	private List<IndependentPair<? extends Point2d, ? extends Point2d>> pointPairsToIndependent(
 			List<PointPair> pointPairs) {
 		List<IndependentPair<? extends Point2d, ? extends Point2d>> independentPairs = new ArrayList<>();
@@ -145,6 +169,12 @@ public class AtomDetector {
 		return independentPairs;
 	}
 	
+	/**
+	 * Takes a list of OpenImaj IndependentPairs and converts it to
+	 * a list of serialisable PointPairs.
+	 * @param pairList
+	 * @return
+	 */
 	private List<PointPair> independentPairsToPoint(
 			List<? extends IndependentPair<? extends Point2d, ? extends Point2d>> pairList) {
 		List<PointPair> pointPairs = new ArrayList<>();
@@ -156,6 +186,11 @@ public class AtomDetector {
 		return pointPairs;
 	}
 	
+	/**
+	 * Serialise points and feed them to the given stream.
+	 * @param objectOut Output stream to feed the points to.
+	 * @throws IOException
+	 */
 	private void serialisePoints(ObjectOutputStream objectOut) throws IOException {
 		List<List<PointPair>> serialisablePoints = new ArrayList<>();
 		
@@ -166,6 +201,12 @@ public class AtomDetector {
 		objectOut.writeObject(serialisablePoints);
 	}
 	
+	/**
+	 * Deserialise points from an object input stream.
+	 * @param objectIn Input to read the points from.
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
 	private void deserialisePoints(ObjectInputStream objectIn) throws ClassNotFoundException, IOException {
 		points = new ArrayList<>();
 		List<List<PointPair>> rawPoints = (List<List<PointPair>>) objectIn.readObject();
@@ -175,6 +216,10 @@ public class AtomDetector {
 		}
 	}
 	
+	/**
+	 * Calibrate the camera parameters from scratch, including intrinsic parameters.
+	 * The final set of calibration points is used to calibrate the intrinsics.
+	 */
 	public void calibrateIntrinsics() {
 		// take k photos, use them to calibrate, overwriting existing points
 		
@@ -206,6 +251,9 @@ public class AtomDetector {
 		calibrate();
 	}
 
+	/**
+	 * Gets a new image and analyses it for a chessboard.
+	 */
 	private void chessboardFromCurrentFrame() {
 		System.out.println("Capturing image...");
 		MBFImage frame = source.getImage();
@@ -216,6 +264,11 @@ public class AtomDetector {
 		chessboardAnalyser.analyseImage(frame.flatten());
 	}
 	
+	/**
+	 * Takes a single new image and if there's a chessboard in it,
+	 * uses it to calibrate the extrinsic parameters of the camera.
+	 * @return True if there is a chessboard found, otherwise false.
+	 */
 	public boolean calibrateExtrinsics() {
 		// take 1 photo, overwrite the last pointset with its points and recalibrate
 
@@ -234,6 +287,10 @@ public class AtomDetector {
 		return false;
 	}
 	
+	/**
+	 * Calibrate the camera's intrinsic and extrinsic parameters from
+	 * existing calibration information.
+	 */
 	private void calibrate() {
 		calibration = new CameraCalibrationZhang(points, CAMERA_WIDTH, CAMERA_HEIGHT);
 		
@@ -266,7 +323,12 @@ public class AtomDetector {
 	    return pts;
 	}
 	
-	private MBFImage getBirdsEye() throws VideoCaptureException {
+	/**
+	 * Get a view from the camera, warped so that it appears to be
+	 * taken from above, and atoms appear circular.
+	 * @return Warped view.
+	 */
+	private MBFImage getBirdsEye() {
 		MBFImage frame = source.getImage();
 		
 		DisplayUtilities.display(frame);
@@ -278,6 +340,18 @@ public class AtomDetector {
 		return birdsEye;
 	}
 	
+	/**
+	 * Find the good circles in the image.
+	 * First Gaussian blur to remove noise.
+	 * Then differentiate image with Sobel.
+	 * Then calculate edge magnitudes from result.
+	 * Then threshold on the magnitudes to find edges.
+	 * Then run Hough transform on edges to find circles.
+	 * Filter out the bad circles with low weight.
+	 * Finally, eliminate overlapping circles.
+	 * @param img Image to find circles in.
+	 * @return Centroids of circles.
+	 */
 	private static List<Point2d> findGoodCircles(FImage img) {
 		DisplayUtilities.display(img);
 		img.processInplace(new FFastGaussianConvolve(BLUR_SIGMA, 5));
@@ -316,6 +390,11 @@ public class AtomDetector {
 		return goodCircles;
 	}
 	
+	/**
+	 * Eliminate circles that overlap with better ones.
+	 * @param goodCircles Circles.
+	 * @return Best non-overlapping circles.
+	 */
 	private static List<Point2d> eliminateDuplicates(List<Point2d> goodCircles) {
 		
 		ArrayList<Point2d> unique = new ArrayList<>();
@@ -337,29 +416,50 @@ public class AtomDetector {
 		return unique;
 	}
 
-	public List<Point2d> findRedium() throws VideoCaptureException {
+	/**
+	 * Find redium coordinates.
+	 * @return coordinates of redium.
+	 */
+	public List<Point2d> findRedium() {
 		MBFImage birdsEye = getBirdsEye();
 		FImage red = colourThreshold(birdsEye, REDIUM_A, REDIUM_B, COLOUR_TOLERANCE);
 		return findGoodCircles(red);
 	}
-	
-	public List<Point2d> findGreenium() throws VideoCaptureException {
+
+	/**
+	 * Find greenium coordinates.
+	 * @return coordinates of greenium.
+	 */
+	public List<Point2d> findGreenium() {
 		MBFImage birdsEye = getBirdsEye();
 		FImage green = colourThreshold(birdsEye, GREENIUM_A, GREENIUM_B, COLOUR_TOLERANCE);
 		return findGoodCircles(green);
 	}
 	
-	
-	public List<Point2d> findBlueium() throws VideoCaptureException {
+	/**
+	 * Find blueium coordinates.
+	 * @return coordinates of blueium.
+	 */
+	public List<Point2d> findBlueium() {
 		MBFImage birdsEye = getBirdsEye();
 		FImage blue = colourThreshold(birdsEye, BLUEIUM_A, BLUEIUM_B, COLOUR_TOLERANCE);
 		return findGoodCircles(blue);
 	}
 	
+	/**
+	 * Threshold LAB image based on colour.
+	 * Pixels are 1 if less than tolerance from specified A,B values.
+	 * @param rgb Image in RGB.
+	 * @param a A value of wanted colour.
+	 * @param b B value of wanted colour.
+	 * @param tolerance Maxiumum allowable distance from wanted colour.
+	 * @return Thresholded image.
+	 */
 	private FImage colourThreshold(MBFImage rgb, float a, float b, float tolerance) {
 		FImage out = new FImage(rgb.getWidth(), rgb.getHeight());
 		
 		MBFImage lab = ColourSpace.convert(rgb, ColourSpace.CIE_Lab);
+		DisplayUtilities.display(lab);
 		
 		for(int i = 0; i < lab.getWidth(); i++) {
 			for(int j = 0; j < lab.getHeight(); j++) {

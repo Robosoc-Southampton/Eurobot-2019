@@ -10,14 +10,32 @@ import static uk.co.caprica.picam.CameraConfiguration.cameraConfiguration;
 
 import java.io.ByteArrayInputStream;
 
-
+/**
+ * Interface to raspberry pi camera.
+ * @author billy
+ *
+ */
 public class PiCam implements ImageSource {
+	
+	// pi camera instance
+	private Camera camera;
+	
+	/**
+	 * Sole constructor.
+	 */
+	public PiCam() {
+		CameraConfiguration config = cameraConfiguration()
+				.width(640)
+				.height(480);
+		
+		camera = new Camera(config);
+	}
 
 	@Override
 	public MBFImage getImage() {
-		CameraConfiguration config = cameraConfiguration();
 		
-		try(Camera camera = new Camera(config)) {
+		
+		try {
 			ByteArrayPictureCaptureHandler handler = new ByteArrayPictureCaptureHandler();
 			camera.takePicture(handler);
 			
