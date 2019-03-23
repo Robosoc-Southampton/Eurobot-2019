@@ -12,7 +12,10 @@ void setup() {
 }
 
 void loop() {
-	rlogi(sensor.read());
+	// rlog("Sensor reading");
+	// rlogi(sensor.read());
+	rlog("Sensor voltage (/1024)");
+	rlogi(analogRead(A0));
 
-	delay(200);
+	delay(500);
 }

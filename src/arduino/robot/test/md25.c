@@ -18,6 +18,10 @@ void setup() {
 
 	if (!left_encoder_okay) rlogf("Left encoder not readable");
 	if (!right_encoder_okay) rlogf("Right encoder not readable");
+
+	if (left_encoder_okay && right_encoder_okay) rlogf("Encoders are okay");
+
+	rlogf("Starting to drive...");
 }
 
 void loop() {

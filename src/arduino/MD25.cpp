@@ -14,6 +14,9 @@ void MD25::setup() {
 
 	isSetup = true;
 
+	// delay required to allow the MD25 to actually initialise
+	delay(500);
+
 	resetEncoders();
 }
 
@@ -103,7 +106,7 @@ bool MD25::i2c_test_read4(uint8_t reg) {
 
 	Wire.requestFrom(MD25_ADDRESS, 4u); // request 4 bytes
 
-	while (Wire.available() < 4 && millis() - start_time < 10000); // wait for 4 bytes
+	while (Wire.available() < 4 && millis() - start_time < 500); // wait for 4 bytes
 
 	for (int i = 0; Wire.available() && to_read; ++i) {
 		Wire.read();

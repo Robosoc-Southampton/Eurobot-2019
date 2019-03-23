@@ -2,6 +2,7 @@
 #include "include/robot/secondary.h"
 
 #include <Stepper.h>
+#include <Servo.h>
 
 /* Blink LED activity
  *  Blinks the LED 10 times
@@ -38,6 +39,22 @@ ACTIVITY(lowerStepperSmall, cooldown=3000, count=200) {
 	raisingStepper.step(-2);
 }
 
+/* Servo control activities
+ *  Controlls the front grabber grip servo
+ */
+Servo gripServo;
+
+ACTIVITY(closeGrip, cooldown=0, count=0) {}
+ACTIVITY(openGrip, cooldown=0, count=0) {}
+
+INIT(closeGrip) {
+	gripServo.write(31);
+}
+
+INIT(openGrip) {
+	gripServo.write(0);
+}
+
 /* Component reader
  *  Allows component values to be read remotely
  */
@@ -50,6 +67,8 @@ int16_t readComponentValue(int16_t component_ID) {
  * Activity 3 lowers front grabber slightly
  * Activity 4 raises front grabber slightly
  * Activity 5 blinks the LED 5 times
+ * Activity 6 closes the grabber grip
+ * Activity 7 opens the grabber grip
  */
 struct Activity* lookupActivity(uint16_t activity_ID) {
 	switch (activity_ID) {
@@ -63,6 +82,10 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 			return ACTIVITY(raiseStepperSmall);
 		case 5:
 			return ACTIVITY(blinkLED);
+		case 6:
+			return ACTIVITY(closeGrip);
+		case 7:
+			return ACTIVITY(openGrip);
 	}
 
 	return nullptr;
@@ -81,6 +104,10 @@ void setup() {
 
 	rlogf("Setting up raising stepper speed");
 	raisingStepper.setSpeed(200);
+
+	rlogf("Attaching servo");
+	gripServo.attach(5);
+	gripServo.write(0);
 }
 
 void loop() {
