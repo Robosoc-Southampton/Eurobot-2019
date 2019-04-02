@@ -38,6 +38,7 @@ namespace robot {
 
 	void loop() {
 		if (drive::is_moving && drive::is_moving_forward && check_distance_sensors()) {
+			delay(1000);
 			drive::stop();
 			int16_t distance = drive::get_average_distance_travelled();
 			robot::invalidate_message_buffer(distance);
@@ -48,6 +49,7 @@ namespace robot {
 		}
 
 		drive::update_motor_speeds();
+
 		run_activity();
 	
 		char opcode;
@@ -59,6 +61,8 @@ namespace robot {
 
 		if ((opcode = peek_next_opcode()) == '\0')
 			return;
+
+		rlogfd("Message ready to read");
 
 		// test the opcode char to determine if the message is ready to be read
 		switch (opcode) {

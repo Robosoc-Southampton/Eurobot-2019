@@ -4,30 +4,16 @@
 #include <Stepper.h>
 #include <Servo.h>
 
-/* Blink LED activity
- *  Blinks the LED 10 times
- */
-auto ledOn = LOW;
-
-ACTIVITY(blinkLED, cooldown=500000, count=10) {
-	ledOn ^= HIGH;
-	digitalWrite(LED_BUILTIN, ledOn);
-}
-
-INIT(blinkLED) {
-	ledOn = LOW;
-}
-
 /* Stepper control activities
  *  Controls the front grabber elevation through 4 up/down activities
  */
 Stepper raisingStepper(200, 8, 9, 10, 11);
 
-ACTIVITY(raiseStepper, cooldown=3000, count=500) {
+ACTIVITY(raiseStepper, cooldown=3000, count=1000) {
 	raisingStepper.step(2);
 }
 
-ACTIVITY(lowerStepper, cooldown=3000, count=500) {
+ACTIVITY(lowerStepper, cooldown=3000, count=1000) {
 	raisingStepper.step(-2);
 }
 
@@ -48,7 +34,7 @@ ACTIVITY(closeGrip, cooldown=0, count=0) {}
 ACTIVITY(openGrip, cooldown=0, count=0) {}
 
 INIT(closeGrip) {
-	gripServo.write(31);
+	gripServo.write(35);
 }
 
 INIT(openGrip) {
@@ -80,8 +66,8 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 			return ACTIVITY(lowerStepperSmall);
 		case 4:
 			return ACTIVITY(raiseStepperSmall);
-		case 5:
-			return ACTIVITY(blinkLED);
+		// case 5:
+			// return ACTIVITY(blinkLED);
 		case 6:
 			return ACTIVITY(closeGrip);
 		case 7:
