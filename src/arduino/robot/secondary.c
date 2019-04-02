@@ -26,7 +26,7 @@ ACTIVITY(lowerStepperSmall, cooldown=3000, count=200) {
 }
 
 /* Servo control activities
- *  Controlls the front grabber grip servo
+ *  Controls the front grabber grip servo
  */
 Servo gripServo;
 
@@ -39,6 +39,32 @@ INIT(closeGrip) {
 
 INIT(openGrip) {
 	gripServo.write(0);
+}
+
+/* Pull cord activity
+ *  Waits until the pull cord has been pulled before returning
+ */
+uint8_t pullCordPin = 12;
+bool pullCordInserted = false;
+
+ACTIVITY(pullCord, cooldown=1000000, count=900) {
+	if (!digitalRead(pullCordPin) && !pullCordInserted) {
+		pullCordInserted = true;
+		rlogf("Pull cord inserted");
+	}
+}
+
+INIT(pullCord) {
+	rlogf("Waiting for pull cord to be inserted");
+}
+
+PREDICATE(pullCord) {
+	if (pullCordInserted && digitalRead(pullCordPin)) {
+		rlogf("Pull cord pulled");
+		return false;
+	}
+
+	return true;
 }
 
 /* Component reader
@@ -72,6 +98,8 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 			return ACTIVITY(closeGrip);
 		case 7:
 			return ACTIVITY(openGrip);
+		case 100:
+			return ACTIVITY(pullCord);
 	}
 
 	return nullptr;
@@ -94,6 +122,11 @@ void setup() {
 	rlogf("Attaching servo");
 	gripServo.attach(5);
 	gripServo.write(0);
+
+	rlogf("Setting pull cord pin to input");
+	pinMode(pullCordPin, INPUT);
+
+	rlogf("Done");
 }
 
 void loop() {

@@ -14,7 +14,6 @@ namespace robot {
 		bool left_encoder_okay, right_encoder_okay;
 
 		robot::wait_for_connection();
-		rlogf("Connection established");
 
 		rlogf("Setting up MD25");
 		md25->setup();

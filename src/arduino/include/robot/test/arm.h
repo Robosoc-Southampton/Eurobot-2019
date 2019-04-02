@@ -33,7 +33,7 @@ const uint8_t SERVO_GRABBER = 3;
 
 // secondary
 // 65 extended
-// 35 angled
+// 30 angled
 
 // grabber:
 // 170 open wide
