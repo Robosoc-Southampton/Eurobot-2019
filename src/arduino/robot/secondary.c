@@ -25,6 +25,21 @@ ACTIVITY(lowerStepperSmall, cooldown=3000, count=200) {
 	raisingStepper.step(-2);
 }
 
+/* LED blink activity
+ *  Blinks the LED on and off 5 times
+ */
+auto ledOn = LOW;
+
+ACTIVITY(blinkLED, cooldown=500000, count=10) {
+	ledOn ^= HIGH;
+	digitalWrite(LED_BUILTIN, ledOn);
+}
+
+INIT(blinkLED) {
+	ledOn = LOW;
+	digitalWrite(LED_BUILTIN, LOW);
+}
+
 /* Servo control activities
  *  Controls the front grabber grip servo
  */
@@ -55,7 +70,8 @@ ACTIVITY(pullCord, cooldown=1000000, count=900) {
 }
 
 INIT(pullCord) {
-	rlogf("Waiting for pull cord to be inserted");
+	if (!pullCordInserted)
+		rlogf("Waiting for pull cord to be inserted");
 }
 
 PREDICATE(pullCord) {
@@ -81,6 +97,7 @@ int16_t readComponentValue(int16_t component_ID) {
  * Activity 5 blinks the LED 5 times
  * Activity 6 closes the grabber grip
  * Activity 7 opens the grabber grip
+ * Activity 100 waits for the pull cord
  */
 struct Activity* lookupActivity(uint16_t activity_ID) {
 	switch (activity_ID) {
@@ -92,8 +109,8 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 			return ACTIVITY(lowerStepperSmall);
 		case 4:
 			return ACTIVITY(raiseStepperSmall);
-		// case 5:
-			// return ACTIVITY(blinkLED);
+		case 5:
+			return ACTIVITY(blinkLED);
 		case 6:
 			return ACTIVITY(closeGrip);
 		case 7:
