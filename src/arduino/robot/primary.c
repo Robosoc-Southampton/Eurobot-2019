@@ -43,6 +43,28 @@ PREDICATE(pullCord) {
 	return true;
 }
 
+/* Robot arm activities
+ *
+ */
+Stepper armStepper(200, 22, 24, 26, 28);
+
+ACTIVITY(raiseArmSlightly, cooldown=3000, count=50) {
+	armStepper.step(-2);
+}
+
+ACTIVITY(lowerArmSlightly, cooldown=3000, count=50) {
+	armStepper.step(2);
+}
+
+/* Carousel rotation activities
+ *  Turns the carousel by one puck
+ */
+Stepper carouselStepper(200, 8, 9, 11, 10);
+
+ACTIVITY(rotateLeft, cooldown=3000, count=62) {
+	carouselStepper.step(-2);
+}
+
 /* Component reader
  *  Allows component values to be read remotely
  */
@@ -50,11 +72,18 @@ int16_t readComponentValue(int16_t component_ID) {
 	return robot::drive::get_average_distance_travelled();
 }
 
-/* Activity 5 blinks the LED 5 times
+/* Activity 1 rotates the carousel anticlockwise (aerial view)
+ * Activity 5 blinks the LED 5 times
  * Activity 100 waits for the pull cord
  */
 struct Activity* lookupActivity(uint16_t activity_ID) {
 	switch (activity_ID) {
+		case 1:
+			return ACTIVITY(rotateLeft);
+		case 3:
+			return ACTIVITY(raiseArmSlightly);
+		case 4:
+			return ACTIVITY(lowerArmSlightly);
 		case 5:
 			return ACTIVITY(blinkLED);
 		case 100: 
@@ -76,6 +105,12 @@ void setup() {
 	robot::set_distance_sensors(1, sensors);
 
 	robot::setup();
+
+	rlogf("Setting up arm stepper speed");
+	armStepper.setSpeed(50);
+
+	rlogf("Setting up carousel stepper speed");
+	carouselStepper.setSpeed(50);
 
 	rlogf("Setting pull cord pin to input");
 	pinMode(pullCordPin, INPUT);

@@ -1,9 +1,6 @@
 
 #include "include/robot/secondary.h"
 
-#include <Stepper.h>
-#include <Servo.h>
-
 /* Stepper control activities
  *  Controls the front grabber elevation through 4 up/down activities
  */

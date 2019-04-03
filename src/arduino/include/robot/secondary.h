@@ -2,6 +2,8 @@
 #pragma once
 
 #include <Arduino.h>
+#include <Stepper.h>
+#include <Servo.h>
 #include "../component/MD25.h"
 #include "../component/SharpIR.h"
 #include "../robot.h"
