@@ -36,6 +36,8 @@ namespace robot {
 	}
 
 	void loop() {
+		robot::check_timeout();
+
 		if (check_distance_sensors()) {
 			if (drive::is_moving && drive::is_moving_forward && robot::is_message_buffer_valid) {
 				drive::stop();

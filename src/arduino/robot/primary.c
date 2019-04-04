@@ -19,28 +19,18 @@ INIT(blinkLED) {
 /* Pull cord activity
  *  Waits until the pull cord has been pulled before returning
  */
-uint8_t pullCordPin = 12;
-bool pullCordInserted = false;
+const uint8_t PULL_CORD_PIN = 12;
 
 ACTIVITY(pullCord, cooldown=1000000, count=900) {
-	if (!digitalRead(pullCordPin) && !pullCordInserted) {
-		pullCordInserted = true;
-		rlogf("Pull cord inserted");
-	}
+	/* do nothing */
 }
 
 INIT(pullCord) {
-	if (!pullCordInserted)
-		rlogf("Waiting for pull cord to be inserted");
+	rlogf("Waiting for pull cord to be inserted");
 }
 
 PREDICATE(pullCord) {
-	if (pullCordInserted && digitalRead(pullCordPin)) {
-		rlogf("Pull cord pulled");
-		return false;
-	}
-
-	return true;
+	return !robot::wait_for_pullcord(PULL_CORD_PIN);
 }
 
 /* Robot arm activities
@@ -115,7 +105,7 @@ void setup() {
 	carouselStepper.setSpeed(50);
 
 	rlogf("Setting pull cord pin to input");
-	pinMode(pullCordPin, INPUT);
+	pinMode(PULL_CORD_PIN, INPUT);
 
 	rlogf("Done");
 }

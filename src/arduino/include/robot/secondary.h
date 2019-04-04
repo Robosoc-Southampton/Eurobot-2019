@@ -9,6 +9,7 @@
 #include "../robot.h"
 #include "../activities.h"
 #include "../debug.h"
+#include "../timeout.h"
 
 uint16_t readComponentValue(uint16_t component_ID);
 
