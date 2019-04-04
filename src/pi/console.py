@@ -32,7 +32,7 @@ for opt in sys.argv[1:]:
 bdaddr = options["addr"]
 
 if bdaddr == "auto":
-	bdaddr = comms.find_bt_addr()
+	bdaddr = lib.comms.find_bt_addr()
 
 	if bdaddr == None:
 		print("Couldn't find bluetooth device")

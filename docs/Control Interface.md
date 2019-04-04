@@ -61,6 +61,7 @@ request | R | component | Reads a value from a component (e.g. servo rotation). 
 message | M | mode | Message buffer related messages, for values of `mode`, see [above](#Message-communication).
 config-key | K | key | Sets the config key to write to next
 config-set | S | value | Sets the configuration value given by the current config key
+echo | E | status | Will cause the Arduino to send a status message when it reaches this message.
 
 ### Arduino to Pi
 

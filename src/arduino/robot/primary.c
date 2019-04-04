@@ -73,6 +73,8 @@ int16_t readComponentValue(int16_t component_ID) {
 }
 
 /* Activity 1 rotates the carousel anticlockwise (aerial view)
+ * Activity 3 lowers the arm
+ * Activity 4 raises the arm
  * Activity 5 blinks the LED 5 times
  * Activity 100 waits for the pull cord
  */
@@ -81,9 +83,9 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 		case 1:
 			return ACTIVITY(rotateLeft);
 		case 3:
-			return ACTIVITY(raiseArmSlightly);
-		case 4:
 			return ACTIVITY(lowerArmSlightly);
+		case 4:
+			return ACTIVITY(raiseArmSlightly);
 		case 5:
 			return ACTIVITY(blinkLED);
 		case 100: 

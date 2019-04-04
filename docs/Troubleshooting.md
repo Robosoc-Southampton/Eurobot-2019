@@ -20,6 +20,16 @@ If a particular component/feature isn't working, or the setup isn't completing, 
 
 ---
 
+## Arduino restarting
+
+Any strange restarting behaviour on the Arduino is likely due to too much current being drawn through the Arduino's 3.3/5V connections, causing it to restart.
+
+### Next steps
+
+Move potentially high-current connections to a 3.3/5V connection of something else like an L298
+
+---
+
 ## LED flashing (500ms)
 
 The LED flashing with a total period of `500ms` indicates that an initial message has not been received from the controller.

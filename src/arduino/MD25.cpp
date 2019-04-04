@@ -83,24 +83,43 @@ void MD25::i2c_write(uint8_t reg, uint8_t data) {
 int32_t MD25::i2c_read4(uint8_t reg) {
 	int32_t value = 0;
 
-	delay(2); // TODO: maybe this helps?
+	for (int t = TRIES; t; --t) {
+		// rlogfd("Hello :)");
 
-	Wire.beginTransmission(MD25_ADDRESS);
-	Wire.write(reg);
-	Wire.endTransmission();
+		long start_time = micros();
 
-	delay(2); // TODO: maybe this helps?
+		value = 0;
 
-	Wire.requestFrom(MD25_ADDRESS, 4u); // request 4 bytes
+		delay(2); // TODO: maybe this helps?
 
-	while (Wire.available() < 4); // wait for 4 bytes
+		Wire.beginTransmission(MD25_ADDRESS);
+		Wire.write(reg);
+		Wire.endTransmission();
 
-	for (uint8_t i = 0; i < 4; ++i) {
-		value <<= 8;
-		value += Wire.read();
+		delay(2); // TODO: maybe this helps?
+
+		Wire.requestFrom(MD25_ADDRESS, 4u); // request 4 bytes
+
+		while (Wire.available() < 4) { // wait for 4 bytes
+			if (micros() - start_time > TIMEOUT) break;
+		}
+
+		if (Wire.available() < 4) {
+			rlogf("Hit timeout!");
+			// delay(100);
+			while (Wire.available()) Wire.read();
+			continue;
+		}
+
+		for (uint8_t i = 0; i < 4; ++i) {
+			value <<= 8;
+			value += Wire.read();
+		}
+
+		return value;
 	}
 
-	return value;
+	rerrorf("Couldn't read value from encoder");
 }
 
 bool MD25::i2c_test_read4(uint8_t reg) {

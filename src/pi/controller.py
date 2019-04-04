@@ -1,35 +1,132 @@
 
+import lib.comms
 import lib.controller
 import lib.messages
 import lib.state
 from lib.position import RobotPosition
 import sys
+import time
 
-files = sys.argv[1:]
+PRIMARY_ADDRESS = "20:17:03:08:58:54"
+PRIMARY_CONFIG = "src/pi/msgs/config2.txt"
+# PRIMARY_ADDRESS = "20:17:03:08:60:45"
+# PRIMARY_CONFIG = "src/pi/msgs/config.txt"
+# SECONDARY_ADDRESS = "20:17:03:08:58:54"
+# SECONDARY_CONFIG = "src/pi/msgs/config2.txt"
 
-position = RobotPosition(0, 0)
-facing = RobotPosition(0, 1)
-state = lib.state.RobotState(position, facing)
-pathfinder = lib.controller.PathFinder()            # TODO: add other pathfinders
-controller = lib.controller.Controller(pathfinder)  # TODO: add other controllers
+primary_connection = lib.comms.BluetoothConnection(PRIMARY_ADDRESS)
+# secondary_connection = lib.comms.BluetoothConnection(SECONDARY_ADDRESS)
 
-controller.begin(state)
+if not primary_connection:
+	print("Failed to connect to primary")
+	sys.exit()
 
-for file in files:
-	h = open("src/pi/msgs/" + file + ".txt", "r")
-	content = h.read()
-	h.close()
+def logger(msg):
+	print("[" + str(time.clock()) + "] Log message received (primary): " + msg.strip())
 
-	for line in content.splitlines():
-		if line.startswith("goto "):
-			parts = line[5:].split(", ")
-			controller.goto(RobotPosition(int(parts[0].strip()), int(parts[1].strip())))
-		elif line.startswith("face"):
-			parts = line[5:].split(", ")
-			controller.face(RobotPosition(int(parts[0].strip()), int(parts[1].strip())))
-		else:
-			controller.append(lib.messages.parse_messages(line))
+primary_connection.on_log(logger)
+# secondary_connection.on_log(logger)
+primary_connection.connect()
+# secondary_connection.connect()
 
-controller.run()
+time.sleep(1)
 
-print(lib.messages.serialise_messages(controller.finish()))
+primary_connection.send_batched(lib.messages.parse_message_file(PRIMARY_CONFIG))
+# secondary_connection.send_batched(lib.messages.parse_message_file(SECONDARY_CONFIG))
+
+time.sleep(1)
+
+def getSide():
+	readings = []
+	turns = 0
+
+	primary_connection.on_message(lambda opcode, data: readings.append(data) if opcode == 'return' else None)
+	primary_connection.send_batched([
+		# turn 90 and request reading
+		('turn', 90),
+		('do', 0),
+		('request', 1001),
+		# turn other 90 and request reading
+		('turn', -180),
+		('do', 0),
+		('request', 1001),
+		# face forward and request reading (just for ease of tracking where it is in this code)
+		('turn', 90),
+		('do', 0),
+		('request', 1001)
+	])
+
+	# wait for all readings to come through
+	while len(readings) < 3:
+		pass
+
+	# log side readings
+	print("to left: ", readings[0])
+	print("to right: ", readings[1])
+
+	# reset the message buffer
+	primary_connection.send(('message', 7))
+
+	# return left if it was closer
+	return 'left' if readings[0] < readings[1] else 'right'
+
+side = getSide()
+print(side)
+
+def prepareConfigure():
+	primary_configured = [False]
+	secondary_configured = [False]
+
+	def on_configure(robot, opcode, data):
+		if opcode == "status" and data == 1:
+			if robot == "primary":
+				primary_configured[0] = True
+			elif robot == "secondary":
+				secondary_configured[0] = True 
+
+	primary_connection.on_message(lambda opcode, data: on_configure("primary", opcode, data))
+	# secondary_connection.on_message(lambda opcode, data: on_configure("secondary") if opcode == 'status' and data == 1 else None)
+
+	while not primary_configured[0]: # or not secondary_configured[0]
+		pass
+
+	print("configured")
+
+def configurePrimary():
+	messages = []
+
+	messages.append(('do', 1100))
+	messages.append(('forward', 750))
+	messages.append(('do', 1000))
+	messages.append(('turn', 180))
+	messages.append(('forward', -100))
+	messages.append(('forward', 850))
+	
+	if side == "left":
+		messages.append(('turn', 90))
+	else:
+		messages.append(('turn', -90))
+
+	messages.append(('forward', -200))
+	messages.append(('forward', 100))
+
+	if side == "left":
+		messages.append(('turn', 90))
+	else:
+		messages.append(('turn', -90))
+
+	messages.append(('echo', 1))
+
+	primary_connection.send_batched(messages)
+
+def configureSecondary():
+	pass
+
+configurePrimary()
+configureSecondary()
+prepareConfigure()
+
+# connect to primary
+# tell primary to do side switch
+# wait for `status 1`
+# configure primary and secondary positions

@@ -50,7 +50,7 @@ namespace robot {
 		drive::update_motor_speeds();
 
 		run_activity();
-	
+
 		char opcode;
 		bool is_activity_running = current_activity != nullptr;
 		bool is_readable = false;
@@ -61,15 +61,13 @@ namespace robot {
 		if ((opcode = peek_next_opcode()) == '\0')
 			return;
 
-		rlogfd("Message ready to read");
-
 		// test the opcode char to determine if the message is ready to be read
 		switch (opcode) {
 			case 'F': case 'T': // forward and turn commands
 				// can only run next movement opcode if not currently moving
 				is_readable = !drive::is_moving;
 				break;
-			case 'D': // can only run next activity if the current one has finished
+			case 'D': case 'E': // can only run next activity/echo if the current one has finished
 				is_readable = !is_activity_running && !drive::is_moving;
 				break;
 			case 'R': case 'K': case 'S':
@@ -93,6 +91,7 @@ namespace robot {
 		char msg[2] = {'\0', '\0'};
 		msg[0] = message->opcode;
 		rlogd((const char*) msg);
+		rlogid(message->payload);
 
 		// act on message
 		consume_message(message);
@@ -111,10 +110,14 @@ namespace robot {
 			case 'D': // do
 				perform_do_command(message->payload);
 				break;
-			case 'K':
+			case 'E': // echo
+				rlogfd("Echoing");
+				robot::send_message('s', message->payload);
+				break;
+			case 'K': // config-key
 				robot::configuration::set_config_key(message->payload);
 				break;
-			case 'S':
+			case 'S': // config-set
 				robot::configuration::set_config_value(message->payload);
 				break;
 			case 'R': // request

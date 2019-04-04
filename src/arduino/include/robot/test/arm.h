@@ -23,9 +23,9 @@ const uint8_t ARM_STEPPER_1 = 22;
 const uint8_t ARM_STEPPER_2 = 24;
 const uint8_t ARM_STEPPER_3 = 26;
 const uint8_t ARM_STEPPER_4 = 28;
-const uint8_t SERVO_PRIMARY = 6;
-const uint8_t SERVO_SECONDARY = 5;
-const uint8_t SERVO_GRABBER = 3;
+const uint8_t SERVO_PRIMARY = 4;
+const uint8_t SERVO_SECONDARY = 3;
+const uint8_t SERVO_GRABBER = 2;
 
 // primary:
 //  160 closed (^)

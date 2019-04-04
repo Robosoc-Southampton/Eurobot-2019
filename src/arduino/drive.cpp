@@ -8,7 +8,7 @@ namespace robot {
 		MD25 *md25;
 		bool is_moving = false;
 		bool is_moving_forward = false;
-		uint8_t SPEED_THRESHOLD = 5u;
+		uint8_t SPEED_THRESHOLD = 2u;
 		int32_t ENCODER_DELTA_THRESHOLD = 5;
 		int32_t left_encoder_measurements[3] = {},
 		       right_encoder_measurements[3] = {};

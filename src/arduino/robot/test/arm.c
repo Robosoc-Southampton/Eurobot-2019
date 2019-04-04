@@ -8,6 +8,8 @@ bool primary_enabled = true, secondary_enabled = false, grabber_enabled = false;
 
 void setup() {
 	Serial.begin(9600);
+
+	armStepper.setSpeed(50);
 	
 	primaryServo.attach(SERVO_PRIMARY);
 	secondaryServo.attach(SERVO_SECONDARY);
@@ -49,6 +51,14 @@ void loop() {
 		rlog(primary_enabled ? "Primary enabled" : "Primary NOT enabled");
 		rlog(secondary_enabled ? "Secondary enabled" : "Secondary NOT enabled");
 		rlog(grabber_enabled ? "Grabber enabled" : "Grabber NOT enabled");
+	}
+
+	if (robot::peek_next_opcode() == 'T') {
+		Message *message = robot::read_message_buffer();
+		rlogf("Turning stepper for arm");
+		rlogi(message->payload);
+
+		armStepper.step(message->payload);
 	}
 
 	if (robot::peek_next_opcode() == 'D') {
