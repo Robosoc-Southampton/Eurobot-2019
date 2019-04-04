@@ -36,14 +36,16 @@ namespace robot {
 	}
 
 	void loop() {
-		if (drive::is_moving && drive::is_moving_forward && check_distance_sensors()) {
-			delay(1000);
-			drive::stop();
-			int16_t distance = drive::get_average_distance_travelled();
-			robot::invalidate_message_buffer(distance);
-			robot::send_message('c', distance);
+		if (check_distance_sensors()) {
+			if (drive::is_moving && drive::is_moving_forward && robot::is_message_buffer_valid) {
+				drive::stop();
+				int16_t distance = drive::get_average_distance_travelled();
+				robot::invalidate_message_buffer(distance);
+				robot::send_message('c', distance);
+			}
 		}
-		else {
+		else if (!robot::is_message_buffer_valid) {
+			rlogfd("Revalidating message buffer");
 			robot::validate_message_buffer();
 		}
 

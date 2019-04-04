@@ -53,8 +53,8 @@ namespace robot {
 
 			is_moving = false;
 			is_moving_forward = false;
-			target_left_encoder_value  -= md25->readLeftEncoder();
-			target_right_encoder_value -= md25->readRightEncoder();
+			target_left_encoder_value  = 0;
+			target_right_encoder_value = 0;
 
 			md25->resetEncoders();
 		}
