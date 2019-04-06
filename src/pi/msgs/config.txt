@@ -1,6 +1,6 @@
 
 config-key robot-radius
-config-set 135
+config-set 137
 config-key wheel-radius
 config-set 37
 config-key peak-speed

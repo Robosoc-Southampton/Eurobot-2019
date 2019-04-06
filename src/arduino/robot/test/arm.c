@@ -22,6 +22,11 @@ void setup() {
 	robot::wait_for_connection();
 
 	rlogf("Setup complete");
+	rlogf("Use `T angle` to rotate stepper");
+	rlogf("Use `S 1-3` to set which servo to use (1 primary, 3 grabber)");
+	rlogf("Use `D angle` to set stepper angle");
+	rlogf("Use `R 0-3` to get state of servos");
+	rlogf("Use `K 1-3` to toggle which servos are active");
 }
 
 void loop() {
@@ -78,9 +83,15 @@ void loop() {
 				rlog(secondary_enabled ? "Secondary enabled" : "Secondary NOT enabled");
 				rlog(grabber_enabled ? "Grabber enabled" : "Grabber NOT enabled");
 				break;
-			case 1: rlogid(primaryServo.read()); break;
-			case 2: rlogid(secondaryServo.read()); break;
-			case 3: rlogid(grabberServo.read()); break;
+			case 1:
+				rlogi(primaryServo.read());
+				break;
+			case 2:
+				rlogi(secondaryServo.read());
+				break;
+			case 3:
+				rlogi(grabberServo.read());
+				break;
 		}
 	}
 

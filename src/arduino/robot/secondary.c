@@ -1,31 +1,40 @@
 
 #include "include/robot/secondary.h"
 
-/* Stepper control activities
- *  Controls the front grabber elevation through 4 up/down activities
- */
-Stepper raisingStepper(200, 8, 9, 10, 11);
+auto ledOn = LOW;
+Stepper raisingStepper(STEPPER_ROTATIONS, LIFTING_STEPPER_1, LIFTING_STEPPER_2, LIFTING_STEPPER_3, LIFTING_STEPPER_4);
+Servo gripServo;
+
+SharpIR sensors[] = {
+	SharpIR(A0, 220),
+	SharpIR(A1, 220)
+};
+
+///////////////////////////////////////////////////
 
 ACTIVITY(raiseStepper, cooldown=3000, count=1000) {
 	raisingStepper.step(2);
 }
 
+///////////////////////////////////////////////////
+
 ACTIVITY(lowerStepper, cooldown=3000, count=1000) {
 	raisingStepper.step(-2);
 }
+
+///////////////////////////////////////////////////////
 
 ACTIVITY(raiseStepperSmall, cooldown=3000, count=200) {
 	raisingStepper.step(2);
 }
 
+///////////////////////////////////////////////////////
+
 ACTIVITY(lowerStepperSmall, cooldown=3000, count=200) {
 	raisingStepper.step(-2);
 }
 
-/* LED blink activity
- *  Blinks the LED on and off 5 times
- */
-auto ledOn = LOW;
+///////////////////////////////////////////////
 
 ACTIVITY(blinkLED, cooldown=500000, count=10) {
 	ledOn ^= HIGH;
@@ -37,26 +46,27 @@ INIT(blinkLED) {
 	digitalWrite(LED_BUILTIN, LOW);
 }
 
-/* Servo control activities
- *  Controls the front grabber grip servo
- */
-Servo gripServo;
+//////////////////////////////////////////
 
-ACTIVITY(closeGrip, cooldown=0, count=0) {}
-ACTIVITY(openGrip, cooldown=0, count=0) {}
+ACTIVITY(closeGrip, cooldown=0, count=0) {
+
+}
 
 INIT(closeGrip) {
 	gripServo.write(35);
+}
+
+//////////////////////////////////////////
+
+ACTIVITY(openGrip, cooldown=0, count=0) {
+
 }
 
 INIT(openGrip) {
 	gripServo.write(0);
 }
 
-/* Pull cord activity
- *  Waits until the pull cord has been pulled before returning
- */
-const uint8_t PULL_CORD_PIN = 12;
+/////////////////////////////////////////////////
 
 ACTIVITY(pullCord, cooldown=1000000, count=900) {
 	/* do nothing */
@@ -70,49 +80,34 @@ PREDICATE(pullCord) {
 	return !robot::wait_for_pullcord(PULL_CORD_PIN);
 }
 
-/* Component reader
- *  Allows component values to be read remotely
- */
+//////////////////////////////////////////////////
+
 int16_t readComponentValue(int16_t component_ID) {
 	return 0u;
 }
 
-/* Activity 1 lowers front grabber
- * Activity 2 raises front grabber
- * Activity 3 lowers front grabber slightly
- * Activity 4 raises front grabber slightly
- * Activity 5 blinks the LED 5 times
- * Activity 6 closes the grabber grip
- * Activity 7 opens the grabber grip
- * Activity 100 waits for the pull cord
- */
 struct Activity* lookupActivity(uint16_t activity_ID) {
 	switch (activity_ID) {
-		case 1:
+		case ACTIVITY_LOWER_STEPPER:
 			return ACTIVITY(lowerStepper);
-		case 2:
+		case ACTIVITY_RAISE_STEPPER:
 			return ACTIVITY(raiseStepper);
-		case 3:
+		case ACTIVITY_LOWER_STEPPER_SMALL:
 			return ACTIVITY(lowerStepperSmall);
-		case 4:
+		case ACTIVITY_RAISE_STEPPER_SMALL:
 			return ACTIVITY(raiseStepperSmall);
-		case 5:
+		case ACTIVITY_BLINK_LED:
 			return ACTIVITY(blinkLED);
-		case 6:
+		case ACTIVITY_CLOSE_GRIP:
 			return ACTIVITY(closeGrip);
-		case 7:
+		case ACTIVITY_OPEN_GRIP:
 			return ACTIVITY(openGrip);
-		case 100:
+		case ACTIVITY_PULL_CORD:
 			return ACTIVITY(pullCord);
 	}
 
 	return nullptr;
 }
-
-SharpIR sensors[] = {
-	SharpIR(A0, 220),
-	SharpIR(A1, 220)
-};
 
 void setup() {
 	Serial.begin(9600);
@@ -124,10 +119,10 @@ void setup() {
 	robot::setup();
 
 	rlogf("Setting up raising stepper speed");
-	raisingStepper.setSpeed(200);
+	raisingStepper.setSpeed(STEPPER_SPEED);
 
 	rlogf("Attaching servo");
-	gripServo.attach(5);
+	gripServo.attach(GRIP_SERVO_PIN);
 	gripServo.write(0);
 
 	rlogf("Setting pull cord pin to input");

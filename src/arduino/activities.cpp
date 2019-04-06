@@ -14,6 +14,14 @@ namespace robot {
 	void set_activity_lookup(ActivityLookup lookup) {
 		lookup_activity = lookup;
 	}
+
+	void stop_current_activity() {
+		if (current_activity->stop != nullptr) {
+			(*current_activity->stop)();
+		}
+
+		current_activity = nullptr;
+	}
 	
 	void run_activity() {
 		if (current_activity == nullptr) return;
@@ -27,8 +35,8 @@ namespace robot {
 
 		// if activity predicate exists and returns false, stop activity
 		if (current_activity->predicate != nullptr && !(*current_activity->predicate)()) {
-			current_activity = nullptr;
 			rlogfd("Stopping activity due to predicate");
+			stop_current_activity();
 			return;
 		}
 
@@ -42,8 +50,8 @@ namespace robot {
 		}
 
 		if (!current_activity_call_countdown) {
-			current_activity = nullptr;
 			rlogfd("Stopping activity due to countdown");
+			stop_current_activity();
 		}
 	}
 

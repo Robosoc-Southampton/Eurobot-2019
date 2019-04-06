@@ -154,7 +154,7 @@ namespace robot {
 				break;
 			case 1100: // activity 1100 disables sensors
 				rlogf("Disabling all distance sensors");
-				robot::enable_distance_sensors();
+				robot::disable_distance_sensors();
 				break;
 			default: // run another activity
 				if (payload > 1000) {

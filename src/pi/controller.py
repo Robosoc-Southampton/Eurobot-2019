@@ -7,10 +7,10 @@ from lib.position import RobotPosition
 import sys
 import time
 
-PRIMARY_ADDRESS = "20:17:03:08:58:54"
-PRIMARY_CONFIG = "src/pi/msgs/config2.txt"
-# PRIMARY_ADDRESS = "20:17:03:08:60:45"
-# PRIMARY_CONFIG = "src/pi/msgs/config.txt"
+# PRIMARY_ADDRESS = "20:17:03:08:58:54"
+# PRIMARY_CONFIG = "src/pi/msgs/config2.txt"
+PRIMARY_ADDRESS = "20:17:03:08:60:45"
+PRIMARY_CONFIG = "src/pi/msgs/config.txt"
 # SECONDARY_ADDRESS = "20:17:03:08:58:54"
 # SECONDARY_CONFIG = "src/pi/msgs/config2.txt"
 

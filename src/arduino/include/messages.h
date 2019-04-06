@@ -12,7 +12,9 @@
 #include "debug.h"
 
 #define MESSAGE_SIZE 3
-#define MESSAGE_BUFFER_SIZE 150
+#ifndef MESSAGE_BUFFER_SIZE
+	#define MESSAGE_BUFFER_SIZE 150
+#endif
 
 struct Message {
 	char opcode;

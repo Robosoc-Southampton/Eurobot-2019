@@ -1,10 +1,16 @@
 
 #include "include/robot/primary.h"
 
-/* LED blink activity
- *  Blinks the LED on and off 5 times
- */
 auto ledOn = LOW;
+Stepper carouselStepper(STEPPER_ROTATIONS, CAROUSEL_STEPPER_1, CAROUSEL_STEPPER_2, CAROUSEL_STEPPER_3, CAROUSEL_STEPPER_4);
+Stepper armStepper(STEPPER_ROTATIONS, ARM_STEPPER_1, ARM_STEPPER_2, ARM_STEPPER_3, ARM_STEPPER_4);
+Servo primaryArmServo, secondaryArmServo, grabberServo;
+
+SharpIR sensors[] = {
+	SharpIR(A0, 220)
+};
+
+///////////////////////////////////////////////
 
 ACTIVITY(blinkLED, cooldown=500000, count=10) {
 	ledOn ^= HIGH;
@@ -16,10 +22,7 @@ INIT(blinkLED) {
 	digitalWrite(LED_BUILTIN, LOW);
 }
 
-/* Pull cord activity
- *  Waits until the pull cord has been pulled before returning
- */
-const uint8_t PULL_CORD_PIN = 12;
+/////////////////////////////////////////////////
 
 ACTIVITY(pullCord, cooldown=1000000, count=900) {
 	/* do nothing */
@@ -33,64 +36,141 @@ PREDICATE(pullCord) {
 	return !robot::wait_for_pullcord(PULL_CORD_PIN);
 }
 
-/* Robot arm activities
- *
- */
-Stepper armStepper(200, 22, 24, 26, 28);
+/////////////////////////////////////////////////////
 
-ACTIVITY(raiseArmSlightly, cooldown=3000, count=50) {
+ACTIVITY(raiseArmSlightly, cooldown=3000, count=25) {
 	armStepper.step(-2);
 }
 
-ACTIVITY(lowerArmSlightly, cooldown=3000, count=50) {
+/////////////////////////////////////////////////////
+
+ACTIVITY(lowerArmSlightly, cooldown=3000, count=25) {
 	armStepper.step(2);
 }
 
-/* Carousel rotation activities
- *  Turns the carousel by one puck
- */
-Stepper carouselStepper(200, 8, 9, 11, 10);
+////////////////////////////////////////////////////////
 
-ACTIVITY(rotateLeft, cooldown=3000, count=62) {
+ACTIVITY(lowerFromTopToSide, cooldown=3000, count=175) {
+	armStepper.step(-2);
+}
+
+INIT(lowerFromTopToSide) {
+	primaryArmServo.write(50);
+	secondaryArmServo.write(35);
+	grabberServo.write(ARM_GRABBER_OPEN);
+}
+
+///////////////////////////////////////////////////////////
+
+ACTIVITY(raiseFromSideToTopRed, cooldown=3000, count=175) {
+	armStepper.step(2);
+}
+
+INIT(raiseFromSideToTopRed) {
+	grabberServo.write(ARM_GRABBER_CLOSED);
+}
+
+STOP(raiseFromSideToTopRed) {
+	secondaryArmServo.write(20);
+	primaryArmServo.write(86);
+}
+
+/////////////////////////////////////////////////////////////
+
+ACTIVITY(raiseFromSideToTopGreen, cooldown=3000, count=175) {
+	armStepper.step(2);
+}
+
+INIT(raiseFromSideToTopGreen) {
+	grabberServo.write(ARM_GRABBER_CLOSED);
+}
+
+STOP(raiseFromSideToTopGreen) {
+	secondaryArmServo.write(20);
+	primaryArmServo.write(85);
+}
+
+////////////////////////////////////////////////////////////
+
+ACTIVITY(raiseFromSideToTopBlue, cooldown=3000, count=175) {
+	armStepper.step(2);
+}
+
+INIT(raiseFromSideToTopBlue) {
+	grabberServo.write(ARM_GRABBER_CLOSED);
+}
+
+STOP(raiseFromSideToTopBlue) {
+	secondaryArmServo.write(20);
+	primaryArmServo.write(83);
+}
+
+//////////////////////////////////////////////////////
+
+ACTIVITY(lowerIntoCarousel, cooldown=3000, count=75) {
+	armStepper.step(-2);
+}
+
+STOP(lowerIntoCarousel) {
+	grabberServo.write(ARM_GRABBER_OPEN);
+}
+
+//////////////////////////////////////////////////////
+
+ACTIVITY(raiseFromCarousel, cooldown=3000, count=75) {
+	armStepper.step(2);
+}
+
+///////////////////////////////////////////////////
+
+ACTIVITY(rotateCarousel, cooldown=3000, count=61) {
 	carouselStepper.step(-2);
 }
 
-/* Component reader
- *  Allows component values to be read remotely
- */
+INIT(rotateCarousel) {
+	carouselStepper.step(-1);
+}
+
+//////////////////////////////////////////////////
+
 int16_t readComponentValue(int16_t component_ID) {
 	return robot::drive::get_average_distance_travelled();
 }
 
-/* Activity 1 rotates the carousel anticlockwise (aerial view)
- * Activity 3 lowers the arm
- * Activity 4 raises the arm
- * Activity 5 blinks the LED 5 times
- * Activity 100 waits for the pull cord
- */
 struct Activity* lookupActivity(uint16_t activity_ID) {
 	switch (activity_ID) {
-		case 1:
-			return ACTIVITY(rotateLeft);
-		case 3:
+		case ACTIVITY_ROTATE_CAROUSEL:
+			return ACTIVITY(rotateCarousel);
+		case ACTIVITY_LOWER_ARM:
 			return ACTIVITY(lowerArmSlightly);
-		case 4:
+		case ACTIVITY_RAISE_ARM:
 			return ACTIVITY(raiseArmSlightly);
-		case 5:
+		case ACTIVITY_BLINK_LED:
 			return ACTIVITY(blinkLED);
-		case 100: 
+		case ACTIVITY_LOWER_ARM_FROM_TOP_TO_SIDE:
+			return ACTIVITY(lowerFromTopToSide);
+		case ACTIVITY_RAISE_ARM_FROM_SIDE_TO_TOP_RED:
+			return ACTIVITY(raiseFromSideToTopRed);
+		case ACTIVITY_RAISE_ARM_FROM_SIDE_TO_TOP_GREEN:
+			return ACTIVITY(raiseFromSideToTopGreen);
+		case ACTIVITY_RAISE_ARM_FROM_SIDE_TO_TOP_BLUE:
+			return ACTIVITY(raiseFromSideToTopBlue);
+		case ACTIVITY_LOWER_ARM_INTO_CAROUSEL:
+			return ACTIVITY(lowerIntoCarousel);
+		case ACTIVITY_RAISE_ARM_FROM_CAROUSEL:
+			return ACTIVITY(raiseFromCarousel);
+		case ACTIVITY_PULL_CORD: 
 			return ACTIVITY(pullCord);
 	}
 
 	return nullptr;
 }
 
-SharpIR sensors[] = {
-	SharpIR(A0, 606, 1202, 1112, 529, 124, 11)
-};
-
 void setup() {
 	Serial.begin(9600);
+
+	primaryArmServo.attach(PRIMARY_SERVO_PIN);
+	primaryArmServo.write(0);
 
 	robot::set_component_value_reader(&readComponentValue);
 	robot::set_activity_lookup(&lookupActivity);
@@ -99,13 +179,27 @@ void setup() {
 	robot::setup();
 
 	rlogf("Setting up arm stepper speed");
-	armStepper.setSpeed(50);
+	armStepper.setSpeed(STEPPER_SPEED);
 
 	rlogf("Setting up carousel stepper speed");
-	carouselStepper.setSpeed(50);
+	carouselStepper.setSpeed(STEPPER_SPEED);
+
+	rlogf("Attaching arm servos");
+	secondaryArmServo.attach(SECONDARY_SERVO_PIN);
+	grabberServo.attach(GRABBER_SERVO_PIN);
 
 	rlogf("Setting pull cord pin to input");
 	pinMode(PULL_CORD_PIN, INPUT);
+
+	rlogf("Setting initial arm position");
+	secondaryArmServo.write(20);
+	grabberServo.write(48);
+	primaryArmServo.write(0);
+	armStepper.step(350);
+	primaryArmServo.write(50);
+	armStepper.step(100);
+	primaryArmServo.write(90);
+	armStepper.step(130);
 
 	rlogf("Done");
 }
