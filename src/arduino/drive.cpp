@@ -8,7 +8,7 @@ namespace robot {
 		MD25 *md25;
 		bool is_moving = false;
 		bool is_moving_forward = false;
-		uint8_t SPEED_THRESHOLD = 5u;
+		uint8_t SPEED_THRESHOLD = 2u;
 		int32_t ENCODER_DELTA_THRESHOLD = 5;
 		int32_t left_encoder_measurements[3] = {},
 		       right_encoder_measurements[3] = {};
@@ -53,8 +53,8 @@ namespace robot {
 
 			is_moving = false;
 			is_moving_forward = false;
-			target_left_encoder_value  -= md25->readLeftEncoder();
-			target_right_encoder_value -= md25->readRightEncoder();
+			target_left_encoder_value  = 0;
+			target_right_encoder_value = 0;
 
 			md25->resetEncoders();
 		}
@@ -66,7 +66,6 @@ namespace robot {
 		void update_motor_speeds() {
 			if (!is_moving) return;
 
-			bool has_finished_movement = false;
 			uint8_t left_speed = 0, right_speed = 0;
 			int32_t left_delta, right_delta;
 
@@ -74,6 +73,7 @@ namespace robot {
 			right_encoder_measurements[2] = right_encoder_measurements[1];
 			 left_encoder_measurements[1] =  left_encoder_measurements[0];
 			right_encoder_measurements[1] = right_encoder_measurements[0];
+
 			 left_encoder_measurements[0] = md25->readLeftEncoder();
 			right_encoder_measurements[0] = md25->readRightEncoder();
 
@@ -89,6 +89,7 @@ namespace robot {
 				? 128u + encoder_delta_to_speed(right_delta)
 				: 128u - encoder_delta_to_speed(-right_delta);
 
+
 			if (left_speed - 128u < SPEED_THRESHOLD
 			 && 128u - left_speed < SPEED_THRESHOLD
 			 && right_speed - 128u < SPEED_THRESHOLD
@@ -100,10 +101,6 @@ namespace robot {
 			 &&  left_encoder_measurements[1] ==  left_encoder_measurements[2]
 			 && right_encoder_measurements[1] == right_encoder_measurements[2]
 			) {
-				has_finished_movement = true;
-			}
-
-			if (has_finished_movement) {
 				rlogfd("Finished movement");
 				stop();
 				robot::send_message('s', 0); // send a status(0) message

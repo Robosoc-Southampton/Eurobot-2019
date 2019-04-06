@@ -2,7 +2,14 @@
 
 USAGE="Usage: \"bin/upload\" ENTRY PORT\n\twhere ENTRY = primary, secondary or <test>\n\tnote: find PORT using \"bin/ports\"\n"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-PORT=$2
+PORT=""
+BOARD="arduino:avr:uno"
+
+if [ "$2" == "mega" ]; then
+	BOARD="arduino:avr:mega:cpu=atmega2560"
+else
+	PORT=$2
+fi
 
 if [ -z "$1" ]; then
 	printf "$USAGE"
@@ -17,4 +24,4 @@ if [ -z "$PORT" ]; then
 	printf "\e[1;35mUsing detected port $PORT\e[0m\n"
 fi
 
-$DIR/prep $1 && $DIR/arduino-cmd --upload --port "/dev/tty$PORT" --preserve-temp-files
+$DIR/prep $1 && $DIR/arduino-cmd --upload --port "/dev/tty$PORT" --preserve-temp-files --board $BOARD

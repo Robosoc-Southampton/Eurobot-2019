@@ -12,7 +12,9 @@
 #include "debug.h"
 
 #define MESSAGE_SIZE 3
-#define MESSAGE_BUFFER_SIZE 200
+#ifndef MESSAGE_BUFFER_SIZE
+	#define MESSAGE_BUFFER_SIZE 150
+#endif
 
 struct Message {
 	char opcode;
@@ -24,10 +26,16 @@ struct Message {
 namespace robot {
 	// stores commands
 	extern const uint8_t message_buffer[MESSAGE_BUFFER_SIZE * 3];
+	// start, end and eof pointers
+	// start = beginning, end = end, eof = end of full array
 	extern Message *message_buffer_start_ptr, *message_buffer_end_ptr, *message_buffer_eof_ptr;
+	// number of messages in buffer
 	extern size_t message_buffer_length;
+	// number of messages in a batch that have been read into the buffer but not fully loaded
 	extern int16_t message_buffer_consume_length;
+	// whether a batch is being read
 	extern bool message_buffer_consuming;
+	// whether the buffer is valid
 	extern bool is_message_buffer_valid;
 
 	// invalidates and validates the buffer

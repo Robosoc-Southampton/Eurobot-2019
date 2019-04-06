@@ -18,6 +18,7 @@
 #include "debug.h"
 #include "drive.h"
 #include "messages.h"
+#include "timeout.h"
 #include "component/MD25.h"
 
 typedef int16_t (*ReadComponentValue)(int16_t);

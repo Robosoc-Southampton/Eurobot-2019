@@ -26,6 +26,9 @@ namespace robot {
 				found_forward_message = true;
 				break;
 			}
+			else if (ptr->opcode == 'D') {
+				return;
+			}
 		}
 
 		if (!found_forward_message)
@@ -33,7 +36,13 @@ namespace robot {
 
 		rlogfd("Found forward message, rolling back");
 
+		rlogf("Distance travelled:");
+		rlogi(distance_travelled);
+		rlogf("New distance");
+		rlogi(ptr->payload - distance_travelled);
+
 		message_buffer_start_ptr--;
+		message_buffer_length++;
 		message_buffer_start_ptr->opcode = 'F';
 		message_buffer_start_ptr->payload = ptr->payload - distance_travelled;
 	}

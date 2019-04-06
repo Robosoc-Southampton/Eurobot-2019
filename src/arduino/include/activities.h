@@ -34,7 +34,7 @@ typedef Activity* (*ActivityLookup)(uint16_t);
 struct Activity {
 	// function to run when activity is triggered
 	// note that this function calls irrespective of the predicate
-	ActivityCallback init = nullptr;
+	ActivityCallback init = nullptr, stop = nullptr;
 	// function to run while activity is running
 	// the function should not be significantly blocking (no delay()s, pretty much)
 	ActivityCallback callback = nullptr;
@@ -58,6 +58,9 @@ namespace robot {
 	// sets the function to lookup an activity
 	// should be called prior to robot::setup()
 	void set_activity_lookup(ActivityLookup lookup);
+
+	// stops the current activity
+	void stop_current_activity();
 
 	// starts an activity running
 	void start_activity(Activity* activity);
@@ -85,6 +88,12 @@ namespace robot {
  * 	INIT(name) {
  * 		// code to run
  * 	}
+ *
+ * then, to assign a stop function
+ * 
+ *  STOP(name) {
+ *  	// code to run
+ *  }
  *
  * then, to assign a predicate...
  * 
@@ -134,3 +143,13 @@ struct name##_init_init_struct {\
 };\
 name##_init_init_struct name##_init_init_struct_instance;\
 void name##_init()
+
+#define STOP(name) \
+void name##_stop();\
+struct name##_stop_init_struct {\
+	name##_stop_init_struct() {\
+		name.stop = &name##_stop;\
+	}\
+};\
+name##_stop_init_struct name##_stop_init_struct_instance;\
+void name##_stop()

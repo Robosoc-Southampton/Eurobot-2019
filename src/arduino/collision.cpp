@@ -14,12 +14,11 @@ namespace robot {
 
 	bool check_distance_sensors() {
 		bool is_collision_detected = false;
-		int16_t THRESHOLD = 0;
 
 		if (!distance_sensor_enabled_mask) return false;
 
 		for (SharpIR *sensor = distance_sensors; sensor != distance_sensors + distance_sensor_count; ++sensor) {
-			if (sensor->enabled && sensor->read() < THRESHOLD) {
+			if (sensor->enabled && sensor->read() > sensor->trigger_voltage) {
 				return true;
 			}
 		}

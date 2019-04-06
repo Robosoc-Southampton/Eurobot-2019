@@ -165,7 +165,7 @@ def find_bt_addr():
 	nearby_devices = bluetooth.discover_devices()
 
 	for bdaddr in nearby_devices:
-		if bluetooth.lookup_name(bdaddr) != None and bluetooth.lookup_name(bdaddr).endswith("RS"):
+		if bluetooth.lookup_name(bdaddr) != None and bluetooth.lookup_name(bdaddr).strip().endswith("RS"):
 			return bdaddr
 
 	return None

@@ -5,6 +5,7 @@ opcodes = {
 	"forward": 'F',
 	"turn": 'T',
 	"do": 'D',
+	"echo": 'E',
 	"request": 'R',
 	"message": 'M',
 	"config-key": "K",
@@ -45,6 +46,7 @@ def parse_message(message):
 		return (opcode, config_keys[split[1]])
 	
 	data = int(split[1])
+
 	return (opcode, data)
 
 def parse_messages(messages):
@@ -52,7 +54,7 @@ def parse_messages(messages):
 
 	for line in messages.splitlines():
 		if line.find("//") != -1:
-			line = line[0:line:indexof("//")]
+			line = line[0:line.index("//")]
 		if line != "":
 			msgs.append(parse_message(line))
 

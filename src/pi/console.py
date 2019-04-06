@@ -32,7 +32,7 @@ for opt in sys.argv[1:]:
 bdaddr = options["addr"]
 
 if bdaddr == "auto":
-	bdaddr = comms.find_bt_addr()
+	bdaddr = lib.comms.find_bt_addr()
 
 	if bdaddr == None:
 		print("Couldn't find bluetooth device")
@@ -56,8 +56,8 @@ if not conn:
 	print("Failed to connect!")
 	sys.exit()
 
-conn.on_log(lambda msg: print("Log message received: " + msg.strip()))
-conn.on_message(lambda opcode, data: print("Message received (%s %s)" % (opcode, data)))
+conn.on_log(lambda msg: print("[" + str(time.clock()) + "] Log message received: " + msg.strip()))
+conn.on_message(lambda opcode, data: print("[" + str(time.clock()) + "] Message received (%s %s)" % (opcode, data)))
 conn.connect()
 conn.send(("message", 1))
 
@@ -117,7 +117,7 @@ while True:
 				continue
 
 			parsed = lib.messages.parse_message(inp)
-			print("Sending (" + lib.messages.opcodes[parsed[0]] + " " + str(parsed[1]) + ")")
+			print("Sending (" + (lib.messages.opcodes[parsed[0]] if len(parsed[0]) > 1 else parsed[0]) + " " + str(parsed[1]) + ")")
 			conn.send(parsed)
 			time.sleep(1)
 	except KeyboardInterrupt:

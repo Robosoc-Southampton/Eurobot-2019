@@ -1,6 +1,9 @@
 
 #include "include/component/MD25.h"
 
+const int TRIES = 3;
+const int TIMEOUT = 5000;
+
 MD25::MD25() {
 	acceleration = DEFAULT_ACCELERATION;
 	isSetup = false;
@@ -13,6 +16,9 @@ void MD25::setup() {
 	i2c_write(ACCELERATION_REGISTER, acceleration);
 
 	isSetup = true;
+
+	// delay required to allow the MD25 to actually initialise
+	delay(500);
 
 	resetEncoders();
 }
@@ -77,20 +83,43 @@ void MD25::i2c_write(uint8_t reg, uint8_t data) {
 int32_t MD25::i2c_read4(uint8_t reg) {
 	int32_t value = 0;
 
-	Wire.beginTransmission(MD25_ADDRESS);
-	Wire.write(reg);
-	Wire.endTransmission();
+	for (int t = TRIES; t; --t) {
+		// rlogfd("Hello :)");
 
-	Wire.requestFrom(MD25_ADDRESS, 4u); // request 4 bytes
+		long start_time = micros();
 
-	while(Wire.available() < 4); // wait for 4 bytes
+		value = 0;
 
-	for (uint8_t i = 0; i < 4; ++i) {
-		value <<= 8;
-		value += Wire.read();
+		delay(2); // TODO: maybe this helps?
+
+		Wire.beginTransmission(MD25_ADDRESS);
+		Wire.write(reg);
+		Wire.endTransmission();
+
+		delay(2); // TODO: maybe this helps?
+
+		Wire.requestFrom(MD25_ADDRESS, 4u); // request 4 bytes
+
+		while (Wire.available() < 4) { // wait for 4 bytes
+			if (micros() - start_time > TIMEOUT) break;
+		}
+
+		if (Wire.available() < 4) {
+			rlogf("Hit timeout!");
+			// delay(100);
+			while (Wire.available()) Wire.read();
+			continue;
+		}
+
+		for (uint8_t i = 0; i < 4; ++i) {
+			value <<= 8;
+			value += Wire.read();
+		}
+
+		return value;
 	}
 
-	return value;
+	rerrorf("Couldn't read value from encoder");
 }
 
 bool MD25::i2c_test_read4(uint8_t reg) {
@@ -103,7 +132,7 @@ bool MD25::i2c_test_read4(uint8_t reg) {
 
 	Wire.requestFrom(MD25_ADDRESS, 4u); // request 4 bytes
 
-	while (Wire.available() < 4 && millis() - start_time < 10000); // wait for 4 bytes
+	while (Wire.available() < 4 && millis() - start_time < 500); // wait for 4 bytes
 
 	for (int i = 0; Wire.available() && to_read; ++i) {
 		Wire.read();
@@ -120,7 +149,7 @@ uint8_t MD25::i2c_read1(uint8_t reg) {
 
 	Wire.requestFrom(MD25_ADDRESS, 1u); // request 4 bytes
 
-	while(Wire.available() < 1); // wait for 4 bytes
+	while (Wire.available() < 1); // wait for 4 bytes
 
 	return Wire.read();
 }

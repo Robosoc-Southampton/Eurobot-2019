@@ -14,13 +14,10 @@ namespace robot {
 		bool left_encoder_okay, right_encoder_okay;
 
 		robot::wait_for_connection();
-		rlogf("Connection established");
 
 		rlogf("Setting up MD25");
 		md25->setup();
 		rlogf("MD25 set up");
-
-		delay(500);
 
 		md25->testEncoders(&left_encoder_okay, &right_encoder_okay);
 
@@ -39,19 +36,25 @@ namespace robot {
 	}
 
 	void loop() {
-		if (drive::is_moving && drive::is_moving_forward && check_distance_sensors()) {
-			drive::stop();
-			int16_t distance = drive::get_average_distance_travelled();
-			robot::invalidate_message_buffer(distance);
-			robot::send_message('c', distance);
+		robot::check_timeout();
+
+		if (check_distance_sensors()) {
+			if (drive::is_moving && drive::is_moving_forward && robot::is_message_buffer_valid) {
+				drive::stop();
+				int16_t distance = drive::get_average_distance_travelled();
+				robot::invalidate_message_buffer(distance);
+				robot::send_message('c', distance);
+			}
 		}
-		else {
+		else if (!robot::is_message_buffer_valid) {
+			rlogfd("Revalidating message buffer");
 			robot::validate_message_buffer();
 		}
 
 		drive::update_motor_speeds();
+
 		run_activity();
-	
+
 		char opcode;
 		bool is_activity_running = current_activity != nullptr;
 		bool is_readable = false;
@@ -68,7 +71,7 @@ namespace robot {
 				// can only run next movement opcode if not currently moving
 				is_readable = !drive::is_moving;
 				break;
-			case 'D': // can only run next activity if the current one has finished
+			case 'D': case 'E': // can only run next activity/echo if the current one has finished
 				is_readable = !is_activity_running && !drive::is_moving;
 				break;
 			case 'R': case 'K': case 'S':
@@ -92,6 +95,7 @@ namespace robot {
 		char msg[2] = {'\0', '\0'};
 		msg[0] = message->opcode;
 		rlogd((const char*) msg);
+		rlogid(message->payload);
 
 		// act on message
 		consume_message(message);
@@ -110,10 +114,14 @@ namespace robot {
 			case 'D': // do
 				perform_do_command(message->payload);
 				break;
-			case 'K':
+			case 'E': // echo
+				rlogfd("Echoing");
+				robot::send_message('s', message->payload);
+				break;
+			case 'K': // config-key
 				robot::configuration::set_config_key(message->payload);
 				break;
-			case 'S':
+			case 'S': // config-set
 				robot::configuration::set_config_value(message->payload);
 				break;
 			case 'R': // request
@@ -146,7 +154,7 @@ namespace robot {
 				break;
 			case 1100: // activity 1100 disables sensors
 				rlogf("Disabling all distance sensors");
-				robot::enable_distance_sensors();
+				robot::disable_distance_sensors();
 				break;
 			default: // run another activity
 				if (payload > 1000) {
