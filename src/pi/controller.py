@@ -12,27 +12,29 @@ import time
 PRIMARY_ADDRESS = "20:17:03:08:60:45"
 PRIMARY_CONFIG = "src/pi/msgs/config.txt"
 # SECONDARY_ADDRESS = "20:17:03:08:58:54"
-# SECONDARY_CONFIG = "src/pi/msgs/config2.txt"
+SECONDARY_CONFIG = "src/pi/msgs/config2.txt"
 
 primary_connection = lib.comms.BluetoothConnection(PRIMARY_ADDRESS)
 # secondary_connection = lib.comms.BluetoothConnection(SECONDARY_ADDRESS)
+secondary_connection = lib.comms.SerialConnection("/dev/ttyACM0")
 
 if not primary_connection:
 	print("Failed to connect to primary")
 	sys.exit()
 
-def logger(msg):
-	print("[" + str(time.clock()) + "] Log message received (primary): " + msg.strip())
+if not secondary_connection:
+	print("Failed to connect to secondary")
+	sys.exit()
 
-primary_connection.on_log(logger)
-# secondary_connection.on_log(logger)
+primary_connection.on_log(lambda msg: print("[" + str(time.clock()) + "] Log message received (primary): " + msg.strip()))
+secondary_connection.on_log(lambda msg: print("[" + str(time.clock()) + "] Log message received (secondary): " + msg.strip()))
 primary_connection.connect()
-# secondary_connection.connect()
+secondary_connection.connect()
 
 time.sleep(1)
 
 primary_connection.send_batched(lib.messages.parse_message_file(PRIMARY_CONFIG))
-# secondary_connection.send_batched(lib.messages.parse_message_file(SECONDARY_CONFIG))
+secondary_connection.send_batched(lib.messages.parse_message_file(SECONDARY_CONFIG))
 
 time.sleep(1)
 
@@ -70,8 +72,9 @@ def getSide():
 	# return left if it was closer
 	return 'left' if readings[0] < readings[1] else 'right'
 
-side = getSide()
-print(side)
+# side = getSide()
+side = "left"
+print("on side: ", side)
 
 def prepareConfigure():
 	primary_configured = [False]
@@ -85,9 +88,9 @@ def prepareConfigure():
 				secondary_configured[0] = True 
 
 	primary_connection.on_message(lambda opcode, data: on_configure("primary", opcode, data))
-	# secondary_connection.on_message(lambda opcode, data: on_configure("secondary") if opcode == 'status' and data == 1 else None)
+	secondary_connection.on_message(lambda opcode, data: on_configure("secondary", opcode, data))
 
-	while not primary_configured[0]: # or not secondary_configured[0]
+	while not primary_configured[0] or not secondary_configured[0]:
 		pass
 
 	print("configured")
@@ -116,7 +119,24 @@ def configurePrimary():
 	primary_connection.send_batched(messages)
 
 def configureSecondary():
-	pass
+	messages = []
+
+	# left only for now
+	messages.append(('do', 1100))
+	messages.append(('turn', -90))
+	messages.append(('forward', 320))
+	messages.append(('forward', -20))
+	messages.append(('turn', -90))
+	messages.append(('forward', 40))
+	messages.append(('forward', -20))
+	messages.append(('turn', 90))
+	messages.append(('forward', -305))
+	messages.append(('turn', 90))
+
+	messages.append(('echo', 1))
+	messages.append(('do', 1000))
+
+	secondary_connection.send_batched(messages)
 
 configurePrimary()
 configureSecondary()
