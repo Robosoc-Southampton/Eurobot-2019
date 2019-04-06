@@ -14,4 +14,9 @@ if "%2" == "" (
 )
 
 call "%~dp0prep" %1
-call "%~dp0arduino-cmd" --upload --port %2 --preserve-temp-files
+
+if "%3" == "" (
+	call "%~dp0arduino-cmd" --upload --port %2 --preserve-temp-files
+) else (
+	call "%~dp0arduino-cmd" --upload --port %2 --preserve-temp-files --board "arduino:avr:mega:cpu=atmega2560"
+)
