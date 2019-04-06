@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
-import bluetooth
+try:
+	import bluetooth
+except ImportError:
+	pass
+
 import threading
 import serial
 import time
