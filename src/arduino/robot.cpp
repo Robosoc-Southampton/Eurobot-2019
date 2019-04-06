@@ -19,6 +19,9 @@ namespace robot {
 		md25->setup();
 		rlogf("MD25 set up");
 
+		rlogf("Battery voltage is:");
+		rlogi(md25->getBatteryVoltage());
+
 		md25->testEncoders(&left_encoder_okay, &right_encoder_okay);
 
 		if (!left_encoder_okay) rlogf("Left encoder not readable");

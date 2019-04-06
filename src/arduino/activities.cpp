@@ -43,7 +43,7 @@ namespace robot {
 		// while cooldown is satisfied
 		while (current_activity_call_countdown && current_activity_clock > current_activity->cooldown) {
 			// run the activity
-			current_activity->callback();
+			current_activity->callback(current_activity->count - current_activity_call_countdown);
 			// decrement the countdown and update clock
 			--current_activity_call_countdown;
 			current_activity_clock -= current_activity->cooldown;
@@ -68,10 +68,10 @@ namespace robot {
 		// set the countdown
 		current_activity_call_countdown = activity->count;
 
-		// run the activity's init function if applicable
-		if (current_activity->init != nullptr) {
-			rlogfd("Running activity init function");
-			(*current_activity->init)();
+		// run the activity's start function if applicable
+		if (current_activity->start != nullptr) {
+			rlogfd("Running activity start function");
+			(*current_activity->start)();
 		}
 	}
 	

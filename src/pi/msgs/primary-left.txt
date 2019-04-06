@@ -1,0 +1,49 @@
+
+do 100
+do 0
+
+turn 90
+forward 640
+turn -90
+forward 245
+
+do 10
+do 11
+do 14
+do 15
+do 1
+forward 108
+
+do 10
+do 12
+do 14
+do 15
+do 1
+forward 108
+
+do 10
+do 11
+do 14
+do 15
+do 1
+forward 108
+
+do 10
+do 13
+do 14
+do 15
+do 1
+forward 108
+
+do 10
+do 11
+do 14
+do 15
+do 1
+forward 108
+
+do 10
+do 12
+do 14
+do 15
+do 1

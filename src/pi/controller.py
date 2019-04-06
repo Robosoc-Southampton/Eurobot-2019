@@ -95,27 +95,23 @@ def prepareConfigure():
 def configurePrimary():
 	messages = []
 
+	# left only for now
 	messages.append(('do', 1100))
-	messages.append(('forward', 750))
-	messages.append(('do', 1000))
-	messages.append(('turn', 180))
-	messages.append(('forward', -100))
-	messages.append(('forward', 850))
+	messages.append(('forward', 330))
+	messages.append(('turn', -90))
+	messages.append(('do', 2))
+	messages.append(('forward', 205))
+	messages.append(('do', 10))
+	messages.append(('do', 101))
+	messages.append(('do', 102))
+	messages.append(('do', 0))
+	messages.append(('forward', -245))
+	messages.append(('turn', 90))
+	messages.append(('forward', -640))
+	messages.append(('turn', -90))
 	
-	if side == "left":
-		messages.append(('turn', 90))
-	else:
-		messages.append(('turn', -90))
-
-	messages.append(('forward', -200))
-	messages.append(('forward', 100))
-
-	if side == "left":
-		messages.append(('turn', 90))
-	else:
-		messages.append(('turn', -90))
-
 	messages.append(('echo', 1))
+	messages.append(('do', 1000))
 
 	primary_connection.send_batched(messages)
 
@@ -126,7 +122,17 @@ configurePrimary()
 configureSecondary()
 prepareConfigure()
 
-# connect to primary
-# tell primary to do side switch
-# wait for `status 1`
-# configure primary and secondary positions
+primary_connection.on_log(lambda msg: print("[" + str(time.clock()) + "] Log message received: " + msg.strip()))
+primary_connection.on_message(lambda opcode, data: print("[" + str(time.clock()) + "] Message received (%s %s)" % (opcode, data)))
+
+# secondary_connection.on_log(lambda msg: print("[" + str(time.clock()) + "] Log message received: " + msg.strip()))
+# secondary_connection.on_message(lambda opcode, data: print("[" + str(time.clock()) + "] Message received (%s %s)" % (opcode, data)))
+
+if side == "left":
+	primary_connection.send_batched(lib.messages.parse_message_file("src/pi/msgs/primary-left.txt"))
+else:
+	# TODO: remove
+	primary_connection.send_batched(lib.messages.parse_message_file("src/pi/msgs/primary-right.txt"))
+
+while True:
+	pass
