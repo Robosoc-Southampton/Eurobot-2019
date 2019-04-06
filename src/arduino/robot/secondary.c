@@ -41,7 +41,7 @@ ACTIVITY(blinkLED, cooldown=500000, count=10) {
 	digitalWrite(LED_BUILTIN, ledOn);
 }
 
-INIT(blinkLED) {
+START(blinkLED) {
 	ledOn = LOW;
 	digitalWrite(LED_BUILTIN, LOW);
 }
@@ -52,7 +52,7 @@ ACTIVITY(closeGrip, cooldown=0, count=0) {
 
 }
 
-INIT(closeGrip) {
+START(closeGrip) {
 	gripServo.write(35);
 }
 
@@ -62,7 +62,7 @@ ACTIVITY(openGrip, cooldown=0, count=0) {
 
 }
 
-INIT(openGrip) {
+START(openGrip) {
 	gripServo.write(0);
 }
 
@@ -72,7 +72,7 @@ ACTIVITY(pullCord, cooldown=1000000, count=900) {
 	/* do nothing */
 }
 
-INIT(pullCord) {
+START(pullCord) {
 	rlogf("Waiting for pull cord to be inserted");
 }
 

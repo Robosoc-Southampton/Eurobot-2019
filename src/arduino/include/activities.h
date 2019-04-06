@@ -22,8 +22,10 @@
 
 struct Activity;
 
+// a callback that starts or stops the activity
+typedef void (*ActivityOnceCallback)();
 // a callback that runs the activity
-typedef void (*ActivityCallback)();
+typedef void (*ActivityCallback)(int);
 // a callback that returns true if the activity should continue
 typedef bool (*ActivityPredicate)();
 // a callback that returns the activity from an activity ID
@@ -34,7 +36,7 @@ typedef Activity* (*ActivityLookup)(uint16_t);
 struct Activity {
 	// function to run when activity is triggered
 	// note that this function calls irrespective of the predicate
-	ActivityCallback init = nullptr, stop = nullptr;
+	ActivityOnceCallback start = nullptr, stop = nullptr;
 	// function to run while activity is running
 	// the function should not be significantly blocking (no delay()s, pretty much)
 	ActivityCallback callback = nullptr;
@@ -83,9 +85,9 @@ namespace robot {
  * 		// code to run
  * 	}
  *
- * then, to assign an init function
+ * then, to assign an start function
  *
- * 	INIT(name) {
+ * 	START(name) {
  * 		// code to run
  * 	}
  *
@@ -109,7 +111,7 @@ namespace robot {
 
 #define ACTIVITY3(name, c, n) \
 Activity name;\
-void name##_callback();\
+void name##_callback(int);\
 struct name##_init_struct {\
 	name##_init_struct() {\
 		name.n;\
@@ -118,7 +120,7 @@ struct name##_init_struct {\
 	}\
 };\
 name##_init_struct name##_init_struct_instance;\
-void name##_callback()
+void name##_callback(int activity_iteration)
 #define ACTIVITY2(name, cooldown) ACTIVITY3(name, cooldown, count=0)
 #define ACTIVITY1(ref) &ref
 #define GET_ACTIVITY_MACRO(_1,_2,_3,NAME,...) NAME
@@ -134,11 +136,11 @@ struct name##_init_predicate_struct {\
 name##_init_predicate_struct name##_init_predicate_struct_instance;\
 bool name##_predicate()
 
-#define INIT(name) \
+#define START(name) \
 void name##_init();\
 struct name##_init_init_struct {\
 	name##_init_init_struct() {\
-		name.init = &name##_init;\
+		name.start = &name##_init;\
 	}\
 };\
 name##_init_init_struct name##_init_init_struct_instance;\

@@ -20,6 +20,16 @@ If a particular component/feature isn't working, or the setup isn't completing, 
 
 ---
 
+## Carousel stepper is vibrating but not rotating
+
+The carousel steppers both jiggle/vibrate but don't rotate smoothly. Likely caused by a missing connection in the data cables/the data cables being ordered incorrectly.
+
+### Next steps
+
+Check the connections in the base of the robot (L298 connections and pins 8-11). Try just pushing them in, even if they seem okay. The ordering should always be right as the wires are taped. Also check the power wires coming out of the L298. There should be 2 of the same colour in each output.
+
+---
+
 ## Arduino restarting
 
 Any strange restarting behaviour on the Arduino is likely due to too much current being drawn through the Arduino's 3.3/5V connections, causing it to restart.

@@ -17,9 +17,21 @@ ACTIVITY(blinkLED, cooldown=500000, count=10) {
 	digitalWrite(LED_BUILTIN, ledOn);
 }
 
-INIT(blinkLED) {
+START(blinkLED) {
 	ledOn = LOW;
 	digitalWrite(LED_BUILTIN, LOW);
+}
+
+///////////////////////////////////////////////////
+
+ACTIVITY(rotateCarousel, cooldown=1500, count=120) {
+	carouselStepper.step(-1);
+}
+
+///////////////////////////////////////////////////
+
+ACTIVITY(rotateCarouselHalf, cooldown=1500, count=80) {
+	carouselStepper.step(-1);
 }
 
 /////////////////////////////////////////////////
@@ -28,7 +40,7 @@ ACTIVITY(pullCord, cooldown=1000000, count=900) {
 	/* do nothing */
 }
 
-INIT(pullCord) {
+START(pullCord) {
 	rlogf("Waiting for pull cord to be inserted");
 }
 
@@ -36,25 +48,39 @@ PREDICATE(pullCord) {
 	return !robot::wait_for_pullcord(PULL_CORD_PIN);
 }
 
-/////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
 
-ACTIVITY(raiseArmSlightly, cooldown=3000, count=25) {
-	armStepper.step(-2);
+ACTIVITY(pullCordInsert, cooldown=1000000, count=900) {
+	/* do nothing */
+}
+
+START(pullCordInsert) {
+	rlogf("Waiting for pull cord to be inserted");
+}
+
+PREDICATE(pullCordInsert) {
+	return digitalRead(PULL_CORD_PIN);
 }
 
 /////////////////////////////////////////////////////
 
-ACTIVITY(lowerArmSlightly, cooldown=3000, count=25) {
-	armStepper.step(2);
+ACTIVITY(raiseArmSlightly, cooldown=1500, count=50) {
+	armStepper.step(-1);
+}
+
+/////////////////////////////////////////////////////
+
+ACTIVITY(lowerArmSlightly, cooldown=1500, count=50) {
+	armStepper.step(1);
 }
 
 ////////////////////////////////////////////////////////
 
-ACTIVITY(lowerFromTopToSide, cooldown=3000, count=175) {
-	armStepper.step(-2);
+ACTIVITY(lowerFromTopToSide, cooldown=2000, count=300) {
+	armStepper.step(-1);
 }
 
-INIT(lowerFromTopToSide) {
+START(lowerFromTopToSide) {
 	primaryArmServo.write(50);
 	secondaryArmServo.write(35);
 	grabberServo.write(ARM_GRABBER_OPEN);
@@ -62,53 +88,64 @@ INIT(lowerFromTopToSide) {
 
 ///////////////////////////////////////////////////////////
 
-ACTIVITY(raiseFromSideToTopRed, cooldown=3000, count=175) {
-	armStepper.step(2);
+ACTIVITY(raiseFromSideToTopRed, cooldown=2000, count=400) {
+	if (activity_iteration >= 100) armStepper.step(1);
 }
 
-INIT(raiseFromSideToTopRed) {
+START(raiseFromSideToTopRed) {
 	grabberServo.write(ARM_GRABBER_CLOSED);
 }
 
 STOP(raiseFromSideToTopRed) {
+	secondaryArmServo.write(16);
+	primaryArmServo.write(83);
+}
+
+///////////////////////////////////////////////////////////
+
+ACTIVITY(raiseFromSideToRest, cooldown=2000, count=400) {
+	if (activity_iteration >= 100) armStepper.step(1);
+}
+
+STOP(raiseFromSideToRest) {
 	secondaryArmServo.write(20);
-	primaryArmServo.write(86);
+	primaryArmServo.write(90);
 }
 
 /////////////////////////////////////////////////////////////
 
-ACTIVITY(raiseFromSideToTopGreen, cooldown=3000, count=175) {
-	armStepper.step(2);
+ACTIVITY(raiseFromSideToTopGreen, cooldown=2000, count=400) {
+	if (activity_iteration >= 100) armStepper.step(1);
 }
 
-INIT(raiseFromSideToTopGreen) {
+START(raiseFromSideToTopGreen) {
 	grabberServo.write(ARM_GRABBER_CLOSED);
 }
 
 STOP(raiseFromSideToTopGreen) {
-	secondaryArmServo.write(20);
-	primaryArmServo.write(85);
+	secondaryArmServo.write(17);
+	primaryArmServo.write(80);
 }
 
 ////////////////////////////////////////////////////////////
 
-ACTIVITY(raiseFromSideToTopBlue, cooldown=3000, count=175) {
-	armStepper.step(2);
+ACTIVITY(raiseFromSideToTopBlue, cooldown=2000, count=400) {
+	if (activity_iteration >= 100) armStepper.step(1);
 }
 
-INIT(raiseFromSideToTopBlue) {
+START(raiseFromSideToTopBlue) {
 	grabberServo.write(ARM_GRABBER_CLOSED);
 }
 
 STOP(raiseFromSideToTopBlue) {
-	secondaryArmServo.write(20);
-	primaryArmServo.write(83);
+	secondaryArmServo.write(17);
+	primaryArmServo.write(77);
 }
 
 //////////////////////////////////////////////////////
 
-ACTIVITY(lowerIntoCarousel, cooldown=3000, count=75) {
-	armStepper.step(-2);
+ACTIVITY(lowerIntoCarousel, cooldown=1500, count=250) {
+	if (activity_iteration >= 100) armStepper.step(-1);
 }
 
 STOP(lowerIntoCarousel) {
@@ -117,18 +154,12 @@ STOP(lowerIntoCarousel) {
 
 //////////////////////////////////////////////////////
 
-ACTIVITY(raiseFromCarousel, cooldown=3000, count=75) {
-	armStepper.step(2);
+ACTIVITY(raiseFromCarousel, cooldown=1500, count=150) {
+	armStepper.step(1);
 }
 
-///////////////////////////////////////////////////
-
-ACTIVITY(rotateCarousel, cooldown=3000, count=61) {
-	carouselStepper.step(-2);
-}
-
-INIT(rotateCarousel) {
-	carouselStepper.step(-1);
+STOP(raiseFromCarousel) {
+	secondaryArmServo.write(5);
 }
 
 //////////////////////////////////////////////////
@@ -141,6 +172,8 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 	switch (activity_ID) {
 		case ACTIVITY_ROTATE_CAROUSEL:
 			return ACTIVITY(rotateCarousel);
+		case ACTIVITY_ROTATE_CAROUSEL_HALF:
+			return ACTIVITY(rotateCarouselHalf);
 		case ACTIVITY_LOWER_ARM:
 			return ACTIVITY(lowerArmSlightly);
 		case ACTIVITY_RAISE_ARM:
@@ -159,8 +192,12 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 			return ACTIVITY(lowerIntoCarousel);
 		case ACTIVITY_RAISE_ARM_FROM_CAROUSEL:
 			return ACTIVITY(raiseFromCarousel);
-		case ACTIVITY_PULL_CORD: 
+		case ACTIVITY_PULL_CORD:
 			return ACTIVITY(pullCord);
+		case ACTIVITY_PULL_CORD_INSERT:
+			return ACTIVITY(pullCordInsert);
+		case ACTIVITY_RAISE_ARM_FROM_SIDE_TO_REST:
+			return ACTIVITY(raiseFromSideToRest);
 	}
 
 	return nullptr;
@@ -179,10 +216,10 @@ void setup() {
 	robot::setup();
 
 	rlogf("Setting up arm stepper speed");
-	armStepper.setSpeed(STEPPER_SPEED);
+	armStepper.setSpeed(ARM_STEPPER_SPEED);
 
 	rlogf("Setting up carousel stepper speed");
-	carouselStepper.setSpeed(STEPPER_SPEED);
+	carouselStepper.setSpeed(CAROUSEL_STEPPER_SPEED);
 
 	rlogf("Attaching arm servos");
 	secondaryArmServo.attach(SECONDARY_SERVO_PIN);
