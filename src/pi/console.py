@@ -1,11 +1,16 @@
 
 import lib.comms
 import lib.messages
-import bluetooth
 import sys
 import time
 import readline
 import traceback
+
+bluetooth_enabled = True
+try:
+	import bluetooth
+except ImportError:
+	bluetooth_enabled = False
 
 options = {
 	"addr": "20:17:03:08:60:45",
@@ -29,20 +34,24 @@ for opt in sys.argv[1:]:
 	else:
 		options["files"].append(opt)
 
-bdaddr = options["addr"]
+if options["serial"] == "true":
+	print("Connecting serial")
 
-if bdaddr == "auto":
-	bdaddr = lib.comms.find_bt_addr()
+	conn = lib.comms.SerialConnection(options["port"])
+else:   
+	bdaddr = options["addr"]
+
+	if not bluetooth_enabled:
+		print("Bluetooth is disabled (Windows sucks")
+		sys.exit()
+
+	if bdaddr == "auto":
+		bdaddr = lib.comms.find_bt_addr()
 
 	if bdaddr == None:
 		print("Couldn't find bluetooth device")
 		sys.exit()
 
-if options["serial"] == "true":
-	print("Connecting serial")
-
-	conn = lib.comms.SerialConnection(options["port"])
-else:
 	print("Connecting bluetooth")
 	print("Addr: " + bdaddr)
 
@@ -78,28 +87,31 @@ if len(file_messages) > 0:
 if options["read"] == "true":
 	print("Enter 'q' to quit")
 
-	readline.set_auto_history(True)
+	try:
+		readline.set_auto_history(True)
 
-	def complete(options, begin, text, state):
-		values = []
+		def complete(options, begin, text, state):
+			values = []
 
-		for s in options:
-			if (s.startswith(text)):
-				values.append(s)
+			for s in options:
+				if (s.startswith(text)):
+					values.append(s)
 
-		if state < len(values):
-			return begin + values[state]
+			if state < len(values):
+				return begin + values[state]
 
-	def completer(text, state):
-		if text.find(" ") == -1:
-			return complete(lib.messages.opcodes.keys(), "", text, state)
+		def completer(text, state):
+			if text.find(" ") == -1:
+				return complete(lib.messages.opcodes.keys(), "", text, state)
 
-		if text.startswith("config-key "):
-			return complete(lib.messages.config_keys.keys(), "config-key ", text[11:], state)
+			if text.startswith("config-key "):
+				return complete(lib.messages.config_keys.keys(), "config-key ", text[11:], state)
 
-	readline.set_completer_delims("")
-	readline.parse_and_bind("tab: complete")
-	readline.set_completer(completer)
+		readline.set_completer_delims("")
+		readline.parse_and_bind("tab: complete")
+		readline.set_completer(completer)
+	except:
+		pass
 
 while True:
 	try:
