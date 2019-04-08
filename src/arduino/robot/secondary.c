@@ -12,26 +12,26 @@ SharpIR sensors[] = {
 
 ///////////////////////////////////////////////////
 
-ACTIVITY(raiseStepper, cooldown=3000, count=1000) {
-	raisingStepper.step(2);
+ACTIVITY(raiseStepper, cooldown=2000, count=3000) {
+	raisingStepper.step(1);
 }
 
 ///////////////////////////////////////////////////
 
-ACTIVITY(lowerStepper, cooldown=3000, count=1000) {
-	raisingStepper.step(-2);
+ACTIVITY(lowerStepper, cooldown=2000, count=3000) {
+	raisingStepper.step(-1);
 }
 
 ///////////////////////////////////////////////////////
 
-ACTIVITY(raiseStepperSmall, cooldown=3000, count=200) {
-	raisingStepper.step(2);
+ACTIVITY(raiseStepperSmall, cooldown=2000, count=400) {
+	raisingStepper.step(1);
 }
 
 ///////////////////////////////////////////////////////
 
-ACTIVITY(lowerStepperSmall, cooldown=3000, count=200) {
-	raisingStepper.step(-2);
+ACTIVITY(lowerStepperSmall, cooldown=2000, count=400) {
+	raisingStepper.step(-1);
 }
 
 ///////////////////////////////////////////////

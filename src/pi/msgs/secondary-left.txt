@@ -1,0 +1,29 @@
+
+do 7
+do 100
+do 0
+
+forward 150
+turn 90
+forward -300
+turn -45
+forward 200
+turn 25
+forward 120
+turn 110
+forward 100
+forward -140
+turn -90
+forward 240
+
+forward 360
+do 6
+do 2
+turn 90
+forward 240
+do 7
+do 1
+do 6
+do 2
+turn 90
+forward 240

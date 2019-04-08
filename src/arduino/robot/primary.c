@@ -65,13 +65,13 @@ PREDICATE(pullCordInsert) {
 /////////////////////////////////////////////////////
 
 ACTIVITY(raiseArmSlightly, cooldown=1500, count=50) {
-	armStepper.step(-1);
+	armStepper.step(1);
 }
 
 /////////////////////////////////////////////////////
 
 ACTIVITY(lowerArmSlightly, cooldown=1500, count=50) {
-	armStepper.step(1);
+	armStepper.step(-1);
 }
 
 ////////////////////////////////////////////////////////
@@ -162,6 +162,112 @@ STOP(raiseFromCarousel) {
 	secondaryArmServo.write(5);
 }
 
+/////////////////////////////////////////////////////////
+
+ACTIVITY(putInWeighingScales, cooldown=1500, count=300) {
+	if (activity_iteration >= 100) armStepper.step(-1);
+}
+
+START(putInWeighingScales) {
+	primaryArmServo.write(30);
+}
+
+STOP(putInWeighingScales) {
+	secondaryArmServo.write(50);
+	grabberServo.write(ARM_GRABBER_OPEN);
+}
+
+///////////////////////////////////////////////////////////////
+
+ACTIVITY(retractFromWeighingScales, cooldown=1500, count=200) {
+	armStepper.step(1);
+}
+
+START(retractFromWeighingScales) {
+	secondaryArmServo.write(10);
+}
+
+STOP(retractFromWeighingScales) {
+	primaryArmServo.write(85);
+}
+
+//////////////////////////////////////////////////////
+
+ACTIVITY(pickIntoCarousel, cooldown=1500, count=330) {
+	if (activity_iteration >= 200) armStepper.step(-1);
+}
+
+START(pickIntoCarousel) {
+	primaryArmServo.write(85);
+	secondaryArmServo.write(25);
+	grabberServo.write(ARM_GRABBER_OPEN);
+}
+
+STOP(pickIntoCarousel) {
+	primaryArmServo.write(80);
+}
+
+//////////////////////////////////////////////////////
+
+ACTIVITY(pickFromCarousel, cooldown=1500, count=180) {
+	if (activity_iteration >= 50) armStepper.step(1);
+}
+
+START(pickFromCarousel) {
+	grabberServo.write(ARM_GRABBER_CLOSED);
+}
+
+//////////////////////////////////////////////////////////////
+
+ACTIVITY(putOnParticleAccelerator, cooldown=1500, count=400) {
+	if (activity_iteration >= 100) armStepper.step(-1);
+}
+
+START(putOnParticleAccelerator) {
+	primaryArmServo.write(20);
+	secondaryArmServo.write(55);
+}
+
+STOP(putOnParticleAccelerator) {
+	grabberServo.write(ARM_GRABBER_OPEN);
+}
+
+/////////////////////////////////////////////////////////////////
+
+ACTIVITY(pullBackParticleAccelerator, cooldown=1500, count=300) {
+	armStepper.step(1);
+}
+
+START(pullBackParticleAccelerator) {
+	secondaryArmServo.write(10);
+}
+
+STOP(pullBackParticleAccelerator) {
+	primaryArmServo.write(85);
+}
+
+/////////////////////////////////////////////////////////////////
+
+ACTIVITY(allowRotate, cooldown=1500, count=15) {
+	armStepper.step(1);
+}
+
+START(allowRotate) {
+	primaryArmServo.write(85);
+	secondaryArmServo.write(15);
+}
+
+/////////////////////////////////////////////////////////////////
+
+ACTIVITY(unAllowRotate, cooldown=1500, count=15) {
+	armStepper.step(-1);
+}
+
+START(unAllowRotate) {
+	primaryArmServo.write(85);
+	secondaryArmServo.write(25);
+}
+
 //////////////////////////////////////////////////
 
 int16_t readComponentValue(int16_t component_ID) {
@@ -192,6 +298,22 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 			return ACTIVITY(lowerIntoCarousel);
 		case ACTIVITY_RAISE_ARM_FROM_CAROUSEL:
 			return ACTIVITY(raiseFromCarousel);
+		case ACTIVITY_PUT_IN_WEIGHING_SCALES:
+			return ACTIVITY(putInWeighingScales);
+		case ACTIVITY_RETRACT_FROM_WEIGHING_SCALES:
+			return ACTIVITY(retractFromWeighingScales);
+		case ACTIVITY_PICK_INTO_CAROUSEL:
+			return ACTIVITY(pickIntoCarousel);
+		case ACTIVITY_PICK_FROM_CAROUSEL:
+			return ACTIVITY(pickFromCarousel);
+		case ACTIVITY_PUT_ON_PARTICLE_ACCELERATOR:
+			return ACTIVITY(putOnParticleAccelerator);
+		case ACTIVITY_PULL_BACK_PARTICLE_ACCELERATOR:
+			return ACTIVITY(pullBackParticleAccelerator);
+		case ACTIVITY_ALLOW_ROTATE:
+			return ACTIVITY(allowRotate);
+		case ACTIVITY_UN_ALLOW_ROTATE:
+			return ACTIVITY(unAllowRotate);
 		case ACTIVITY_PULL_CORD:
 			return ACTIVITY(pullCord);
 		case ACTIVITY_PULL_CORD_INSERT:

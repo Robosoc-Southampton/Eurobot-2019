@@ -85,6 +85,7 @@ int32_t MD25::i2c_read4(uint8_t reg) {
 
 	for (int t = TRIES; t; --t) {
 		// rlogfd("Hello :)");
+		if (t != TRIES) rlogf("Here");
 
 		long start_time = micros();
 
@@ -106,8 +107,8 @@ int32_t MD25::i2c_read4(uint8_t reg) {
 
 		if (Wire.available() < 4) {
 			rlogf("Hit timeout!");
-			// delay(100);
 			while (Wire.available()) Wire.read();
+			delay(10);
 			continue;
 		}
 

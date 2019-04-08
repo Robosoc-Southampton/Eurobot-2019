@@ -7,16 +7,21 @@ from lib.position import RobotPosition
 import sys
 import time
 
-# PRIMARY_ADDRESS = "20:17:03:08:58:54"
-# PRIMARY_CONFIG = "src/pi/msgs/config2.txt"
 PRIMARY_ADDRESS = "20:17:03:08:60:45"
 PRIMARY_CONFIG = "src/pi/msgs/config.txt"
 # SECONDARY_ADDRESS = "20:17:03:08:58:54"
 SECONDARY_CONFIG = "src/pi/msgs/config2.txt"
 
-primary_connection = lib.comms.BluetoothConnection(PRIMARY_ADDRESS)
-# secondary_connection = lib.comms.BluetoothConnection(SECONDARY_ADDRESS)
-secondary_connection = lib.comms.SerialConnection("/dev/ttyACM0")
+if "-dp" in sys.argv:
+	primary_connection = lib.comms.DummyConnection()
+else:
+	primary_connection = lib.comms.BluetoothConnection(PRIMARY_ADDRESS)
+
+if "-ds" in sys.argv:
+	secondary_connection = lib.comms.DummyConnection()
+else:
+	# secondary_connection = lib.comms.BluetoothConnection(SECONDARY_ADDRESS)
+	secondary_connection = lib.comms.SerialConnection("/dev/ttyACM0")
 
 if not primary_connection:
 	print("Failed to connect to primary")
@@ -76,25 +81,6 @@ def getSide():
 side = "left"
 print("on side: ", side)
 
-def prepareConfigure():
-	primary_configured = [False]
-	secondary_configured = [False]
-
-	def on_configure(robot, opcode, data):
-		if opcode == "status" and data == 1:
-			if robot == "primary":
-				primary_configured[0] = True
-			elif robot == "secondary":
-				secondary_configured[0] = True 
-
-	primary_connection.on_message(lambda opcode, data: on_configure("primary", opcode, data))
-	secondary_connection.on_message(lambda opcode, data: on_configure("secondary", opcode, data))
-
-	while not primary_configured[0] or not secondary_configured[0]:
-		pass
-
-	print("configured")
-
 def configurePrimary():
 	messages = []
 
@@ -138,21 +124,44 @@ def configureSecondary():
 
 	secondary_connection.send_batched(messages)
 
+def waitForConfigure():
+	primary_configured = ["-dp" in sys.argv]
+	secondary_configured = ["-ds" in sys.argv]
+
+	def on_configure(robot, opcode, data):
+		if opcode == "status" and data == 1:
+			if robot == "primary":
+				primary_configured[0] = True
+			elif robot == "secondary":
+				secondary_configured[0] = True 
+
+	primary_connection.on_message(lambda opcode, data: on_configure("primary", opcode, data))
+	secondary_connection.on_message(lambda opcode, data: on_configure("secondary", opcode, data))
+
+	while not primary_configured[0] or not secondary_configured[0]:
+		pass
+
+	print("configured")
+
 configurePrimary()
 configureSecondary()
-prepareConfigure()
+waitForConfigure()
 
-primary_connection.on_log(lambda msg: print("[" + str(time.clock()) + "] Log message received: " + msg.strip()))
-primary_connection.on_message(lambda opcode, data: print("[" + str(time.clock()) + "] Message received (%s %s)" % (opcode, data)))
+primary_connection.send(("message", 7))
+secondary_connection.send(("message", 7))
 
-# secondary_connection.on_log(lambda msg: print("[" + str(time.clock()) + "] Log message received: " + msg.strip()))
-# secondary_connection.on_message(lambda opcode, data: print("[" + str(time.clock()) + "] Message received (%s %s)" % (opcode, data)))
+primary_connection.on_message(lambda opcode, data: print("[" + str(time.clock()) + "] (primary) Message received (%s %s)" % (opcode, data)))
+secondary_connection.on_message(lambda opcode, data: print("[" + str(time.clock()) + "] (secondary) Message received (%s %s)" % (opcode, data)))
 
 if side == "left":
 	primary_connection.send_batched(lib.messages.parse_message_file("src/pi/msgs/primary-left.txt"))
 else:
-	# TODO: remove
 	primary_connection.send_batched(lib.messages.parse_message_file("src/pi/msgs/primary-right.txt"))
+
+if side == "left":
+	secondary_connection.send_batched(lib.messages.parse_message_file("src/pi/msgs/secondary-left.txt"))
+else:
+	secondary_connection.send_batched(lib.messages.parse_message_file("src/pi/msgs/secondary-right.txt"))
 
 while True:
 	pass
