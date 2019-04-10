@@ -2,30 +2,30 @@
 #include "include/drive.h"
 #include <PID_v1.h>
 
+double left_encoder_measurements[3] = {},
+right_encoder_measurements[3] = {};
+double left_speed = 0, right_speed = 0;
+double target_left_encoder_value = 0, target_right_encoder_value = 0;
 
+//Declare PID variables
+//Multiple of these may be needed yto better optimise for v short and v long drives
+//Still needs calibration 
+double Kp = 1;
+double Ki = 4.5;
+double Kd = 20;
+
+PID leftmotorspeed(&left_encoder_measurements[0], &left_speed, &target_left_encoder_value, Kp, Ki, Kd, DIRECT);
+PID rightmotorspeed(&right_encoder_measurements[0], &right_speed, &target_right_encoder_value, Kp, Ki, Kd, DIRECT);
 
 namespace robot {
 	namespace drive {
-
-		double target_left_encoder_value = 0, target_right_encoder_value = 0;
+				
 		MD25 *md25;
 		bool is_moving = false;
 		bool is_moving_forward = false;
 		uint8_t SPEED_THRESHOLD = 2u;
 		int32_t ENCODER_DELTA_THRESHOLD = 2;
-		double left_encoder_measurements[3] = {},
-		       right_encoder_measurements[3] = {};
-		double left_speed = 0, right_speed = 0;
-
-		//Declare PID variables
-		//Multiple of these may be needed yto better optimise for v short and v long drives
-		//Still needs calibration 
-		double Kp = 1;
-		double Ki = 4.5;
-		double Kd = 20;
-
-		PID leftmotorspeed(&left_encoder_measurements[0], &left_speed, &target_left_encoder_value, Kp, Ki, Kd, DIRECT);
-		PID rightmotorspeed(&right_encoder_measurements[0], &right_speed, &target_right_encoder_value, Kp, Ki, Kd, DIRECT);
+		
 
 		void setup()
 		{			
@@ -40,7 +40,7 @@ namespace robot {
 		}
 
 		void init_movement() {
-			 left_encoder_measurements[0] =  left_encoder_measurements[1] = md25->readLeftEncoder();
+			left_encoder_measurements[0] =  left_encoder_measurements[1] = md25->readLeftEncoder();
 			right_encoder_measurements[0] = right_encoder_measurements[1] = md25->readRightEncoder();
 
 			is_moving = true;
