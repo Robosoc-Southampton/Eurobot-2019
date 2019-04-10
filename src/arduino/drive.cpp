@@ -97,26 +97,18 @@ namespace robot {
 
 			leftmotorspeed.Compute();
 			rightmotorspeed.Compute();
+						
+			left_encoder_measurements[2] = left_encoder_measurements[1];
+			right_encoder_measurements[2] = right_encoder_measurements[1];
+			left_encoder_measurements[1] = left_encoder_measurements[0];
+			right_encoder_measurements[1] = right_encoder_measurements[0];
 
 			int32_t left_delta, right_delta;
 			left_delta = target_left_encoder_value - *left_encoder_measurements;
 			right_delta = target_right_encoder_value - *right_encoder_measurements;
 			is_moving_forward = left_delta > 0 || right_delta > 0;
 
-			/*
-			uint8_t left_speed = 0, right_speed = 0;
-			int32_t left_delta, right_delta;
-
-			 left_encoder_measurements[2] =  left_encoder_measurements[1];
-			right_encoder_measurements[2] = right_encoder_measurements[1];
-			 left_encoder_measurements[1] =  left_encoder_measurements[0];
-			right_encoder_measurements[1] = right_encoder_measurements[0];
-
-			 left_encoder_measurements[0] = md25->readLeftEncoder();
-			right_encoder_measurements[0] = md25->readRightEncoder();
-
-			left_delta = target_left_encoder_value - *left_encoder_measurements;
-			right_delta = target_right_encoder_value - *right_encoder_measurements;
+			/*		
 
 			is_moving_forward = left_delta > 0 || right_delta > 0;
 
