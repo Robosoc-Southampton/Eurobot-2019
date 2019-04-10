@@ -1,17 +1,43 @@
 
 #include "include/drive.h"
+#include <PID_v1.h>
+
+
 
 namespace robot {
 	namespace drive {
 
-		int32_t target_left_encoder_value = 0, target_right_encoder_value = 0;
+		double target_left_encoder_value = 0, target_right_encoder_value = 0;
 		MD25 *md25;
 		bool is_moving = false;
 		bool is_moving_forward = false;
 		uint8_t SPEED_THRESHOLD = 2u;
 		int32_t ENCODER_DELTA_THRESHOLD = 2;
-		int32_t left_encoder_measurements[3] = {},
+		double left_encoder_measurements[3] = {},
 		       right_encoder_measurements[3] = {};
+		double left_speed = 0, right_speed = 0;
+
+		//Declare PID variables
+		//Multiple of these may be needed yto better optimise for v short and v long drives
+		//Still needs calibration 
+		double Kp = 1;
+		double Ki = 4.5;
+		double Kd = 20;
+
+		PID leftmotorspeed(&left_encoder_measurements[0], &left_speed, &target_left_encoder_value, Kp, Ki, Kd, DIRECT);
+		PID rightmotorspeed(&right_encoder_measurements[0], &right_speed, &target_right_encoder_value, Kp, Ki, Kd, DIRECT);
+
+		void setup()
+		{			
+			leftmotorspeed.SetMode(AUTOMATIC);				//Turn on Left motor PID
+			rightmotorspeed.SetMode(AUTOMATIC);				//Turn on Right motor PID
+			leftmotorspeed.SetSampleTime(20);				//Set left sample interval in miliseconds
+			rightmotorspeed.SetSampleTime(20);				//Set left sample interval in miliseconds
+			//leftmotorspeed.SetTunings(Kp, Ki, Kd)			//Change the left PID constants if needed
+			//rightmotorspeed.SetTunings(Kp, Ki, Kd)		//Change the right PID constants if needed
+			//leftmotorspeed.SetOutputLimits(0, 255)			//Change left min/max Speed value- Default is 0-255, same as MD25
+			//rightmotorspeed.SetOutputLimits(0, 255)			//Change right min/max Speed value- Default is 0-255, same as MD25
+		}
 
 		void init_movement() {
 			 left_encoder_measurements[0] =  left_encoder_measurements[1] = md25->readLeftEncoder();
@@ -66,6 +92,18 @@ namespace robot {
 		void update_motor_speeds() {
 			if (!is_moving) return;
 
+			left_encoder_measurements[0] = md25->readLeftEncoder();
+			right_encoder_measurements[0] = md25->readRightEncoder();
+
+			leftmotorspeed.Compute();
+			rightmotorspeed.Compute();
+
+			int32_t left_delta, right_delta;
+			left_delta = target_left_encoder_value - *left_encoder_measurements;
+			right_delta = target_right_encoder_value - *right_encoder_measurements;
+			is_moving_forward = left_delta > 0 || right_delta > 0;
+
+			/*
 			uint8_t left_speed = 0, right_speed = 0;
 			int32_t left_delta, right_delta;
 
@@ -88,6 +126,7 @@ namespace robot {
 			right_speed = right_delta >= 0
 				? 128u + encoder_delta_to_speed(right_delta)
 				: 128u - encoder_delta_to_speed(-right_delta);
+				*/
 
 
 			if (left_speed - 128u < SPEED_THRESHOLD

@@ -17,6 +17,9 @@ namespace robot {
 		extern MD25 *md25;
 		extern bool is_moving, is_moving_forward;
 
+		// setup the PID control
+		void setup();
+
 		// move forward `distance`mm
 		void forward(int16_t distance);
 
