@@ -33,6 +33,7 @@ namespace robot {
 	void check_timeout() {
 		if (started && (millis() - start_time) >= TIMEOUT) {
 			digitalWrite(LED_BUILTIN, HIGH);
+			robot::drive::stop();
 			rlogf("Stopping robot due to timeout");
 
 			while (true);

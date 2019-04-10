@@ -1,113 +1,138 @@
 
+// initial wait
 do 1100
 
 do 100
 do 0
 
+// go to side grabbing position
 turn 90
 forward 640
 turn -90
 forward 245
+do 0
+config-key peak-speed
+config-set 30
 
+// get first atom and move forward
 do 10
 do 11
 do 14
 do 15
 do 1
-do 0
-forward 108
+forward 107
 
+// get second atom and move forward
 do 10
 do 12
 do 14
 do 15
 do 1
-do 0
-forward 108
+forward 107
 
+// get third atom and move forward
 do 10
 do 11
 do 14
 do 15
 do 1
-do 0
-forward 108
+forward 107
 
+// get fourth atom and move forward
+do 200
 do 10
 do 13
 do 14
 do 15
+do 201
 do 1
-do 0
-forward 108
+forward 107
 
+// get fifth atom and move forward
 do 10
 do 11
 do 14
 do 15
 do 1
-do 0
-forward 108
+forward 107
 
+// get sixth atom
 do 10
 do 12
 do 0
 
+// move into position for dropping atoms off
 forward 100
 turn 20
 forward 200
 turn -40
 
+// drop atoms off and rotate carousel accordingly
 do 20
-do 1
-do 1
-do 1
-do 1
-do 1
+do 250
 do 21
 do 22
 do 23
 do 20
 do 1
 do 1
+do 200
 do 21
 do 22
 do 23
 do 20
+do 201
 do 1
 do 21
 
+// move to particle accelerator position
 turn -70
-forward 1190
+config-set 60
+forward 1185
+do 0
+config-set 40
 turn -90
-forward -270
+forward -330
+do 0
+config-set 30
+
+// drop off first red
 do 22
 do 23
 do 24
 do 0
-forward -150
-do 1
-do 1
-do 1
-do 1
-do 1
+
+// push blue down and release red
+forward -100
+do 250
 do 25
 do 0
-forward 150
+forward 100
+
+// drop off second red
 do 22
 do 23
 do 24
 do 0
-forward -150
+
+// push red down and release red
+forward -100
 do 1
 do 1
 do 25
 do 0
-forward 150
+forward 100
+
+// drop off third red
 do 22
 do 23
 do 24
 do 0
-forward -150
+
+// push red down and release red
+forward -100
 do 25
-forward 150
+do 0
+forward -590
+
+echo 2020

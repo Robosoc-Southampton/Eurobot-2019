@@ -9,6 +9,7 @@
 
 #include <Arduino.h>
 #include "debug.h"
+#include "drive.h"
 
 namespace robot {
 	const int32_t TIMEOUT = 98000;

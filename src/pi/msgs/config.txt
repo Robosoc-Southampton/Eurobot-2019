@@ -6,4 +6,4 @@ config-set 39
 config-key peak-speed
 config-set 40
 config-key acceleration
-config-set 3
+config-set 4

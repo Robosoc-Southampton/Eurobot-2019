@@ -24,13 +24,19 @@ START(blinkLED) {
 
 ///////////////////////////////////////////////////
 
-ACTIVITY(rotateCarousel, cooldown=1500, count=120) {
+ACTIVITY(rotateCarousel, cooldown=4000, count=121) {
 	carouselStepper.step(-1);
 }
 
-///////////////////////////////////////////////////
+///////////////////////////////////////////////////////
 
 ACTIVITY(rotateCarouselHalf, cooldown=1500, count=80) {
+	carouselStepper.step(-1);
+}
+
+/////////////////////////////////////////////////////
+
+ACTIVITY(rotateCarousel5, cooldown=4000, count=595) {
 	carouselStepper.step(-1);
 }
 
@@ -88,8 +94,8 @@ START(lowerFromTopToSide) {
 
 ///////////////////////////////////////////////////////////
 
-ACTIVITY(raiseFromSideToTopRed, cooldown=2000, count=400) {
-	if (activity_iteration >= 100) armStepper.step(1);
+ACTIVITY(raiseFromSideToTopRed, cooldown=2000, count=450) {
+	if (activity_iteration >= 100 && activity_iteration < 400) armStepper.step(1);
 }
 
 START(raiseFromSideToTopRed) {
@@ -98,13 +104,13 @@ START(raiseFromSideToTopRed) {
 
 STOP(raiseFromSideToTopRed) {
 	secondaryArmServo.write(16);
-	primaryArmServo.write(83);
+	primaryArmServo.write(85);
 }
 
 ///////////////////////////////////////////////////////////
 
-ACTIVITY(raiseFromSideToRest, cooldown=2000, count=400) {
-	if (activity_iteration >= 100) armStepper.step(1);
+ACTIVITY(raiseFromSideToRest, cooldown=2000, count=450) {
+	if (activity_iteration >= 100 && activity_iteration < 400) armStepper.step(1);
 }
 
 STOP(raiseFromSideToRest) {
@@ -114,8 +120,8 @@ STOP(raiseFromSideToRest) {
 
 /////////////////////////////////////////////////////////////
 
-ACTIVITY(raiseFromSideToTopGreen, cooldown=2000, count=400) {
-	if (activity_iteration >= 100) armStepper.step(1);
+ACTIVITY(raiseFromSideToTopGreen, cooldown=2000, count=450) {
+	if (activity_iteration >= 100 && activity_iteration < 400) armStepper.step(1);
 }
 
 START(raiseFromSideToTopGreen) {
@@ -129,8 +135,8 @@ STOP(raiseFromSideToTopGreen) {
 
 ////////////////////////////////////////////////////////////
 
-ACTIVITY(raiseFromSideToTopBlue, cooldown=2000, count=400) {
-	if (activity_iteration >= 100) armStepper.step(1);
+ACTIVITY(raiseFromSideToTopBlue, cooldown=2000, count=450) {
+	if (activity_iteration >= 100 && activity_iteration < 400) armStepper.step(1);
 }
 
 START(raiseFromSideToTopBlue) {
@@ -164,12 +170,12 @@ STOP(raiseFromCarousel) {
 
 /////////////////////////////////////////////////////////
 
-ACTIVITY(putInWeighingScales, cooldown=1500, count=300) {
-	if (activity_iteration >= 100) armStepper.step(-1);
+ACTIVITY(putInWeighingScales, cooldown=1500, count=400) {
+	if (activity_iteration >= 200) armStepper.step(-1);
 }
 
 START(putInWeighingScales) {
-	primaryArmServo.write(30);
+	primaryArmServo.write(20);
 }
 
 STOP(putInWeighingScales) {
@@ -219,13 +225,13 @@ START(pickFromCarousel) {
 
 //////////////////////////////////////////////////////////////
 
-ACTIVITY(putOnParticleAccelerator, cooldown=1500, count=400) {
-	if (activity_iteration >= 100) armStepper.step(-1);
+ACTIVITY(putOnParticleAccelerator, cooldown=1500, count=470) {
+	if (activity_iteration >= 200) armStepper.step(-1);
+	if (activity_iteration == 200) secondaryArmServo.write(55);
 }
 
 START(putOnParticleAccelerator) {
 	primaryArmServo.write(20);
-	secondaryArmServo.write(55);
 }
 
 STOP(putOnParticleAccelerator) {
@@ -234,7 +240,7 @@ STOP(putOnParticleAccelerator) {
 
 /////////////////////////////////////////////////////////////////
 
-ACTIVITY(pullBackParticleAccelerator, cooldown=1500, count=300) {
+ACTIVITY(pullBackParticleAccelerator, cooldown=1500, count=270) {
 	armStepper.step(1);
 }
 
@@ -246,7 +252,7 @@ STOP(pullBackParticleAccelerator) {
 	primaryArmServo.write(85);
 }
 
-/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////
 
 ACTIVITY(allowRotate, cooldown=1500, count=15) {
 	armStepper.step(1);
@@ -257,7 +263,7 @@ START(allowRotate) {
 	secondaryArmServo.write(15);
 }
 
-/////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////
 
 ACTIVITY(unAllowRotate, cooldown=1500, count=15) {
 	armStepper.step(-1);
@@ -266,6 +272,26 @@ ACTIVITY(unAllowRotate, cooldown=1500, count=15) {
 START(unAllowRotate) {
 	primaryArmServo.write(85);
 	secondaryArmServo.write(25);
+}
+
+////////////////////////////////////////////
+
+ACTIVITY(fastArm, cooldown=1500, count=0) {
+	
+}
+
+START(fastArm) {
+	armStepper.setSpeed(ARM_STEPPER_SPEED_FAST);
+}
+
+////////////////////////////////////////////
+
+ACTIVITY(slowArm, cooldown=1500, count=0) {
+	
+}
+
+START(slowArm) {
+	armStepper.setSpeed(ARM_STEPPER_SPEED_SLOW);
 }
 
 //////////////////////////////////////////////////
@@ -320,6 +346,12 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 			return ACTIVITY(pullCordInsert);
 		case ACTIVITY_RAISE_ARM_FROM_SIDE_TO_REST:
 			return ACTIVITY(raiseFromSideToRest);
+		case ACTIVITY_ROTATE_CAROUSEL_5:
+			return ACTIVITY(rotateCarousel5);
+		case ACTIVITY_FAST_ARM:
+			return ACTIVITY(fastArm);
+		case ACTIVITY_SLOW_ARM:
+			return ACTIVITY(slowArm);
 	}
 
 	return nullptr;
@@ -337,10 +369,10 @@ void setup() {
 
 	robot::setup();
 
-	rlogf("Setting up arm stepper speed");
-	armStepper.setSpeed(ARM_STEPPER_SPEED);
+	rlogf("Setting initial arm stepper speed");
+	armStepper.setSpeed(50);
 
-	rlogf("Setting up carousel stepper speed");
+	rlogf("Setting carousel stepper speed");
 	carouselStepper.setSpeed(CAROUSEL_STEPPER_SPEED);
 
 	rlogf("Attaching arm servos");
@@ -359,6 +391,9 @@ void setup() {
 	armStepper.step(100);
 	primaryArmServo.write(90);
 	armStepper.step(130);
+
+	rlogf("Setting arm stepper speed");
+	armStepper.setSpeed(ARM_STEPPER_SPEED_FAST);
 
 	rlogf("Done");
 }

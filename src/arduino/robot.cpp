@@ -4,6 +4,7 @@
 namespace robot {
 
 	ReadComponentValue component_value_reader = nullptr;
+	bool __activity_duration_limit_warning = false;
 
 	void set_component_value_reader(ReadComponentValue reader) {
 		component_value_reader = reader;
@@ -56,7 +57,12 @@ namespace robot {
 
 		drive::update_motor_speeds();
 
+		long st = millis();
 		run_activity();
+		if (!__activity_duration_limit_warning && millis() - st > 5) {
+			__activity_duration_limit_warning = false;
+			rlogf("Warning: activity duration exceeded 5ms");
+		}
 
 		char opcode;
 		bool is_activity_running = current_activity != nullptr;
@@ -115,6 +121,7 @@ namespace robot {
 				drive::turn(message->payload);
 				break;
 			case 'D': // do
+				__activity_duration_limit_warning = true;
 				perform_do_command(message->payload);
 				break;
 			case 'E': // echo
