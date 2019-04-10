@@ -78,31 +78,51 @@ def getSide():
 	return 'left' if readings[0] < readings[1] else 'right'
 
 # side = getSide()
-side = "left"
+side = "right"
 print("on side: ", side)
 
 def configurePrimary():
 	messages = []
-
-	# left only for now
+	
 	messages.append(('do', 1100))
-	messages.append(('forward', 330))
-	messages.append(('turn', -90))
-	messages.append(('do', 2))
-	messages.append(('forward', 205))
-	messages.append(('do', 10))
-	messages.append(('do', 101))
-	messages.append(('do', 102))
-	messages.append(('do', 0))
-	messages.append(('forward', 107))
-	messages.append(('do', 10))
-	messages.append(('do', 101))
-	messages.append(('do', 102))
-	messages.append(('do', 0))
-	messages.append(('forward', -352))
-	messages.append(('turn', 90))
-	messages.append(('forward', -640))
-	messages.append(('turn', -90))
+
+	if side == "left":
+		messages.append(('forward', 330))
+		messages.append(('turn', -90))
+		messages.append(('do', 2))
+		messages.append(('forward', 205))
+		messages.append(('do', 10))
+		messages.append(('do', 101))
+		messages.append(('do', 102))
+		messages.append(('do', 0))
+		messages.append(('forward', 107))
+		messages.append(('do', 10))
+		messages.append(('do', 101))
+		messages.append(('do', 102))
+		messages.append(('do', 0))
+		messages.append(('forward', -352))
+		messages.append(('turn', 90))
+		messages.append(('forward', -660))
+		messages.append(('turn', -90))
+	else:
+		messages.append(('forward', 330))
+		messages.append(('turn', -90))
+		messages.append(('do', 2))
+		messages.append(('forward', -740))
+		messages.append(('do', 10))
+		messages.append(('do', 101))
+		messages.append(('do', 102))
+		messages.append(('do', 0))
+		messages.append(('forward', 107))
+		messages.append(('do', 10))
+		messages.append(('do', 101))
+		messages.append(('do', 102))
+		messages.append(('do', 0))
+		messages.append(('turn', 180))
+		messages.append(('forward', -700))
+		messages.append(('turn', -90))
+		messages.append(('forward', -620))
+		messages.append(('turn', 90))
 	
 	messages.append(('echo', 1))
 	messages.append(('do', 1000))

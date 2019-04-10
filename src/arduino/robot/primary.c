@@ -145,7 +145,7 @@ START(raiseFromSideToTopBlue) {
 
 STOP(raiseFromSideToTopBlue) {
 	secondaryArmServo.write(17);
-	primaryArmServo.write(77);
+	primaryArmServo.write(80);
 }
 
 //////////////////////////////////////////////////////
