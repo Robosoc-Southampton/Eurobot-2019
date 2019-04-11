@@ -4,9 +4,9 @@
 auto ledOn = LOW;
 Stepper carouselStepper(STEPPER_ROTATIONS, CAROUSEL_STEPPER_1, CAROUSEL_STEPPER_2, CAROUSEL_STEPPER_3, CAROUSEL_STEPPER_4);
 Stepper armStepper(STEPPER_ROTATIONS, ARM_STEPPER_1, ARM_STEPPER_2, ARM_STEPPER_3, ARM_STEPPER_4);
-Servo primaryArmServo, secondaryArmServo, grabberServo;
+Servo primaryArmServo, secondaryArmServo, grabberServo, frontAlignmentServo1, frontAlignmentServo2;
 
-SharpIR sensors[] = {
+DistanceSensor sensors[] = {
 	SharpIR(A0, 220)
 };
 
@@ -68,6 +68,25 @@ PREDICATE(pullCordInsert) {
 	return digitalRead(PULL_CORD_PIN);
 }
 
+///////////////////////////////////////////////////////
+
+ACTIVITY(alignForward, cooldown=150000, count=2) {
+	robot::drive::md25->stop();
+}
+
+START(alignForward) {
+	robot::drive::md25->setLeftMotorSpeed(160);
+	robot::drive::md25->setRightMotorSpeed(160);
+	frontAlignmentServo1.write(90);
+	frontAlignmentServo2.write(0);
+}
+
+STOP(alignForward) {
+	robot::drive::md25->resetEncoders();
+	frontAlignmentServo1.write(0);
+	frontAlignmentServo2.write(90);
+}
+
 /////////////////////////////////////////////////////
 
 ACTIVITY(raiseArmSlightly, cooldown=1500, count=50) {
@@ -80,15 +99,82 @@ ACTIVITY(lowerArmSlightly, cooldown=1500, count=50) {
 	armStepper.step(-1);
 }
 
+/////////////////////////////////////////////////////
+
+ACTIVITY(armPositionPA, cooldown=1500, count=60) {
+	armStepper.step(-1);
+}
+
+START(armPositionPA) {
+	primaryArmServo.write(65);
+	secondaryArmServo.write(45);
+	grabberServo.write(50);
+}
+
+/////////////////////////////////////////////////////
+
+ACTIVITY(armPositionPARetract, cooldown=1500, count=60) {
+	armStepper.step(1);
+}
+
+STOP(armPositionPA) {
+	primaryArmServo.write(80);
+	secondaryArmServo.write(30);
+}
+
+/////////////////////////////////////////////////////
+
+ACTIVITY(armPositionGoldium, cooldown=1500, count=60) {
+	armStepper.step(-1);
+}
+
+START(armPositionGoldium) {
+	primaryArmServo.write(45);
+	secondaryArmServo.write(50);
+	grabberServo.write(ARM_GRABBER_OPEN);
+}
+
+/////////////////////////////////////////////////////
+
+ACTIVITY(armPositionGoldiumRetract, cooldown=1500, count=160) {
+	if (activity_iteration >= 100) armStepper.step(1);
+}
+
+START(armPositionGoldiumRetract) {
+	grabberServo.write(ARM_GRABBER_CLOSED);
+}
+
+/////////////////////////////////////////////////////
+
+ACTIVITY(dropGoldium, cooldown=1500, count=0) {
+	
+}
+
+START(armPositionGoldium) {
+	grabberServo.write(ARM_GRABBER_OPEN);
+}
+
+/////////////////////////////////////////////////////
+
+ACTIVITY(dropGoldiumRetract, cooldown=1500, count=0) {
+	
+}
+
+START(dropGoldiumRetract) {
+	primaryArmServo.write(80);
+	secondaryArmServo.write(40);
+}
+
 ////////////////////////////////////////////////////////
 
-ACTIVITY(lowerFromTopToSide, cooldown=2000, count=300) {
-	armStepper.step(-1);
+ACTIVITY(lowerFromTopToSide, cooldown=2000, count=400) {
+	if (activity_iteration >= 100) armStepper.step(-1);
+	if (activity_iteration == 350) secondaryArmServo.write(35);
 }
 
 START(lowerFromTopToSide) {
 	primaryArmServo.write(50);
-	secondaryArmServo.write(35);
+	secondaryArmServo.write(45);
 	grabberServo.write(ARM_GRABBER_OPEN);
 }
 
@@ -352,6 +438,20 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 			return ACTIVITY(fastArm);
 		case ACTIVITY_SLOW_ARM:
 			return ACTIVITY(slowArm);
+		case ACTIVITY_ALIGN_FORWARD:
+			return ACTIVITY(alignForward);
+		case ACTIVITY_POSITION_PA:
+			return ACTIVITY(armPositionPA);
+		case ACTIVITY_POSIITON_PA_RETRACT:
+			return ACTIVITY(armPositionPARetract);
+		case ACTIVITY_POSITION_GOLDIUM:
+			return ACTIVITY(armPositionGoldium);
+		case ACTIVITY_POSIITON_GOLDIUM_RETRACT:
+			return ACTIVITY(armPositionGoldiumRetract);
+		case ACTIVITY_DROP_GOLDIUM:
+			return ACTIVITY(dropGoldium);
+		case ACTIVITY_DROP_GOLDIUM_RETRACT:
+			return ACTIVITY(dropGoldiumRetract);
 	}
 
 	return nullptr;
@@ -378,6 +478,10 @@ void setup() {
 	rlogf("Attaching arm servos");
 	secondaryArmServo.attach(SECONDARY_SERVO_PIN);
 	grabberServo.attach(GRABBER_SERVO_PIN);
+
+	rlogf("Attaching alignment servos");
+	frontAlignmentServo1.attach(FRONT_ALIGNMENT_SERVO_1_PIN);
+	frontAlignmentServo2.attach(FRONT_ALIGNMENT_SERVO_2_PIN);
 
 	rlogf("Setting pull cord pin to input");
 	pinMode(PULL_CORD_PIN, INPUT);

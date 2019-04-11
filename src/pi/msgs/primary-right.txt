@@ -1,62 +1,102 @@
 
-// initial wait
 do 1100
 
+// initial wait
 do 100
 do 0
 
-turn -90
-forward 630
+// go to particle accelerator
+forward 1500
 turn 90
-forward 807
-turn -180
+forward 500
+do 251
+do 0
+forward -30
+turn -90
 
-// get sixth atom and move forward
+// push down blue
+do 30
+do 0
+turn -30
+turn 30
+do 31
+
+// go to goldium and pick it up
+forward 400
+do 35
+do 36
+do 0
+
+// go to weighing scales and drop goldium
+turn -180
+forward 500
+turn 90
+forward 1500
+do 251
+forward -20
+turn -90
+do 37
+do 38
+do 0
+
+// pick up greens and blue from 6-side
+forward 300
 do 10
 do 12
 do 14
 do 15
 do 1
-// forward 107
-forward 214
+do 0
 
-// get fourth atom and move forward
-do 200
+forward 215
 do 10
 do 13
 do 14
 do 15
-do 201
 do 1
-// forward 107
-forward 214
+do 0
 
-// get second atom
+forward 215
+do 10
+do 12
+do 14
+do 15
+do 1
+do 0
+
+// pick up green from 3-side
+forward 400
+do 251
+do 0
+forward -50
+turn 90
+do 1
+forward 400
+do 251
+do 0
+forward -50
+turn -90
 do 10
 do 12
 do 0
 
-// move into position for dropping atoms off
-turn 180
-forward 700
-turn -160
-
-// drop atoms off and rotate carousel accordingly
-do 20
+// go to weighing scales and deposit atoms
+turn -90
+do 1
+forward 400
+turn -90
 do 250
-do 1
-do 1
+forward 700
+turn 180
+do 20
 do 21
 do 22
 do 23
-do 20
 do 1
-// do 1
-do 200
+do 20
 do 21
 do 22
 do 23
-do 20
-do 201
 do 1
+do 20
 do 21

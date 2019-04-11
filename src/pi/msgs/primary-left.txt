@@ -10,7 +10,7 @@ turn 90
 forward 660
 turn -90
 // forward 245
-forward 362
+forward 350
 do 0
 config-key peak-speed
 config-set 30
@@ -107,9 +107,11 @@ do 0
 turn 20
 do 25
 do 0
+
+// move to goldium extraction position
 turn 170
-forward 670
-turn 180
+forward 660
+turn -180
 
 // drop off first red
 // do 22

@@ -118,9 +118,9 @@ namespace robot {
 		}
 
 		uint8_t encoder_delta_to_speed(int32_t delta) {
-			return delta > robot::configuration::peak_speed * 10 / 12
+			return delta > robot::configuration::peak_speed * 16 / 10
 				? robot::configuration::peak_speed
-				: delta * 10 / 12;
+				: delta * 10 / 16;
 			// if (encoder_reading_to_distance(delta) > robot::configuration::peak_speed / robot::configuration::acceleration) {
 			// 	return robot::configuration::peak_speed;
 			// }
