@@ -1,6 +1,4 @@
 
-do 1100
-
 // initial wait
 do 100
 do 0
@@ -8,7 +6,9 @@ do 0
 // go to particle accelerator
 forward 1500
 turn 90
-forward 500
+forward 270
+do 1100
+forward 230
 do 251
 do 0
 forward -30
@@ -22,16 +22,25 @@ turn 30
 do 31
 
 // go to goldium and pick it up
-forward 400
+do 1003
+do 1002
+forward 550
 do 35
 do 36
 do 0
 
 // go to weighing scales and drop goldium
+do 1103
+do 1001
 turn -180
-forward 500
+forward 850
 turn 90
-forward 1500
+do 1000
+do 1102
+forward 1250
+do 1100
+forward 250
+do 1000
 do 251
 forward -20
 turn -90

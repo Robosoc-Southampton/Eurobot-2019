@@ -33,7 +33,7 @@ namespace robot {
 		if (!distance_sensor_enabled_mask) return false;
 
 		for (DistanceSensor *sensor = distance_sensors; sensor != distance_sensors + distance_sensor_count; ++sensor) {
-			if (sensor->enabled && sensor->measureDistance(UltraSonic::distanceToTime(sensor->trigger_distance) * 2) < sensor->trigger_distance) {
+			if (sensor->enabled && sensor->measure_distance(UltraSonic::distance_to_time(sensor->trigger_distance) * 2) < sensor->trigger_distance) {
 				return true;
 			}
 		}
@@ -42,7 +42,7 @@ namespace robot {
 	}
 
 	int16_t read_distance_sensor(uint8_t sensor) {
-		return distance_sensors[sensor].measureDistance(1000000);
+		return distance_sensors[sensor].measure_distance(1000000);
 	}
 
 	void enable_distance_sensors() {
@@ -65,10 +65,10 @@ namespace robot {
 
 }
 
-ISR(TIMER2_OVF_vect){
-	TCNT2 = t2_counter;
+// ISR(TIMER2_OVF_vect){
+// 	TCNT2 = t2_counter;
 
-	for (int i = 0; i < robot::distance_sensor_count; ++i) {
-		robot::distance_sensors[i].checkEcho();
-	}
-}
+// 	for (int i = 0; i < robot::distance_sensor_count; ++i) {
+// 		robot::distance_sensors[i].checkEcho();
+// 	}
+// }

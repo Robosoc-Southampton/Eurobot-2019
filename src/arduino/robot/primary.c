@@ -7,9 +7,9 @@ Stepper armStepper(STEPPER_ROTATIONS, ARM_STEPPER_1, ARM_STEPPER_2, ARM_STEPPER_
 Servo primaryArmServo, secondaryArmServo, grabberServo, frontAlignmentServo1, frontAlignmentServo2;
 
 DistanceSensor sensors[] = {
-	UltraSonic(34, 42, 200),
+	UltraSonic(34, 42, 300),
 	UltraSonic(36, 40, 200),
-	UltraSonic(32, 44, 200)
+	UltraSonic(32, 44, 300)
 };
 
 ///////////////////////////////////////////////
@@ -89,6 +89,21 @@ STOP(alignForward) {
 	frontAlignmentServo2.write(0);
 }
 
+///////////////////////////////////////////////////////
+
+ACTIVITY(alignBackward, cooldown=250000, count=4) {
+	if (activity_iteration == 3) robot::drive::md25->stopMotors();
+}
+
+START(alignBackward) {
+	robot::drive::md25->setLeftMotorSpeed(100);
+	robot::drive::md25->setRightMotorSpeed(100);
+}
+
+STOP(alignBackward) {
+	robot::drive::md25->resetEncoders();
+}
+
 /////////////////////////////////////////////////////
 
 ACTIVITY(raiseArmSlightly, cooldown=1500, count=50) {
@@ -103,8 +118,8 @@ ACTIVITY(lowerArmSlightly, cooldown=1500, count=50) {
 
 /////////////////////////////////////////////////////
 
-ACTIVITY(armPositionPA, cooldown=1500, count=60) {
-	armStepper.step(-1);
+ACTIVITY(armPositionPA, cooldown=1500, count=260) {
+	if (activity_iteration >= 200) armStepper.step(-1);
 }
 
 START(armPositionPA) {
@@ -442,6 +457,8 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 			return ACTIVITY(slowArm);
 		case ACTIVITY_ALIGN_FORWARD:
 			return ACTIVITY(alignForward);
+		case ACTIVITY_ALIGN_BACKWARD:
+			return ACTIVITY(alignBackward);
 		case ACTIVITY_ARM_POSITION_PA:
 			return ACTIVITY(armPositionPA);
 		case ACTIVITY_ARM_POSITION_PA_RETRACT:
@@ -487,6 +504,8 @@ void setup() {
 	rlogf("Attaching alignment servos");
 	frontAlignmentServo1.attach(FRONT_ALIGNMENT_SERVO_1_PIN);
 	frontAlignmentServo2.attach(FRONT_ALIGNMENT_SERVO_2_PIN);
+	frontAlignmentServo1.write(75);
+	frontAlignmentServo2.write(0);
 
 	rlogf("Setting pull cord pin to input");
 	pinMode(PULL_CORD_PIN, INPUT);

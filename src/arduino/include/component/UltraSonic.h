@@ -6,7 +6,7 @@
 #include "../debug.h"
 
 // the minimum time in microseconds between pulses
-#define ULTRASONIC_MIN_DELAY 20000
+#define ULTRASONIC_MIN_DELAY 50000
 
 class UltraSonic {
 public:
@@ -20,7 +20,7 @@ public:
 	bool pulse();
 
 	// uses pulseIn to determine a distance reading
-	int16_t measureDistance(unsigned long timeout);
+	int16_t measure_distance(unsigned long timeout);
 
 	// called externally to check for an echo
 	void checkEcho();
@@ -28,11 +28,15 @@ public:
 	// reads a value, updating `last_reading`, and returning the value
 	int16_t read();
 
-	static unsigned long distanceToTime(int16_t distance);
+	static unsigned long global_pulse_time;
+
+	static void update_global_pulse_time();
+
+	static unsigned long distance_to_time(int16_t distance);
 
 private:
-	bool pulse_out;
-	unsigned long pulse_time;
-	uint8_t trigger_pin, echo_pin;
+	bool pulse_out = false;
+	unsigned long pulse_time = 0;
 	int16_t last_reading = 0;
+	uint8_t trigger_pin, echo_pin;
 };

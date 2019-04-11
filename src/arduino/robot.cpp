@@ -42,6 +42,7 @@ namespace robot {
 
 	void loop() {
 		robot::check_timeout();
+		UltraSonic::update_global_pulse_time();
 
 		if (check_distance_sensors()) {
 			if (drive::is_moving && drive::is_moving_forward && robot::is_message_buffer_valid) {
