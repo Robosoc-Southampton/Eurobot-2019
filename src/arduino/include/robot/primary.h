@@ -48,6 +48,8 @@
 
 #define PULL_CORD_PIN 12
 
+#define LED_GROUND_PIN 7
+
 #define PRIMARY_SERVO_PIN 4
 #define SECONDARY_SERVO_PIN 3
 #define GRABBER_SERVO_PIN 2

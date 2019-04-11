@@ -9,6 +9,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include <limits.h>
 #include "debug.h"
 #include "component/UltraSonic.h"
 
@@ -18,6 +19,9 @@ namespace robot {
 	extern DistanceSensor *distance_sensors;
 	extern uint8_t distance_sensor_count;
 	extern bool distance_sensor_enabled_mask;
+
+	// sets up the timer interrupt for handling ultrasonic echoes
+	void setup_collision();
 
 	// sets the list of distance sensors
 	// should be called prior to robot::setup()

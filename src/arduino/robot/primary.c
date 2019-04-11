@@ -8,8 +8,8 @@ Servo primaryArmServo, secondaryArmServo, grabberServo, frontAlignmentServo1, fr
 
 DistanceSensor sensors[] = {
 	UltraSonic(34, 42, 200),
-	UltraSonic(32, 40, 150),
-	UltraSonic(30, 38, 200)
+	UltraSonic(36, 40, 200),
+	UltraSonic(32, 44, 200)
 };
 
 ///////////////////////////////////////////////
@@ -79,14 +79,14 @@ ACTIVITY(alignForward, cooldown=150000, count=2) {
 START(alignForward) {
 	robot::drive::md25->setLeftMotorSpeed(160);
 	robot::drive::md25->setRightMotorSpeed(160);
-	frontAlignmentServo1.write(90);
-	frontAlignmentServo2.write(0);
+	frontAlignmentServo1.write(150);
+	frontAlignmentServo2.write(100);
 }
 
 STOP(alignForward) {
 	robot::drive::md25->resetEncoders();
-	frontAlignmentServo1.write(0);
-	frontAlignmentServo2.write(90);
+	frontAlignmentServo1.write(75);
+	frontAlignmentServo2.write(0);
 }
 
 /////////////////////////////////////////////////////
@@ -462,12 +462,15 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 void setup() {
 	Serial.begin(9600);
 
+	pinMode(LED_GROUND_PIN, OUTPUT);
+	digitalWrite(LED_GROUND_PIN, LOW);
+
 	primaryArmServo.attach(PRIMARY_SERVO_PIN);
 	primaryArmServo.write(0);
 
 	robot::set_component_value_reader(&readComponentValue);
 	robot::set_activity_lookup(&lookupActivity);
-	robot::set_distance_sensors(1, sensors);
+	robot::set_distance_sensors(3, sensors);
 
 	robot::setup();
 

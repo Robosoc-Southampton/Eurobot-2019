@@ -30,6 +30,7 @@ namespace robot {
 		if (!left_encoder_okay || !right_encoder_okay) rerrorf("Failed to read encoder values");
 
 		robot::drive::set_md25(md25);
+		robot::setup_collision();
 
 		rassertf(component_value_reader != nullptr, "Component value reader not set");
 		rassertf(lookup_activity != nullptr, "Activity lookup not set");
