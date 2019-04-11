@@ -7,7 +7,9 @@ Stepper armStepper(STEPPER_ROTATIONS, ARM_STEPPER_1, ARM_STEPPER_2, ARM_STEPPER_
 Servo primaryArmServo, secondaryArmServo, grabberServo, frontAlignmentServo1, frontAlignmentServo2;
 
 DistanceSensor sensors[] = {
-	SharpIR(A0, 220)
+	UltraSonic(34, 42, 200),
+	UltraSonic(32, 40, 150),
+	UltraSonic(30, 38, 200)
 };
 
 ///////////////////////////////////////////////
@@ -71,7 +73,7 @@ PREDICATE(pullCordInsert) {
 ///////////////////////////////////////////////////////
 
 ACTIVITY(alignForward, cooldown=150000, count=2) {
-	robot::drive::md25->stop();
+	robot::drive::md25->stopMotors();
 }
 
 START(alignForward) {
@@ -150,7 +152,7 @@ ACTIVITY(dropGoldium, cooldown=1500, count=0) {
 	
 }
 
-START(armPositionGoldium) {
+START(dropGoldium) {
 	grabberServo.write(ARM_GRABBER_OPEN);
 }
 
@@ -440,13 +442,13 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 			return ACTIVITY(slowArm);
 		case ACTIVITY_ALIGN_FORWARD:
 			return ACTIVITY(alignForward);
-		case ACTIVITY_POSITION_PA:
+		case ACTIVITY_ARM_POSITION_PA:
 			return ACTIVITY(armPositionPA);
-		case ACTIVITY_POSIITON_PA_RETRACT:
+		case ACTIVITY_ARM_POSITION_PA_RETRACT:
 			return ACTIVITY(armPositionPARetract);
-		case ACTIVITY_POSITION_GOLDIUM:
+		case ACTIVITY_ARM_POSITION_GOLDIUM:
 			return ACTIVITY(armPositionGoldium);
-		case ACTIVITY_POSIITON_GOLDIUM_RETRACT:
+		case ACTIVITY_ARM_POSITION_GOLDIUM_RETRACT:
 			return ACTIVITY(armPositionGoldiumRetract);
 		case ACTIVITY_DROP_GOLDIUM:
 			return ACTIVITY(dropGoldium);
