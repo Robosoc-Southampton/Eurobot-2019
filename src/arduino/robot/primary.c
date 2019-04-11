@@ -72,8 +72,8 @@ PREDICATE(pullCordInsert) {
 
 ///////////////////////////////////////////////////////
 
-ACTIVITY(alignForward, cooldown=150000, count=2) {
-	robot::drive::md25->stopMotors();
+ACTIVITY(alignForward, cooldown=250000, count=4) {
+	if (activity_iteration == 3) robot::drive::md25->stopMotors();
 }
 
 START(alignForward) {

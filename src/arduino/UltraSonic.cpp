@@ -26,18 +26,23 @@ bool UltraSonic::pulse() {
 	return true;
 }
 
-unsigned long UltraSonic::measureDistance(unsigned long timeout) {
+int16_t UltraSonic::measureDistance(unsigned long timeout) {
 	if (micros() - pulse_time < ULTRASONIC_MIN_DELAY)
 		return last_reading;
 
-	rlogf("Hello :)");
+	digitalWrite(trigger_pin, LOW);
+	delayMicroseconds(2);
+	digitalWrite(trigger_pin, HIGH);
+	delayMicroseconds(10);
+	digitalWrite(trigger_pin, LOW);
+	pulse_time = micros();
+
 	unsigned long duration = pulseIn(echo_pin, HIGH, timeout);
-	rlogf("Hi");
 
 	if (duration)
 		return last_reading = duration * 343ul / 2000ul;
 
-	return last_reading = ULONG_MAX;
+	return last_reading = INT_MAX;
 }
 
 void UltraSonic::checkEcho() {

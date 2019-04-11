@@ -42,7 +42,7 @@ namespace robot {
 	}
 
 	int16_t read_distance_sensor(uint8_t sensor) {
-		return distance_sensors[sensor].measureDistance(UltraSonic::distanceToTime(1000));
+		return distance_sensors[sensor].measureDistance(1000000);
 	}
 
 	void enable_distance_sensors() {
