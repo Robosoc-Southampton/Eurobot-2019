@@ -23,6 +23,9 @@ namespace robot {
 		rlogf("Battery voltage is:");
 		rlogi(md25->getBatteryVoltage());
 
+		if (md25->getBatteryVoltage() < 110)
+			rerrorf("Battery voltage too low!");
+
 		md25->testEncoders(&left_encoder_okay, &right_encoder_okay);
 
 		if (!left_encoder_okay) rlogf("Left encoder not readable");
@@ -30,6 +33,7 @@ namespace robot {
 		if (!left_encoder_okay || !right_encoder_okay) rerrorf("Failed to read encoder values");
 
 		robot::drive::set_md25(md25);
+		robot::setup_collision();
 
 		rassertf(component_value_reader != nullptr, "Component value reader not set");
 		rassertf(lookup_activity != nullptr, "Activity lookup not set");
@@ -40,14 +44,20 @@ namespace robot {
 	}
 
 	void loop() {
-		robot::check_timeout();
+		int sensor;
 
-		if (check_distance_sensors()) {
+		robot::check_timeout();
+		UltraSonic::update_global_pulse_time();
+
+		if ((sensor = check_distance_sensors()) != -1) {
 			if (drive::is_moving && drive::is_moving_forward && robot::is_message_buffer_valid) {
-				drive::stop();
 				int16_t distance = drive::get_average_distance_travelled();
+				drive::stop();
 				robot::invalidate_message_buffer(distance);
 				robot::send_message('c', distance);
+				drive::target_left_encoder_value = drive::target_right_encoder_value = 0;
+				rlogfd("Triggered sensor:");
+				rlogid(sensor);
 			}
 		}
 		else if (!robot::is_message_buffer_valid) {

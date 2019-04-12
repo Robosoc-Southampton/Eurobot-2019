@@ -7,7 +7,9 @@ Stepper armStepper(STEPPER_ROTATIONS, ARM_STEPPER_1, ARM_STEPPER_2, ARM_STEPPER_
 Servo primaryArmServo, secondaryArmServo, grabberServo, frontAlignmentServo1, frontAlignmentServo2;
 
 DistanceSensor sensors[] = {
-	SharpIR(A0, 220)
+	UltraSonic(34, 42, 300),
+	UltraSonic(36, 40, 200),
+	UltraSonic(32, 44, 300)
 };
 
 ///////////////////////////////////////////////
@@ -70,21 +72,49 @@ PREDICATE(pullCordInsert) {
 
 ///////////////////////////////////////////////////////
 
-ACTIVITY(alignForward, cooldown=150000, count=2) {
-	robot::drive::md25->stop();
+ACTIVITY(alignForward, cooldown=250000, count=8) {
+	if (activity_iteration == 1) {
+		robot::drive::md25->setLeftMotorSpeed(160);
+		robot::drive::md25->setRightMotorSpeed(160);
+	}
+
+	if (activity_iteration == 3) {
+		robot::drive::md25->setLeftMotorSpeed(120);
+		robot::drive::md25->setRightMotorSpeed(120);
+	}
+
+	if (activity_iteration == 4) {
+		robot::drive::md25->stopMotors();
+	}
+
+	if (activity_iteration == 6) {
+		frontAlignmentServo1.write(72);
+		frontAlignmentServo2.write(180);
+	}
 }
 
 START(alignForward) {
-	robot::drive::md25->setLeftMotorSpeed(160);
-	robot::drive::md25->setRightMotorSpeed(160);
-	frontAlignmentServo1.write(90);
-	frontAlignmentServo2.write(0);
+	frontAlignmentServo1.write(150);
+	frontAlignmentServo2.write(94);
 }
 
 STOP(alignForward) {
 	robot::drive::md25->resetEncoders();
-	frontAlignmentServo1.write(0);
-	frontAlignmentServo2.write(90);
+}
+
+///////////////////////////////////////////////////////
+
+ACTIVITY(alignBackward, cooldown=250000, count=4) {
+	if (activity_iteration == 3) robot::drive::md25->stopMotors();
+}
+
+START(alignBackward) {
+	robot::drive::md25->setLeftMotorSpeed(100);
+	robot::drive::md25->setRightMotorSpeed(100);
+}
+
+STOP(alignBackward) {
+	robot::drive::md25->resetEncoders();
 }
 
 /////////////////////////////////////////////////////
@@ -101,13 +131,13 @@ ACTIVITY(lowerArmSlightly, cooldown=1500, count=50) {
 
 /////////////////////////////////////////////////////
 
-ACTIVITY(armPositionPA, cooldown=1500, count=60) {
-	armStepper.step(-1);
+ACTIVITY(armPositionPA, cooldown=1500, count=260) {
+	if (activity_iteration >= 200) armStepper.step(-1);
 }
 
 START(armPositionPA) {
-	primaryArmServo.write(65);
-	secondaryArmServo.write(45);
+	primaryArmServo.write(60);
+	secondaryArmServo.write(40);
 	grabberServo.write(50);
 }
 
@@ -117,31 +147,34 @@ ACTIVITY(armPositionPARetract, cooldown=1500, count=60) {
 	armStepper.step(1);
 }
 
-STOP(armPositionPA) {
+STOP(armPositionPARetract) {
 	primaryArmServo.write(80);
 	secondaryArmServo.write(30);
 }
 
 /////////////////////////////////////////////////////
 
-ACTIVITY(armPositionGoldium, cooldown=1500, count=60) {
-	armStepper.step(-1);
+ACTIVITY(armPositionGoldium, cooldown=1500, count=310) {
+	if (activity_iteration < 100) return;
+	if (activity_iteration < 210) armStepper.step(-1);
+	if (activity_iteration == 160) grabberServo.write(ARM_GRABBER_OPEN);
 }
 
 START(armPositionGoldium) {
+	primaryArmServo.write(30);
+	secondaryArmServo.write(15);
+}
+
+STOP(armPositionGoldium) {
 	primaryArmServo.write(45);
 	secondaryArmServo.write(50);
-	grabberServo.write(ARM_GRABBER_OPEN);
 }
 
 /////////////////////////////////////////////////////
 
-ACTIVITY(armPositionGoldiumRetract, cooldown=1500, count=160) {
-	if (activity_iteration >= 100) armStepper.step(1);
-}
-
-START(armPositionGoldiumRetract) {
-	grabberServo.write(ARM_GRABBER_CLOSED);
+ACTIVITY(armPositionGoldiumRetract, cooldown=1500, count=260) {
+	if (activity_iteration >= 150) armStepper.step(1);
+	if (activity_iteration == 100) grabberServo.write(ARM_GRABBER_CLOSED);
 }
 
 /////////////////////////////////////////////////////
@@ -150,7 +183,7 @@ ACTIVITY(dropGoldium, cooldown=1500, count=0) {
 	
 }
 
-START(armPositionGoldium) {
+START(dropGoldium) {
 	grabberServo.write(ARM_GRABBER_OPEN);
 }
 
@@ -440,13 +473,15 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 			return ACTIVITY(slowArm);
 		case ACTIVITY_ALIGN_FORWARD:
 			return ACTIVITY(alignForward);
-		case ACTIVITY_POSITION_PA:
+		case ACTIVITY_ALIGN_BACKWARD:
+			return ACTIVITY(alignBackward);
+		case ACTIVITY_ARM_POSITION_PA:
 			return ACTIVITY(armPositionPA);
-		case ACTIVITY_POSIITON_PA_RETRACT:
+		case ACTIVITY_ARM_POSITION_PA_RETRACT:
 			return ACTIVITY(armPositionPARetract);
-		case ACTIVITY_POSITION_GOLDIUM:
+		case ACTIVITY_ARM_POSITION_GOLDIUM:
 			return ACTIVITY(armPositionGoldium);
-		case ACTIVITY_POSIITON_GOLDIUM_RETRACT:
+		case ACTIVITY_ARM_POSITION_GOLDIUM_RETRACT:
 			return ACTIVITY(armPositionGoldiumRetract);
 		case ACTIVITY_DROP_GOLDIUM:
 			return ACTIVITY(dropGoldium);
@@ -460,12 +495,15 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 void setup() {
 	Serial.begin(9600);
 
+	pinMode(LED_GROUND_PIN, OUTPUT);
+	digitalWrite(LED_GROUND_PIN, LOW);
+
 	primaryArmServo.attach(PRIMARY_SERVO_PIN);
 	primaryArmServo.write(0);
 
 	robot::set_component_value_reader(&readComponentValue);
 	robot::set_activity_lookup(&lookupActivity);
-	robot::set_distance_sensors(1, sensors);
+	robot::set_distance_sensors(3, sensors);
 
 	robot::setup();
 
@@ -482,6 +520,8 @@ void setup() {
 	rlogf("Attaching alignment servos");
 	frontAlignmentServo1.attach(FRONT_ALIGNMENT_SERVO_1_PIN);
 	frontAlignmentServo2.attach(FRONT_ALIGNMENT_SERVO_2_PIN);
+	frontAlignmentServo1.write(75);
+	frontAlignmentServo2.write(180);
 
 	rlogf("Setting pull cord pin to input");
 	pinMode(PULL_CORD_PIN, INPUT);
