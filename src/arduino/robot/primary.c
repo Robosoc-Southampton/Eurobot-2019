@@ -72,21 +72,34 @@ PREDICATE(pullCordInsert) {
 
 ///////////////////////////////////////////////////////
 
-ACTIVITY(alignForward, cooldown=250000, count=4) {
-	if (activity_iteration == 3) robot::drive::md25->stopMotors();
+ACTIVITY(alignForward, cooldown=250000, count=8) {
+	if (activity_iteration == 1) {
+		robot::drive::md25->setLeftMotorSpeed(160);
+		robot::drive::md25->setRightMotorSpeed(160);
+	}
+
+	if (activity_iteration == 3) {
+		robot::drive::md25->setLeftMotorSpeed(120);
+		robot::drive::md25->setRightMotorSpeed(120);
+	}
+
+	if (activity_iteration == 4) {
+		robot::drive::md25->stopMotors();
+	}
+
+	if (activity_iteration == 6) {
+		frontAlignmentServo1.write(72);
+		frontAlignmentServo2.write(180);
+	}
 }
 
 START(alignForward) {
-	robot::drive::md25->setLeftMotorSpeed(160);
-	robot::drive::md25->setRightMotorSpeed(160);
 	frontAlignmentServo1.write(150);
-	frontAlignmentServo2.write(100);
+	frontAlignmentServo2.write(94);
 }
 
 STOP(alignForward) {
 	robot::drive::md25->resetEncoders();
-	frontAlignmentServo1.write(75);
-	frontAlignmentServo2.write(0);
 }
 
 ///////////////////////////////////////////////////////
@@ -123,8 +136,8 @@ ACTIVITY(armPositionPA, cooldown=1500, count=260) {
 }
 
 START(armPositionPA) {
-	primaryArmServo.write(65);
-	secondaryArmServo.write(45);
+	primaryArmServo.write(60);
+	secondaryArmServo.write(40);
 	grabberServo.write(50);
 }
 
@@ -134,31 +147,34 @@ ACTIVITY(armPositionPARetract, cooldown=1500, count=60) {
 	armStepper.step(1);
 }
 
-STOP(armPositionPA) {
+STOP(armPositionPARetract) {
 	primaryArmServo.write(80);
 	secondaryArmServo.write(30);
 }
 
 /////////////////////////////////////////////////////
 
-ACTIVITY(armPositionGoldium, cooldown=1500, count=60) {
-	armStepper.step(-1);
+ACTIVITY(armPositionGoldium, cooldown=1500, count=310) {
+	if (activity_iteration < 100) return;
+	if (activity_iteration < 210) armStepper.step(-1);
+	if (activity_iteration == 160) grabberServo.write(ARM_GRABBER_OPEN);
 }
 
 START(armPositionGoldium) {
+	primaryArmServo.write(30);
+	secondaryArmServo.write(15);
+}
+
+STOP(armPositionGoldium) {
 	primaryArmServo.write(45);
 	secondaryArmServo.write(50);
-	grabberServo.write(ARM_GRABBER_OPEN);
 }
 
 /////////////////////////////////////////////////////
 
-ACTIVITY(armPositionGoldiumRetract, cooldown=1500, count=160) {
-	if (activity_iteration >= 100) armStepper.step(1);
-}
-
-START(armPositionGoldiumRetract) {
-	grabberServo.write(ARM_GRABBER_CLOSED);
+ACTIVITY(armPositionGoldiumRetract, cooldown=1500, count=260) {
+	if (activity_iteration >= 150) armStepper.step(1);
+	if (activity_iteration == 100) grabberServo.write(ARM_GRABBER_CLOSED);
 }
 
 /////////////////////////////////////////////////////
@@ -505,7 +521,7 @@ void setup() {
 	frontAlignmentServo1.attach(FRONT_ALIGNMENT_SERVO_1_PIN);
 	frontAlignmentServo2.attach(FRONT_ALIGNMENT_SERVO_2_PIN);
 	frontAlignmentServo1.write(75);
-	frontAlignmentServo2.write(0);
+	frontAlignmentServo2.write(180);
 
 	rlogf("Setting pull cord pin to input");
 	pinMode(PULL_CORD_PIN, INPUT);

@@ -16,6 +16,7 @@ namespace robot {
 	namespace drive {
 		extern MD25 *md25;
 		extern bool is_moving, is_moving_forward;
+		extern int32_t target_left_encoder_value, target_right_encoder_value;
 
 		// move forward `distance`mm
 		void forward(int16_t distance);

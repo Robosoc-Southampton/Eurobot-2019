@@ -27,8 +27,9 @@ namespace robot {
 	// should be called prior to robot::setup()
 	void set_distance_sensors(uint8_t count, DistanceSensor *sensors);
 
-	// checks distance sensors, returns true if a collision is detected
-	bool check_distance_sensors();
+	// checks distance sensors, returns the sensor that is triggered
+	// if a collision is detected or -1 otherwise
+	int check_distance_sensors();
 
 	// reads the value of distance sensor at index `sensor`
 	int16_t read_distance_sensor(uint8_t sensor);

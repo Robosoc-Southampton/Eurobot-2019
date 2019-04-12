@@ -49,14 +49,14 @@ namespace robot {
 		void stop() {
 			rlogfd("Stopping");
 
+			md25->resetEncoders();
 			md25->stopMotors();
 
 			is_moving = false;
 			is_moving_forward = false;
-			target_left_encoder_value  = 0;
-			target_right_encoder_value = 0;
+			target_left_encoder_value -= left_encoder_measurements[0];
+			target_right_encoder_value -= right_encoder_measurements[0];
 
-			md25->resetEncoders();
 		}
 
 		void set_md25(MD25 *_md25) {
@@ -112,9 +112,7 @@ namespace robot {
 		}
 
 		int16_t get_average_distance_travelled() {
-			return encoder_reading_to_distance(( left_encoder_measurements[0]
-				                               + right_encoder_measurements[0] )
-			                                   / 2);
+			return encoder_reading_to_distance(left_encoder_measurements[0]);
 		}
 
 		uint8_t encoder_delta_to_speed(int32_t delta) {

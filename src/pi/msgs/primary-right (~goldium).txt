@@ -1,7 +1,4 @@
 
-// TODO: remove
-do 1100
-
 // initial wait
 do 100
 do 0
@@ -19,8 +16,7 @@ do 1100
 forward 320
 do 251
 do 0
-forward -10
-// TODO: forward 10
+forward 10
 
 // push down blue
 turn -60
@@ -29,25 +25,45 @@ do 0
 turn -30
 do 31
 
-// go to 6-side atoms
-do 1103
-// do 1001
-turn -180
-forward 520
+// go to goldium and pick it up
 turn 90
-// do 1000
-do 1102
-forward 1000
-do 1100
-forward 200
-// do 1000
+forward -30
 do 251
 do 0
-forward -50
+forward -30
+do 0
+turn -92
+do 1003
+forward 550
+do 35
+do 36
+do 0
+
+// go to weighing scales
+do 1103
+do 1001
+turn -180
+forward 870
+turn 90
+do 1000
+do 1102
+forward 800
+do 1101
+forward 200
+do 1100
+forward 250
+do 1000
+do 251
+forward -20
+
+// drop goldium atom into scales
 turn -90
+do 37
+do 38
+do 0
 
 // pick up greens and blue from 6-side
-forward 240
+forward 300
 do 10
 do 12
 do 14
@@ -68,6 +84,7 @@ do 10
 do 12
 do 14
 do 15
+do 1
 do 0
 
 // pick up green from 3-side
@@ -80,8 +97,7 @@ do 1
 forward 400
 do 251
 do 0
-// forward -50
-forward -10
+forward -50
 turn -90
 do 10
 do 12
@@ -90,13 +106,11 @@ do 0
 // go to weighing scales and deposit atoms
 turn -90
 do 1
-forward 440
+forward 400
 turn -90
 do 250
-forward 1120
-turn -90
-forward 30
-turn -80
+forward 700
+turn 180
 do 20
 do 21
 do 22

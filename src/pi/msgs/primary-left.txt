@@ -1,155 +1,111 @@
 
-// initial wait
+// TODO: remove
 do 1100
 
+// initial wait
 do 100
 do 0
 
-// go to side grabbing position
-turn 90
-forward 660
-turn -90
-// forward 245
-forward 350
-do 0
+// go to particle accelerator
 config-key peak-speed
-config-set 30
+config-set 60
+forward 1490
+do 0
+config-set 40
+turn -90
+do 1102
+forward 100
+do 1100
+forward 320
+do 251
+do 0
+forward -10
+// TODO: forward 10
+turn -120
 
-// get first atom and move forward
-// do 10
-// do 11
-// do 14
-// do 15
-// do 1
-// forward 107
+// push down blue
+do 30
+do 0
+turn 30
+do 31
 
-// get second atom and move forward
+// move to 3-side
+forward 500
+turn 90
+forward -40
+do 251
+do 0
+forward -40
+turn -180
+forward 1000
+forward 170
+do 251
+do 0
+forward -30
+turn 90
+forward 1050
+do 251
+do 0
+forward -50
+turn -90
+forward 420
+
+// pick up green from 3-side
+do 251
+do 0
+forward -20
+turn -90
+do 10
+do 12
+do 14
+do 15
+do 0
+
+// move to 6-side
+turn -90
+forward 460
+turn 90
+
+// pick up greens and blue from 6-side
+forward 340
 do 10
 do 12
 do 14
 do 15
 do 1
-// forward 107
-forward 214
+do 0
 
-// get third atom and move forward
-// do 10
-// do 11
-// do 14
-// do 15
-// do 1
-// forward 107
-
-// get fourth atom and move forward
-do 200
+forward 215
 do 10
 do 13
 do 14
 do 15
-do 201
 do 1
-// forward 107
-forward 214
+do 0
 
-// get fifth atom and move forward
-// do 10
-// do 11
-// do 14
-// do 15
-// do 1
-// forward 107
-
-// get sixth atom
+forward 215
 do 10
 do 12
-do 0
 
-// move into position for dropping atoms off
-forward 100
-turn 20
+// go to weighing scales and deposit atoms
+do 1
 forward 200
-turn -40
-
-// drop atoms off and rotate carousel accordingly
-do 20
+turn -20
 do 250
-do 1
-do 1
+do 20
 do 21
 do 22
 do 23
-do 20
 do 1
-// do 1
-do 200
+do 20
 do 21
 do 22
 do 23
-do 20
-do 201
 do 1
+do 20
 do 21
-
-// move to particle accelerator position
-turn -55
-config-set 60
-forward 1240
-do 0
-config-set 30
-// here
-turn 75
-forward 40
-turn 170
-
-// extend arm and push blue
-do 24
-do 0
-turn 20
-do 25
-do 0
-
-// move to goldium extraction position
-turn 170
-forward 660
-turn -180
-
-// drop off first red
-// do 22
-// do 23
-// do 24
-// do 0
-
-// push blue down and release red
-// forward -100
-// do 250
-// do 25
-// do 0
-// forward 100
-
-// drop off second red
-// do 22
-// do 23
-// do 24
-// do 0
-
-// push red down and release red
-// forward -100
-// do 1
-// do 1
-// do 25
-// do 0
-// forward 100
-
-// drop off third red
-// do 22
-// do 23
-// do 24
-// do 0
-
-// push red down and release red
-// forward -100
-// do 25
-// do 0
-// forward -590
-
-echo 2020
+do 22
+do 23
+do 1
+do 20
+do 21

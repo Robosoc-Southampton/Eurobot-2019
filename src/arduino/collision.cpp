@@ -27,18 +27,18 @@ namespace robot {
 		distance_sensor_count = count;
 	}
 
-	bool check_distance_sensors() {
-		bool is_collision_detected = false;
+	int check_distance_sensors() {
+		if (!distance_sensor_enabled_mask) return -1;
 
-		if (!distance_sensor_enabled_mask) return false;
+		for (int i = 0; i < distance_sensor_count; ++i) {
+			DistanceSensor *sensor = distance_sensors + i;
 
-		for (DistanceSensor *sensor = distance_sensors; sensor != distance_sensors + distance_sensor_count; ++sensor) {
 			if (sensor->enabled && sensor->measure_distance(UltraSonic::distance_to_time(sensor->trigger_distance) * 2) < sensor->trigger_distance) {
-				return true;
+				return i;
 			}
 		}
 
-		return false;
+		return -1;
 	}
 
 	int16_t read_distance_sensor(uint8_t sensor) {
