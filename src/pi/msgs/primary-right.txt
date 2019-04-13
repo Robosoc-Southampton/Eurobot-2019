@@ -34,7 +34,11 @@ do 1103
 // do 1001
 turn -180
 forward 520
-turn 90
+turn -90
+do 251
+do 0
+forward -10
+turn 180
 // do 1000
 do 1102
 forward 1000
@@ -47,7 +51,7 @@ forward -50
 turn -90
 
 // pick up greens and blue from 6-side
-forward 240
+forward 170
 do 10
 do 12
 do 14
@@ -68,6 +72,7 @@ do 10
 do 12
 do 14
 do 15
+do 1
 do 0
 
 // pick up green from 3-side
@@ -76,8 +81,7 @@ do 251
 do 0
 forward -50
 turn 90
-do 1
-forward 400
+forward 440
 do 251
 do 0
 // forward -50
@@ -89,23 +93,25 @@ do 0
 
 // go to weighing scales and deposit atoms
 turn -90
-do 1
-forward 440
+forward 480
 turn -90
-do 250
-forward 1120
+do 252
+do 0
+forward 1180
 turn -90
-forward 30
+forward 20
 turn -80
 do 20
 do 21
+do 250
+do 1
+do 1
 do 22
 do 23
-do 1
 do 20
 do 21
+do 1
 do 22
 do 23
-do 1
 do 20
 do 21

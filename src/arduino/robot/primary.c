@@ -248,8 +248,8 @@ START(raiseFromSideToTopGreen) {
 }
 
 STOP(raiseFromSideToTopGreen) {
-	secondaryArmServo.write(17);
-	primaryArmServo.write(80);
+	secondaryArmServo.write(16);
+	primaryArmServo.write(77);
 }
 
 ////////////////////////////////////////////////////////////
@@ -263,8 +263,8 @@ START(raiseFromSideToTopBlue) {
 }
 
 STOP(raiseFromSideToTopBlue) {
-	secondaryArmServo.write(17);
-	primaryArmServo.write(80);
+	secondaryArmServo.write(16);
+	primaryArmServo.write(77);
 }
 
 //////////////////////////////////////////////////////
@@ -518,8 +518,9 @@ void setup() {
 	grabberServo.attach(GRABBER_SERVO_PIN);
 
 	rlogf("Attaching alignment servos");
-	frontAlignmentServo1.attach(FRONT_ALIGNMENT_SERVO_1_PIN);
-	frontAlignmentServo2.attach(FRONT_ALIGNMENT_SERVO_2_PIN);
+	// TODO
+	// frontAlignmentServo1.attach(FRONT_ALIGNMENT_SERVO_1_PIN);
+	// frontAlignmentServo2.attach(FRONT_ALIGNMENT_SERVO_2_PIN);
 	frontAlignmentServo1.write(75);
 	frontAlignmentServo2.write(180);
 

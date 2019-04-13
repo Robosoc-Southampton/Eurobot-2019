@@ -193,7 +193,7 @@ def waitForConfigure():
 			if robot == "primary":
 				primary_configured[0] = True
 			elif robot == "secondary":
-				secondary_configured[0] = True 
+				secondary_configured[0] = True
 
 	primary_connection.on_message(lambda opcode, data: on_configure("primary", opcode, data))
 	secondary_connection.on_message(lambda opcode, data: on_configure("secondary", opcode, data))
