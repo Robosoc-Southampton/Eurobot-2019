@@ -105,23 +105,6 @@ def configurePrimary():
 		messages.append(('do', 252))
 		messages.append(('do', 0))
 		messages.append(('forward', 100))
-		# messages.append(('forward', 330))
-		# messages.append(('turn', -90))
-		# messages.append(('do', 2))
-		# messages.append(('forward', 205))
-		# messages.append(('do', 10))
-		# messages.append(('do', 101))
-		# messages.append(('do', 102))
-		# messages.append(('do', 0))
-		# messages.append(('forward', 107))
-		# messages.append(('do', 10))
-		# messages.append(('do', 101))
-		# messages.append(('do', 102))
-		# messages.append(('do', 0))
-		# messages.append(('forward', -350))
-		# messages.append(('turn', 90))
-		# messages.append(('forward', -660))
-		# messages.append(('turn', -90))
 	else:
 		messages.append(('turn', 90))
 		messages.append(('do', 252))
@@ -137,24 +120,6 @@ def configurePrimary():
 		messages.append(('do', 252))
 		messages.append(('do', 0))
 		messages.append(('forward', 100))
-		# messages.append(('forward', 330))
-		# messages.append(('turn', -90))
-		# messages.append(('do', 2))
-		# messages.append(('forward', -740))
-		# messages.append(('do', 10))
-		# messages.append(('do', 101))
-		# messages.append(('do', 102))
-		# messages.append(('do', 0))
-		# messages.append(('forward', 107))
-		# messages.append(('do', 10))
-		# messages.append(('do', 101))
-		# messages.append(('do', 102))
-		# messages.append(('do', 0))
-		# messages.append(('turn', 180))
-		# messages.append(('forward', -700))
-		# messages.append(('turn', -90))
-		# messages.append(('forward', -620))
-		# messages.append(('turn', 90))
 
 	messages.append(('echo', 1))
 	messages.append(('do', 1000))
@@ -173,7 +138,6 @@ def configureSecondary():
 		messages.append(('turn', 90))
 		messages.append(('forward', -10))
 		messages.append(('forward', 10))
-		messages.append(('turn', -30))
 	else:
 		messages.append(('turn', 90))
 		messages.append(('forward', 330))
@@ -181,7 +145,6 @@ def configureSecondary():
 		messages.append(('turn', -90))
 		messages.append(('forward', -10))
 		messages.append(('forward', 10))
-		messages.append(('turn', 30))
 
 	messages.append(('echo', 1))
 	messages.append(('do', 1000))
@@ -286,10 +249,12 @@ def doVision(opcode, data):
 		secondary_connection.send(('do', 1))
 		collectGreenium(s)
 
+s = None
 
-ip = 'localhost'
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((ip, VISION_PORT))
+if not "-ds" in sys.argv:
+	ip = 'localhost'
+	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	s.connect((ip, VISION_PORT))
 
 configurePrimary()
 configureSecondary()

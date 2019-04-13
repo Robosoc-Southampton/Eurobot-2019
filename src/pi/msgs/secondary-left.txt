@@ -1,7 +1,7 @@
 
 // wait for pull cord
 config-key peak-speed
-config-set 70
+config-set 60
 do 31
 do 100
 do 0
