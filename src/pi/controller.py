@@ -1,4 +1,3 @@
-
 import lib.comms
 import lib.controller
 import lib.messages
@@ -6,11 +5,16 @@ import lib.state
 from lib.position import RobotPosition
 import sys
 import time
+import socket
+import math
 
 PRIMARY_ADDRESS = "20:17:03:08:60:45"
 PRIMARY_CONFIG = "src/pi/msgs/config.txt"
 # SECONDARY_ADDRESS = "20:17:03:08:58:54"
 SECONDARY_CONFIG = "src/pi/msgs/config2.txt"
+
+VISION_PORT = 12345
+VISION_TCP_BUFFER_SIZE = 1024
 
 if "-dp" in sys.argv:
 	primary_connection = lib.comms.DummyConnection()
@@ -83,7 +87,7 @@ print("on side: ", side)
 
 def configurePrimary():
 	messages = []
-	
+
 	messages.append(('do', 1100))
 
 	if side == "left":
@@ -151,7 +155,7 @@ def configurePrimary():
 		# messages.append(('turn', -90))
 		# messages.append(('forward', -620))
 		# messages.append(('turn', 90))
-	
+
 	messages.append(('echo', 1))
 	messages.append(('do', 1000))
 
@@ -193,7 +197,7 @@ def waitForConfigure():
 			if robot == "primary":
 				primary_configured[0] = True
 			elif robot == "secondary":
-				secondary_configured[0] = True 
+				secondary_configured[0] = True
 
 	primary_connection.on_message(lambda opcode, data: on_configure("primary", opcode, data))
 	secondary_connection.on_message(lambda opcode, data: on_configure("secondary", opcode, data))
@@ -203,6 +207,80 @@ def waitForConfigure():
 
 	print("configured")
 
+def seeAtoms(s, vision_message):
+        s.send(bytes(vision_message + "\n", 'utf-8'))
+        data = ""
+        while(data == "" or data[-2:] != "\n\n"):
+                data += s.recv(VISION_TCP_BUFFER_SIZE)
+        data = data[:-2]
+        point_strings = data.split(b'\n')
+
+        points = list()
+
+        for point_string in point_strings:
+                coords = point_string.split(b",")
+                points.append((int(float(coords[0])), int(float(coords[1]))))
+
+        return points
+
+def collectAtom(s, vision_message):
+        atoms = seeAtoms(s, vision_message)
+        atoms = offsetAtoms(atoms)
+        atom = nearestAtom(atoms)
+
+        (x,y) = atom
+        angle = math.atan2(x, y)
+        angle = math.degrees(angle)
+        angle = int(angle)
+        angle *= 1
+        dist = math.hypot(x, y)
+        dist = int(dist)
+        dist -= 100
+
+        #turn angle
+        #go distance (- something)
+        messages = list()
+        messages.append(("turn", angle))
+        messages.append(("forward", dist))
+        secondary_connection.send_batched(messages)
+
+
+def nearestAtom(atoms):
+        nearest = None
+        dist = 1000000
+
+        for atom in atoms:
+                thisDist = math.hypot(atom[0], atom[1])
+                if thisDist < dist:
+                        nearest = atom
+                        dist = thisDist
+        return nearest
+
+
+def offsetAtoms(atoms):
+        transformed = list()
+        for (x,y) in atoms:
+                transformed.append((100-x, 200+y))
+        return transformed
+
+def collectRedium(s):
+        collectAtom("findRedium")
+
+def collectGreenium(s):
+        collectAtom("findGreenium")
+
+def collectBlueium(s):
+        collectAtom("findBlueium")
+
+def doVision(opcode, data):
+        if opcode == 1234:
+                collectGreenium(s)
+
+
+ip = 'localhost'
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((ip, VISION_PORT))
+
 configurePrimary()
 configureSecondary()
 waitForConfigure()
@@ -211,7 +289,8 @@ primary_connection.send(("message", 7))
 secondary_connection.send(("message", 7))
 
 primary_connection.on_message(lambda opcode, data: print("[" + str(time.clock()) + "] (primary) Message received (%s %s)" % (opcode, data)))
-secondary_connection.on_message(lambda opcode, data: print("[" + str(time.clock()) + "] (secondary) Message received (%s %s)" % (opcode, data)))
+#secondary_connection.on_message(lambda opcode, data: print("[" + str(time.clock()) + "] (secondary) Message received (%s %s)" % (opcode, data)))
+secondary_connection.on_message(doVision)
 
 if side == "left":
 	primary_connection.send_batched(lib.messages.parse_message_file("src/pi/msgs/primary-left.txt"))
