@@ -167,14 +167,6 @@ def configureSecondary():
 	messages.append(('do', 1100))
 
 	if side == "left":
-		messages.append(('turn', 90))
-		messages.append(('forward', 330))
-		messages.append(('forward', -320))
-		messages.append(('turn', -90))
-		messages.append(('forward', -10))
-		messages.append(('forward', 10))
-		messages.append(('turn', 30))
-	else:
 		messages.append(('turn', -90))
 		messages.append(('forward', 330))
 		messages.append(('forward', -320))
@@ -182,6 +174,14 @@ def configureSecondary():
 		messages.append(('forward', -10))
 		messages.append(('forward', 10))
 		messages.append(('turn', -30))
+	else:
+		messages.append(('turn', 90))
+		messages.append(('forward', 330))
+		messages.append(('forward', -320))
+		messages.append(('turn', -90))
+		messages.append(('forward', -10))
+		messages.append(('forward', 10))
+		messages.append(('turn', 30))
 
 	messages.append(('echo', 1))
 	messages.append(('do', 1000))
@@ -208,73 +208,83 @@ def waitForConfigure():
 	print("configured")
 
 def seeAtoms(s, vision_message):
-        s.send(bytes(vision_message + "\n", 'utf-8'))
-        data = ""
-        while(data == "" or data[-2:] != "\n\n"):
-                data += s.recv(VISION_TCP_BUFFER_SIZE)
-        data = data[:-2]
-        point_strings = data.split(b'\n')
+	print("Here1")
+	s.send(bytes(vision_message + "\n", 'utf-8'))
+	data = b""
+	while(data == "" or data[-2:] != "\n\n"):
+		data += s.recv(VISION_TCP_BUFFER_SIZE)
+	data = data[:-2]
+	point_strings = data.split(b'\n')
 
-        points = list()
+	print("Here2")
 
-        for point_string in point_strings:
-                coords = point_string.split(b",")
-                points.append((int(float(coords[0])), int(float(coords[1]))))
+	points = []
 
-        return points
+	for point_string in point_strings:
+		coords = point_string.split(b",")
+		points.append((int(float(coords[0])), int(float(coords[1]))))
+
+	print("Here3")
+
+	return points
 
 def collectAtom(s, vision_message):
-        atoms = seeAtoms(s, vision_message)
-        atoms = offsetAtoms(atoms)
-        atom = nearestAtom(atoms)
+	print("Looking for atom")
+	atoms = seeAtoms(s, vision_message)
+	atoms = offsetAtoms(atoms)
+	atom = nearestAtom(atoms)
 
-        (x,y) = atom
-        angle = math.atan2(x, y)
-        angle = math.degrees(angle)
-        angle = int(angle)
-        angle *= 1
-        dist = math.hypot(x, y)
-        dist = int(dist)
-        dist -= 100
+	(x,y) = atom
+	angle = math.atan2(x, y)
+	angle = math.degrees(angle)
+	angle = int(angle)
+	angle *= 1
+	dist = math.hypot(x, y)
+	dist = int(dist)
+	dist -= 100
 
-        #turn angle
-        #go distance (- something)
-        messages = list()
-        messages.append(("turn", angle))
-        messages.append(("forward", dist))
-        secondary_connection.send_batched(messages)
+	#turn angle
+	#go distance (- something)
+	messages = []
+	print("Found atom")
+	messages.append(("turn", angle))
+	messages.append(("forward", dist))
+	secondary_connection.send_batched(messages)
 
 
 def nearestAtom(atoms):
-        nearest = None
-        dist = 1000000
+	nearest = None
+	dist = 1000000
 
-        for atom in atoms:
-                thisDist = math.hypot(atom[0], atom[1])
-                if thisDist < dist:
-                        nearest = atom
-                        dist = thisDist
-        return nearest
+	for atom in atoms:
+		thisDist = math.hypot(atom[0], atom[1])
+		if thisDist < dist:
+			nearest = atom
+			dist = thisDist
+	return nearest
 
 
 def offsetAtoms(atoms):
-        transformed = list()
-        for (x,y) in atoms:
-                transformed.append((100-x, 200+y))
-        return transformed
+	transformed = list()
+	for (x,y) in atoms:
+		transformed.append((100-x, 200+y))
+	return transformed
 
 def collectRedium(s):
-        collectAtom("findRedium")
+	collectAtom(s, "findRedium")
 
 def collectGreenium(s):
-        collectAtom("findGreenium")
+	collectAtom(s, "findGreenium")
 
 def collectBlueium(s):
-        collectAtom("findBlueium")
+	collectAtom(s, "findBlueium")
 
 def doVision(opcode, data):
-        if opcode == 1234:
-                collectGreenium(s)
+	if opcode == "status" and data == 1234:
+		secondary_connection.send(('message', 7))
+		secondary_connection.send(('do', 1))
+		secondary_connection.send(('do', 1))
+		collectGreenium(s)
 
 
 ip = 'localhost'
