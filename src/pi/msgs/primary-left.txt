@@ -90,9 +90,9 @@ do 0
 // go to weighing scales
 turn 20
 forward 70
-turn -10
-forward 170
 turn -20
+forward 200
+turn -30
 
 // deposit atoms into weighing scales
 // green in hand
@@ -132,3 +132,8 @@ do 23
 do 20
 do 1
 do 21
+
+// TODO:
+// open alignment servos
+// rotate and go back to starting area, through chaos area
+// drop off red in carousel

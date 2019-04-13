@@ -145,3 +145,8 @@ do 23
 do 20
 do 1
 do 21
+
+// TODO:
+// open alignment servos
+// rotate and go back to starting area, through chaos area
+// drop off red in carousel
