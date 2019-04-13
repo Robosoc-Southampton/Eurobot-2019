@@ -33,6 +33,7 @@ do 31
 do 1103
 // do 1001
 turn -180
+config-set 60
 forward 520
 turn -90
 do 251
@@ -43,6 +44,7 @@ turn 180
 do 1102
 forward 1000
 do 1100
+config-set 40
 forward 200
 // do 1000
 do 251
@@ -97,21 +99,27 @@ forward 480
 turn -90
 do 252
 do 0
+config-set 60
 forward 1180
+do 0
+config-set 40
 turn -90
 forward 20
-turn -80
+turn -70
 do 20
-do 21
 do 250
 do 1
-do 1
+do 21
 do 22
 do 23
 do 20
-do 21
 do 1
+do 21
 do 22
 do 23
 do 20
+do 1
 do 21
+do 22
+do 23
+do 20

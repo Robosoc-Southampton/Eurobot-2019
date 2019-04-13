@@ -91,26 +91,24 @@ do 10
 do 12
 
 // go to weighing scales and deposit atoms
-do 1
 forward 100
 turn 20
 forward 150
 turn -30
+do 20
 do 250
-do 20
+do 1
 do 21
 do 22
 do 23
-do 1
 do 20
+do 1
 do 21
 do 22
 do 23
-do 1
 do 20
+do 1
 do 21
 do 22
 do 23
-do 1
 do 20
-do 21

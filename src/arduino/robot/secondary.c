@@ -10,13 +10,19 @@ DistanceSensor sensors[] = {
 
 ///////////////////////////////////////////////////
 
-ACTIVITY(raiseStepper, cooldown=2000, count=3000) {
+ACTIVITY(raiseStepper, cooldown=1650, count=3000) {
+	raisingStepper.step(1);
+}
+
+///////////////////////////////////////////////////////
+
+ACTIVITY(raiseStepperBlue, cooldown=1800, count=3000) {
 	raisingStepper.step(1);
 }
 
 ///////////////////////////////////////////////////
 
-ACTIVITY(lowerStepper, cooldown=2000, count=3000) {
+ACTIVITY(lowerStepper, cooldown=1500, count=3000) {
 	raisingStepper.step(-1);
 }
 
@@ -110,6 +116,8 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 			return ACTIVITY(lowerStepper);
 		case ACTIVITY_RAISE_STEPPER:
 			return ACTIVITY(raiseStepper);
+		case ACTIVITY_RAISE_STEPPER_BLUE:
+			return ACTIVITY(raiseStepperBlue);
 		case ACTIVITY_LOWER_STEPPER_SMALL:
 			return ACTIVITY(lowerStepperSmall);
 		case ACTIVITY_RAISE_STEPPER_SMALL:

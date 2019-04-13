@@ -165,19 +165,19 @@ def configureSecondary():
 	if side == "left":
 		messages.append(('turn', 90))
 		messages.append(('forward', 330))
-		messages.append(('forward', -330))
+		messages.append(('forward', -320))
 		messages.append(('turn', -90))
 		messages.append(('forward', -10))
 		messages.append(('forward', 10))
-		messages.append(('turn', 90))
+		messages.append(('turn', 30))
 	else:
 		messages.append(('turn', -90))
 		messages.append(('forward', 330))
-		messages.append(('forward', -330))
+		messages.append(('forward', -320))
 		messages.append(('turn', 90))
 		messages.append(('forward', -10))
 		messages.append(('forward', 10))
-		messages.append(('turn', -90))
+		messages.append(('turn', -30))
 
 	messages.append(('echo', 1))
 	messages.append(('do', 1000))

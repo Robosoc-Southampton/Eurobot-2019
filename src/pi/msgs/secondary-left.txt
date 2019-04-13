@@ -1,29 +1,67 @@
 
-do 7
+// wait for pull cord
+config-key peak-speed
+config-set 70
+do 31
 do 100
 do 0
 
-forward 150
-turn 90
-forward -300
-turn -45
-forward 200
-turn 25
-forward 120
-turn 110
-forward 100
-forward -140
+// activate experiment
+config-key peak-speed
+config-set 70
+forward 230
+turn -60
+do 10
+config-set 40
+forward 185
+forward -50
+do 0
+config-set 70
+do 11
 turn -90
-forward 240
+forward 200
+do 0
+config-set 40
+forward 100
+forward -10
+do 0
+config-set 70
+turn 183
+forward 365
+turn 90
 
-forward 360
-do 6
+// go to first atom and pick it up
+config-set 40
+forward 200
+do 0
+config-set 60
+do 30
 do 2
-turn 90
-forward 240
-do 7
-do 1
-do 6
 do 2
-turn 90
-forward 240
+do 0
+
+// go to second atom and pick it up
+forward 700
+do 0
+
+// go to periodic table and drop atoms
+turn 180
+forward 520
+turn -90
+forward 340
+do 31
+do 0
+config-set 40
+forward 40
+do 0
+config-set 70
+forward -90
+turn 182
+
+// go to chaos area
+forward 400
+turn 50
+forward 200
+
+// tell the pi that we're ready for image processing
+echo 1234
