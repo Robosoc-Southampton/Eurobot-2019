@@ -69,7 +69,7 @@ public class AtomDetector {
 	// chessboard parameters for calibration
 	private static final int CHESSBOARD_WIDTH = 9;
 	private static final int CHESSBOARD_HEIGHT = 6;
-	private static final double CHESSBOARD_SQUARE_SIDE_LENGTH = 22.25;
+	private static final double CHESSBOARD_SQUARE_SIDE_LENGTH = 23.2;
 	
 	// file where calibration data is stored
 	private static final String POINTS_FILENAME = "points.dat";
