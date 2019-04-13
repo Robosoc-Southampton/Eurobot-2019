@@ -53,21 +53,24 @@ forward 420
 // pick up green from 3-side
 do 251
 do 0
-forward -20
+forward -10
 turn -90
 do 10
 do 12
 do 14
 do 15
+do 1
 do 0
 
 // move to 6-side
 turn -90
-forward 460
+forward 490
 turn 90
 
 // pick up greens and blue from 6-side
-forward 340
+do 252
+do 0
+forward 470
 do 10
 do 12
 do 14
@@ -89,8 +92,10 @@ do 12
 
 // go to weighing scales and deposit atoms
 do 1
-forward 200
-turn -20
+forward 100
+turn 20
+forward 150
+turn -30
 do 250
 do 20
 do 21

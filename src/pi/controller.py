@@ -160,17 +160,24 @@ def configurePrimary():
 def configureSecondary():
 	messages = []
 
-	# left only for now
 	messages.append(('do', 1100))
-	messages.append(('turn', -90))
-	messages.append(('forward', 320))
-	messages.append(('forward', -20))
-	messages.append(('turn', -90))
-	messages.append(('forward', 40))
-	messages.append(('forward', -20))
-	messages.append(('turn', 90))
-	messages.append(('forward', -305))
-	messages.append(('turn', 90))
+
+	if side == "left":
+		messages.append(('turn', 90))
+		messages.append(('forward', 330))
+		messages.append(('forward', -330))
+		messages.append(('turn', -90))
+		messages.append(('forward', -10))
+		messages.append(('forward', 10))
+		messages.append(('turn', 90))
+	else:
+		messages.append(('turn', -90))
+		messages.append(('forward', 330))
+		messages.append(('forward', -330))
+		messages.append(('turn', 90))
+		messages.append(('forward', -10))
+		messages.append(('forward', 10))
+		messages.append(('turn', -90))
 
 	messages.append(('echo', 1))
 	messages.append(('do', 1000))
