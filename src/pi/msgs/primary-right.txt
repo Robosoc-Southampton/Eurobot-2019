@@ -2,58 +2,32 @@
 // TODO: remove
 do 1100
 
+// turn to face start area
+turn -90
+
+// set config
+config-key peak-speed
+config-set 60
+
 // initial wait
 do 100
 do 0
 
-// go to particle accelerator
+// go to 3-side
 config-key peak-speed
 config-set 60
-forward 1500
+forward 1130
 do 0
 config-set 40
-turn 90
-do 1102
-forward 100
-do 1100
-forward 320
 do 251
 do 0
 forward -10
-// TODO: forward 10
-
-// push down blue
-turn -60
-do 30
-do 0
-turn -30
-do 31
-
-// go to 6-side atoms
-do 1103
-// do 1001
-turn -180
-config-set 60
-forward 520
 turn -90
 do 251
 do 0
-forward -10
-turn 180
-// do 1000
-do 1102
-forward 1000
-do 1100
-config-set 40
-forward 200
-// do 1000
-do 251
-do 0
-forward -50
-turn -90
+forward -25
 
-// pick up greens and blue from 6-side
-forward 170
+// pick up green from 3-side
 do 10
 do 12
 do 14
@@ -61,7 +35,39 @@ do 15
 do 1
 do 0
 
-forward 215
+// go to 6-side
+config-set 60
+turn -90
+forward 520
+turn -90
+do 252
+do 0
+forward 1100
+turn -90
+do 251
+do 0
+config-set 40
+forward -40
+turn -90
+forward 220
+
+// pick up reds, greens and blue from 6-side
+do 10
+do 12
+do 14
+do 15
+do 1
+do 0
+
+forward 107
+do 10
+do 11
+do 14
+do 15
+do 1
+do 0
+
+forward 107
 do 10
 do 13
 do 14
@@ -69,7 +75,15 @@ do 15
 do 1
 do 0
 
-forward 215
+forward 107
+do 10
+do 11
+do 14
+do 15
+do 1
+do 0
+
+forward 107
 do 10
 do 12
 do 14
@@ -77,49 +91,57 @@ do 15
 do 1
 do 0
 
-// pick up green from 3-side
-forward 400
-do 251
-do 0
-forward -50
-turn 90
-forward 440
-do 251
-do 0
-// forward -50
-forward -10
-turn -90
+forward 107
 do 10
-do 12
+do 11
 do 0
 
-// go to weighing scales and deposit atoms
-turn -90
-forward 480
-turn -90
-do 252
-do 0
+// go to weighing scales
 config-set 60
-forward 1180
-do 0
-config-set 40
+turn 180
+forward 780
 turn -90
-forward 20
+do 251
+config-set 40
+do 0
+forward -20
 turn -70
+
+// deposit atoms into weighing scales
+// red in hand
 do 20
-do 250
+do 1
+do 1
 do 1
 do 21
 do 22
 do 23
+// green
 do 20
 do 1
 do 21
 do 22
 do 23
+// red
 do 20
 do 1
 do 21
 do 22
 do 23
+// blue
 do 20
+do 1
+do 21
+do 22
+do 23
+// green
+do 20
+do 1
+do 1
+do 21
+do 22
+do 23
+// red
+do 20
+do 1
+do 21

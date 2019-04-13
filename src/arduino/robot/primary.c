@@ -202,7 +202,7 @@ START(dropGoldiumRetract) {
 
 ACTIVITY(lowerFromTopToSide, cooldown=2000, count=400) {
 	if (activity_iteration >= 100) armStepper.step(-1);
-	if (activity_iteration == 350) secondaryArmServo.write(35);
+	if (activity_iteration == 350) secondaryArmServo.write(38);
 }
 
 START(lowerFromTopToSide) {
@@ -213,68 +213,74 @@ START(lowerFromTopToSide) {
 
 ///////////////////////////////////////////////////////////
 
-ACTIVITY(raiseFromSideToTopRed, cooldown=2000, count=450) {
+ACTIVITY(raiseFromSideToTopRed, cooldown=2000, count=550) {
 	if (activity_iteration >= 100 && activity_iteration < 400) armStepper.step(1);
+	if (activity_iteration == 400) secondaryArmServo.write(60);
+	if (activity_iteration == 500) {
+		primaryArmServo.write(90);
+		secondaryArmServo.write(15);
+	}
 }
 
 START(raiseFromSideToTopRed) {
 	grabberServo.write(ARM_GRABBER_CLOSED);
 }
 
-STOP(raiseFromSideToTopRed) {
-	secondaryArmServo.write(16);
-	primaryArmServo.write(85);
-}
-
 ///////////////////////////////////////////////////////////
 
-ACTIVITY(raiseFromSideToRest, cooldown=2000, count=450) {
+ACTIVITY(raiseFromSideToRest, cooldown=2000, count=550) {
 	if (activity_iteration >= 100 && activity_iteration < 400) armStepper.step(1);
-}
-
-STOP(raiseFromSideToRest) {
-	secondaryArmServo.write(20);
-	primaryArmServo.write(90);
+	if (activity_iteration == 400) secondaryArmServo.write(60);
+	if (activity_iteration == 500) {
+		primaryArmServo.write(90);
+		secondaryArmServo.write(15);
+	}
 }
 
 /////////////////////////////////////////////////////////////
 
-ACTIVITY(raiseFromSideToTopGreen, cooldown=2000, count=450) {
+ACTIVITY(raiseFromSideToTopGreen, cooldown=2000, count=550) {
 	if (activity_iteration >= 100 && activity_iteration < 400) armStepper.step(1);
+	if (activity_iteration == 400) secondaryArmServo.write(60);
+	if (activity_iteration == 500) {
+		primaryArmServo.write(90);
+		secondaryArmServo.write(15);
+	}
 }
 
 START(raiseFromSideToTopGreen) {
 	grabberServo.write(ARM_GRABBER_CLOSED);
 }
 
-STOP(raiseFromSideToTopGreen) {
-	secondaryArmServo.write(16);
-	primaryArmServo.write(77);
-}
-
 ////////////////////////////////////////////////////////////
 
-ACTIVITY(raiseFromSideToTopBlue, cooldown=2000, count=450) {
+ACTIVITY(raiseFromSideToTopBlue, cooldown=2000, count=550) {
 	if (activity_iteration >= 100 && activity_iteration < 400) armStepper.step(1);
+	if (activity_iteration == 400) secondaryArmServo.write(60);
+	if (activity_iteration == 500) {
+		primaryArmServo.write(90);
+		secondaryArmServo.write(15);
+	}
 }
 
 START(raiseFromSideToTopBlue) {
 	grabberServo.write(ARM_GRABBER_CLOSED);
 }
 
-STOP(raiseFromSideToTopBlue) {
-	secondaryArmServo.write(16);
-	primaryArmServo.write(77);
-}
-
 //////////////////////////////////////////////////////
 
-ACTIVITY(lowerIntoCarousel, cooldown=1500, count=250) {
-	if (activity_iteration >= 100) armStepper.step(-1);
+ACTIVITY(lowerIntoCarousel, cooldown=1500, count=300) {
+	if (activity_iteration >= 100 && activity_iteration < 250) armStepper.step(-1);
+	if (activity_iteration == 250) primaryArmServo.write(60);
+}
+
+START(lowerIntoCarousel) {
+	primaryArmServo.write(78);
 }
 
 STOP(lowerIntoCarousel) {
 	grabberServo.write(ARM_GRABBER_OPEN);
+	primaryArmServo.write(80);
 }
 
 //////////////////////////////////////////////////////
@@ -304,16 +310,16 @@ STOP(putInWeighingScales) {
 
 ///////////////////////////////////////////////////////////////
 
-ACTIVITY(retractFromWeighingScales, cooldown=1500, count=200) {
-	armStepper.step(1);
+ACTIVITY(retractFromWeighingScales, cooldown=1500, count=400) {
+	if (activity_iteration < 200) armStepper.step(1);
+	if (activity_iteration == 200) {
+		secondaryArmServo.write(5);
+		primaryArmServo.write(90);
+	}
 }
 
 START(retractFromWeighingScales) {
-	secondaryArmServo.write(10);
-}
-
-STOP(retractFromWeighingScales) {
-	primaryArmServo.write(85);
+	secondaryArmServo.write(60);
 }
 
 //////////////////////////////////////////////////////
@@ -323,13 +329,9 @@ ACTIVITY(pickIntoCarousel, cooldown=1500, count=330) {
 }
 
 START(pickIntoCarousel) {
-	primaryArmServo.write(85);
+	primaryArmServo.write(80);
 	secondaryArmServo.write(25);
 	grabberServo.write(ARM_GRABBER_OPEN);
-}
-
-STOP(pickIntoCarousel) {
-	primaryArmServo.write(80);
 }
 
 //////////////////////////////////////////////////////
@@ -535,7 +537,7 @@ void setup() {
 	primaryArmServo.write(50);
 	armStepper.step(100);
 	primaryArmServo.write(90);
-	armStepper.step(130);
+	armStepper.step(170);
 
 	rlogf("Setting arm stepper speed");
 	armStepper.setSpeed(ARM_STEPPER_SPEED_FAST);
