@@ -1,3 +1,8 @@
 #!/usr/bin/env bash
 
 cp src/arduino/robot/$1.c src/arduino/robot.ino
+if [ -r src/arduino/include/robot/$1_config.h ]; then
+	cat src/arduino/include/robot/$1_config.h > src/arduino/include/config.h
+else
+	echo "" > src/arduino/include/config.h
+fi
