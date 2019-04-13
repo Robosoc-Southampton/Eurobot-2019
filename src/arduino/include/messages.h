@@ -10,6 +10,7 @@
 
 #include <Arduino.h>
 #include "debug.h"
+#include "config.h"
 
 #define MESSAGE_SIZE 3
 #ifndef MESSAGE_BUFFER_SIZE
