@@ -1,0 +1,34 @@
+
+// setup and wait for pull cord
+config-key peak-speed
+config-set 60
+turn -3
+do 31
+do 100
+do 0
+
+// get first atom
+forward 360
+do 30
+do 2
+do 2
+do 0
+turn -87
+
+// get second atom
+forward 600
+turn -180
+
+// come back to deposit
+forward 450
+turn 90
+forward 330
+do 0
+config-set 60
+forward 60
+do 31
+
+// go to chaos area
+forward -90
+turn 150
+forward 350

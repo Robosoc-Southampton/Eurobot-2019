@@ -3,35 +3,39 @@
 
 auto ledOn = LOW;
 Stepper raisingStepper(STEPPER_ROTATIONS, LIFTING_STEPPER_1, LIFTING_STEPPER_2, LIFTING_STEPPER_3, LIFTING_STEPPER_4);
-Servo gripServo;
+Servo gripServo, finger;
 
-SharpIR sensors[] = {
-	SharpIR(A0, 220),
-	SharpIR(A1, 220)
+DistanceSensor sensors[] = {
 };
 
 ///////////////////////////////////////////////////
 
-ACTIVITY(raiseStepper, cooldown=3000, count=1000) {
-	raisingStepper.step(2);
+ACTIVITY(raiseStepper, cooldown=1650, count=3000) {
+	raisingStepper.step(1);
+}
+
+///////////////////////////////////////////////////////
+
+ACTIVITY(raiseStepperBlue, cooldown=1800, count=3000) {
+	raisingStepper.step(1);
 }
 
 ///////////////////////////////////////////////////
 
-ACTIVITY(lowerStepper, cooldown=3000, count=1000) {
-	raisingStepper.step(-2);
+ACTIVITY(lowerStepper, cooldown=1500, count=3000) {
+	raisingStepper.step(-1);
 }
 
 ///////////////////////////////////////////////////////
 
-ACTIVITY(raiseStepperSmall, cooldown=3000, count=200) {
-	raisingStepper.step(2);
+ACTIVITY(raiseStepperSmall, cooldown=2000, count=400) {
+	raisingStepper.step(1);
 }
 
 ///////////////////////////////////////////////////////
 
-ACTIVITY(lowerStepperSmall, cooldown=3000, count=200) {
-	raisingStepper.step(-2);
+ACTIVITY(lowerStepperSmall, cooldown=2000, count=400) {
+	raisingStepper.step(-1);
 }
 
 ///////////////////////////////////////////////
@@ -80,6 +84,26 @@ PREDICATE(pullCord) {
 	return !robot::wait_for_pullcord(PULL_CORD_PIN);
 }
 
+//////////////////////////////////////////
+
+ACTIVITY(openFinger, cooldown=0, count=0) {
+
+}
+
+START(openFinger) {
+	finger.write(360);
+}
+
+//////////////////////////////////////////
+
+ACTIVITY(closeFinger, cooldown=0, count=0) {
+
+}
+
+START(closeFinger) {
+	finger.write(0);
+}
+
 //////////////////////////////////////////////////
 
 int16_t readComponentValue(int16_t component_ID) {
@@ -92,6 +116,8 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 			return ACTIVITY(lowerStepper);
 		case ACTIVITY_RAISE_STEPPER:
 			return ACTIVITY(raiseStepper);
+		case ACTIVITY_RAISE_STEPPER_BLUE:
+			return ACTIVITY(raiseStepperBlue);
 		case ACTIVITY_LOWER_STEPPER_SMALL:
 			return ACTIVITY(lowerStepperSmall);
 		case ACTIVITY_RAISE_STEPPER_SMALL:
@@ -104,6 +130,10 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 			return ACTIVITY(openGrip);
 		case ACTIVITY_PULL_CORD:
 			return ACTIVITY(pullCord);
+		case ACTIVITY_OPEN_FINGER:
+			return ACTIVITY(openFinger);
+		case ACTIVITY_CLOSE_FINGER:
+			return ACTIVITY(closeFinger);
 	}
 
 	return nullptr;
@@ -114,16 +144,20 @@ void setup() {
 
 	robot::set_component_value_reader(&readComponentValue);
 	robot::set_activity_lookup(&lookupActivity);
-	robot::set_distance_sensors(2, sensors);
+	robot::set_distance_sensors(0, sensors);
 
 	robot::setup();
 
 	rlogf("Setting up raising stepper speed");
 	raisingStepper.setSpeed(STEPPER_SPEED);
 
-	rlogf("Attaching servo");
+	rlogf("Attaching grip servo");
 	gripServo.attach(GRIP_SERVO_PIN);
 	gripServo.write(0);
+
+	rlogf("Attaching finger servo");
+	finger.attach(FINGER_SERVO_PIN);
+	finger.write(0);
 
 	rlogf("Setting pull cord pin to input");
 	pinMode(PULL_CORD_PIN, INPUT);

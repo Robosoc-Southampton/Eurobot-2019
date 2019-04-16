@@ -84,8 +84,6 @@ int32_t MD25::i2c_read4(uint8_t reg) {
 	int32_t value = 0;
 
 	for (int t = TRIES; t; --t) {
-		// rlogfd("Hello :)");
-
 		long start_time = micros();
 
 		value = 0;
@@ -105,9 +103,9 @@ int32_t MD25::i2c_read4(uint8_t reg) {
 		}
 
 		if (Wire.available() < 4) {
-			rlogf("Hit timeout!");
-			// delay(100);
+			digitalWrite(LED_BUILTIN, HIGH);
 			while (Wire.available()) Wire.read();
+			delay(10);
 			continue;
 		}
 
@@ -115,6 +113,8 @@ int32_t MD25::i2c_read4(uint8_t reg) {
 			value <<= 8;
 			value += Wire.read();
 		}
+		
+		digitalWrite(LED_BUILTIN, LOW);
 
 		return value;
 	}

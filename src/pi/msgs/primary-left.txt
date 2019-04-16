@@ -1,49 +1,114 @@
 
+// TODO: remove
+do 1100
+
+// initial wait
 do 100
 do 0
 
-turn 90
-forward 640
+// go to particle accelerator
+config-key peak-speed
+config-set 60
+forward 1490
+do 0
+config-set 40
 turn -90
-forward 245
+do 1102
+forward 100
+do 1100
+forward 320
+do 251
+do 0
+forward -10
+// TODO: forward 10
+turn -120
 
-do 10
-do 11
-do 14
-do 15
-do 1
-forward 108
+// push down blue
+do 30
+do 0
+turn 30
+do 31
 
+// move to 3-side
+forward 500
+turn 90
+forward -40
+do 251
+do 0
+forward -40
+turn -180
+forward 1000
+forward 170
+do 251
+do 0
+forward -30
+turn 90
+forward 1050
+do 251
+do 0
+forward -50
+turn -90
+forward 420
+
+// pick up green from 3-side
+do 251
+do 0
+forward -10
+turn -90
 do 10
 do 12
 do 14
 do 15
 do 1
-forward 108
+do 0
 
+// move to 6-side
+turn -90
+forward 490
+turn 90
+
+// pick up greens and blue from 6-side
+do 252
+do 0
+forward 470
 do 10
-do 11
+do 12
 do 14
 do 15
 do 1
-forward 108
+do 0
 
+forward 215
 do 10
 do 13
 do 14
 do 15
 do 1
-forward 108
+do 0
 
-do 10
-do 11
-do 14
-do 15
-do 1
-forward 108
-
+forward 215
 do 10
 do 12
-do 14
-do 15
+
+// go to weighing scales and deposit atoms
+forward 100
+turn 20
+forward 150
+turn -30
+do 20
+do 250
 do 1
+do 21
+do 22
+do 23
+do 20
+do 1
+do 21
+do 22
+do 23
+do 20
+do 1
+do 21
+do 22
+do 23
+do 20

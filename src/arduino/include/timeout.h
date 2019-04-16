@@ -9,9 +9,10 @@
 
 #include <Arduino.h>
 #include "debug.h"
+#include "drive.h"
 
 namespace robot {
-	const int32_t TIMEOUT = 89000;
+	const int32_t TIMEOUT = 98000;
 
 	bool wait_for_pullcord(uint8_t pin);
 	void notify_start();
