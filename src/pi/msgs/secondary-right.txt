@@ -16,19 +16,39 @@ do 0
 turn -87
 
 // get second atom
-forward 600
-turn -180
+forward 300
+turn 180
 
 // come back to deposit
-forward 450
+forward 150
 turn 90
 forward 330
 do 0
 config-set 60
-forward 60
+forward 120
 do 31
 
+// to to particle accelerator
+forward -100
+turn -180
+do 0
+config-set 100
+forward 1350
+do 0
+config-set 60
+turn 90
+forward 500
+forward -80
+do 10
+forward 60
+
+// push down atom
+do 11
+T -5
+T 5
+
 // go to chaos area
-forward -90
-turn 150
-forward 350
+turn 170
+forward 1000
+turn -90
+forward 1000

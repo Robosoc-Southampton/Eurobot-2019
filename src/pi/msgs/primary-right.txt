@@ -47,7 +47,7 @@ turn -90
 do 251
 do 0
 config-set 40
-forward -40
+forward -45
 turn -90
 forward 220
 
@@ -59,7 +59,7 @@ do 15
 do 1
 do 0
 
-forward 107
+forward 105
 do 10
 do 11
 do 14
@@ -67,7 +67,7 @@ do 15
 do 1
 do 0
 
-forward 107
+forward 105
 do 10
 do 13
 do 14
@@ -75,7 +75,7 @@ do 15
 do 1
 do 0
 
-forward 107
+forward 105
 do 10
 do 11
 do 14
@@ -83,7 +83,7 @@ do 15
 do 1
 do 0
 
-forward 107
+forward 105
 do 10
 do 12
 do 14
@@ -91,7 +91,7 @@ do 15
 do 1
 do 0
 
-forward 107
+forward 105
 do 10
 do 11
 do 0

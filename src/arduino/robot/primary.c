@@ -310,12 +310,10 @@ STOP(putInWeighingScales) {
 
 ///////////////////////////////////////////////////////////////
 
-ACTIVITY(retractFromWeighingScales, cooldown=1500, count=400) {
+ACTIVITY(retractFromWeighingScales, cooldown=1500, count=500) {
 	if (activity_iteration < 200) armStepper.step(1);
-	if (activity_iteration == 200) {
-		secondaryArmServo.write(5);
-		primaryArmServo.write(90);
-	}
+	if (activity_iteration == 200) secondaryArmServo.write(5);
+	if (activity_iteration == 300) primaryArmServo.write(90);
 }
 
 START(retractFromWeighingScales) {
