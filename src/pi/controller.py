@@ -12,6 +12,7 @@ PRIMARY_ADDRESS = "20:17:03:08:60:45"
 PRIMARY_CONFIG = "src/pi/msgs/config.txt"
 # SECONDARY_ADDRESS = "20:17:03:08:58:54"
 SECONDARY_CONFIG = "src/pi/msgs/config2.txt"
+EXPERIMENT_ADDRESS = "20:17:03:08:60:45"
 
 VISION_PORT = 12345
 VISION_TCP_BUFFER_SIZE = 1024
@@ -248,6 +249,9 @@ def doVision(opcode, data):
 		secondary_connection.send(('do', 1))
 		secondary_connection.send(('do', 1))
 		collectGreenium(s)
+	elif opcode == "status" and data == 5678:
+		# will send data to the experiment during connection, causing it to start
+		lib.comms.BluetoothConnection(EXPERIMENT_ADDRESS).connect()
 
 s = None
 
