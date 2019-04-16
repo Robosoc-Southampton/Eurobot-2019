@@ -1,50 +1,45 @@
-/* Sweep
- by BARRAGAN <http://barraganstudio.com>
- This example code is in the public domain.
-
- modified 8 Nov 2013
- by Scott Fitzgerald
- http://www.arduino.cc/en/Tutorial/Sweep
-*/
 
 #include <Servo.h>
 
-Servo myservo;  // create servo object to control a servo
-// twelve servo objects can be created on most boards
+Servo servo;
+int pos = 0;
+int upper = 120;
+int lower = 80;
 
-int pos = 0;    // variable to store the servo position
-int upper = 120; // P : / Y:   upper must be greater than lower...
-int lower = 80; //P :  / Y :  
-int a = 0;                                   
+#define LEDS_PIN 12
 
 void setup() {
-  pinMode(8,INPUT);
-  myservo.attach(9);  // attaches the servo on pin 9 to the servo object
-  delay(50);
+	Serial.begin(9600);
+
+	pinMode(LED_BUILTIN, OUTPUT);
+	pinMode(LEDS_PIN, OUTPUT);
+	pinMode(8, INPUT);
+	servo.attach(9);
+	delay(50);
+
+	if (digitalRead(8)) {
+		upper = 120;
+		lower = 80;
+	}
+	else {
+		upper = 140;
+		lower = 100;
+	}
+
+	digitalWrite(LED_BUILTIN, HIGH);
+	while (!Serial.available());
+	digitalWrite(LED_BUILTIN, LOW);
+	digitalWrite(LEDS_PIN, HIGH);
 }
 
 void loop() {
-  if(digitalRead(8)){
-    upper = 120;
-    lower = 80;
-  }
-  else{
-    upper = 140;
-    lower = 100;
-  }
-  for (pos = lower; pos <= upper; pos += 1) { // goes from 0 degrees to 180 degrees
-     // in steps of 1 degree
-    myservo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(9);                       // waits 15ms for the servo to reach the position
-  }
-  for (pos = upper; pos >= lower; pos -= 1) { // goes from 180 degrees to 0 degrees
-    myservo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(9);                       // waits 15ms for the servo to reach the position
-  }
- 
-  //myservo.write(90);
-// myservo.write(upper);
-// delay(1500);
-// myservo.write(lower);
-// delay(1500);
+	for (pos = lower; pos <= upper; pos += 1) {
+		servo.write(pos);
+		delay(9);
+	}
+
+	for (pos = upper; pos >= lower; pos -= 1) {
+		servo.write(pos);
+		delay(9);
+	}
 }
