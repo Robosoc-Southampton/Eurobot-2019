@@ -4,6 +4,7 @@ config-key peak-speed
 config-set 60
 turn 3
 do 31
+do 4
 do 100
 do 0
 
@@ -53,4 +54,6 @@ do 11
 turn -170
 forward 1000
 turn 90
-forward 1000
+forward 1030
+turn 45
+forward 650

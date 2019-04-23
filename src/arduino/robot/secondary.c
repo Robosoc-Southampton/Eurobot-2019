@@ -6,6 +6,8 @@ Stepper raisingStepper(STEPPER_ROTATIONS, LIFTING_STEPPER_1, LIFTING_STEPPER_2, 
 Servo gripServo, finger;
 
 DistanceSensor sensors[] = {
+	UltraSonic(2, 3, 200),
+	UltraSonic(4, 7, 200)
 };
 
 ///////////////////////////////////////////////////
@@ -24,6 +26,25 @@ ACTIVITY(raiseStepperBlue, cooldown=1800, count=3000) {
 
 ACTIVITY(lowerStepper, cooldown=1500, count=3000) {
 	raisingStepper.step(-1);
+}
+
+/////////////////////////////////////////////////
+
+ACTIVITY(setupStepper, cooldown=1500, count=100000) {
+	raisingStepper.step(-1);
+}
+
+START(setupStepper) {
+	rlogfd(":notes: it's going down! :notes:");
+	pinMode(PULL_CORD_PIN, INPUT);
+}
+
+PREDICATE(setupStepper) {
+	return digitalRead(PULL_CORD_PIN);
+}
+
+STOP(setupStepper) {
+	rlogfd(":notes: I'm yelling timber :notes:");
 }
 
 ///////////////////////////////////////////////////////
@@ -118,6 +139,8 @@ struct Activity* lookupActivity(uint16_t activity_ID) {
 			return ACTIVITY(raiseStepper);
 		case ACTIVITY_RAISE_STEPPER_BLUE:
 			return ACTIVITY(raiseStepperBlue);
+		case ACTIVITY_SETUP_STEPPER:
+			return ACTIVITY(setupStepper);
 		case ACTIVITY_LOWER_STEPPER_SMALL:
 			return ACTIVITY(lowerStepperSmall);
 		case ACTIVITY_RAISE_STEPPER_SMALL:

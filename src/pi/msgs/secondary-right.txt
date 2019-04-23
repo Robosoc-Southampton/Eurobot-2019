@@ -4,6 +4,7 @@ config-key peak-speed
 config-set 60
 turn -3
 do 31
+do 4
 do 100
 do 0
 
