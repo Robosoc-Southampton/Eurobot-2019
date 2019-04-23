@@ -83,11 +83,12 @@ def getSide():
 	return 'left' if readings[0] < readings[1] else 'right'
 
 # side = getSide()
-side = "left" if "left" in sys.argv else "right"
+side = "left" if "left" in sys.argv else "right" if "right" in sys.argv else getSide()
 print("on side: ", side)
 
 def configurePrimary():
 	messages = []
+	configured = ["-dp" in sys.argv]
 
 	messages.append(('do', 1100))
 
@@ -126,6 +127,12 @@ def configurePrimary():
 	messages.append(('do', 1000))
 
 	primary_connection.send_batched(messages)
+	primary_connection.on_message(lambda opcode, data: configured[0] = True if opcode == "status" and data == 1)
+
+	while not configured[0]:
+		pass
+
+	print("configured primary")
 
 def configureSecondary():
 	messages = []
@@ -153,7 +160,7 @@ def configureSecondary():
 	secondary_connection.send_batched(messages)
 
 def waitForConfigure():
-	primary_configured = ["-dp" in sys.argv]
+	primary_configured = [True]
 	secondary_configured = ["-ds" in sys.argv]
 
 	def on_configure(robot, opcode, data):

@@ -167,7 +167,7 @@ void setup() {
 
 	robot::set_component_value_reader(&readComponentValue);
 	robot::set_activity_lookup(&lookupActivity);
-	robot::set_distance_sensors(0, sensors);
+	robot::set_distance_sensors(2, sensors);
 
 	robot::setup();
 
