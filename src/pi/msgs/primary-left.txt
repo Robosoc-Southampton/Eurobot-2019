@@ -1,5 +1,4 @@
 
-// TODO: remove
 do 1100
 
 // turn to face start area
@@ -37,11 +36,13 @@ do 0
 // go to 6-side
 config-set 60
 turn -90
+do 1002
 forward 450
 turn 90
 do 252
 do 0
-forward 325
+do 1003
+forward 320
 
 // pick up reds, greens and blue from 6-side
 do 10
@@ -90,10 +91,11 @@ do 0
 
 // go to weighing scales
 turn 20
-forward 100
+forward 150
+do 1100
 turn -20
 forward 150
-turn -30
+turn -25
 
 // deposit atoms into weighing scales
 // green in hand
@@ -111,6 +113,8 @@ do 21
 do 22
 do 23
 // green
+do 0
+turn 20
 do 20
 do 1
 do 21

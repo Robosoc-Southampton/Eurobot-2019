@@ -104,7 +104,7 @@ STOP(alignForward) {
 
 ///////////////////////////////////////////////////////
 
-ACTIVITY(alignBackward, cooldown=250000, count=4) {
+ACTIVITY(alignBackward, cooldown=250000, count=5) {
 	if (activity_iteration == 3) robot::drive::md25->stopMotors();
 }
 
@@ -217,7 +217,7 @@ ACTIVITY(raiseFromSideToTopRed, cooldown=2000, count=550) {
 	if (activity_iteration >= 100 && activity_iteration < 400) armStepper.step(1);
 	if (activity_iteration == 400) secondaryArmServo.write(60);
 	if (activity_iteration == 500) {
-		primaryArmServo.write(82);
+		primaryArmServo.write(83);
 		secondaryArmServo.write(15);
 	}
 }
@@ -271,7 +271,7 @@ START(raiseFromSideToTopBlue) {
 
 ACTIVITY(lowerIntoCarousel, cooldown=1500, count=300) {
 	if (activity_iteration >= 100 && activity_iteration < 250) armStepper.step(-1);
-	if (activity_iteration == 250) primaryArmServo.write(80);
+	if (activity_iteration == 250) primaryArmServo.write(81);
 }
 
 START(lowerIntoCarousel) {
