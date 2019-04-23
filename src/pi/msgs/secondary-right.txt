@@ -55,7 +55,7 @@ T -5
 T 5
 
 // go to chaos area
-turn 170
+turn 180
 forward 400
 turn -90
 forward 1000
