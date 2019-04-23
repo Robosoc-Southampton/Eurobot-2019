@@ -259,7 +259,10 @@ def doVision(opcode, data):
 		collectGreenium(s)
 	elif opcode == "status" and data == 5678:
 		# will send data to the experiment during connection, causing it to start
-		lib.comms.BluetoothConnection(EXPERIMENT_ADDRESS).connect()
+		experiment_conn = lib.comms.BluetoothConnection(EXPERIMENT_ADDRESS)
+		experiment_conn.connect()
+		experiment_conn.send(('message', 0))
+		experiment_conn.close()
 
 s = None
 

@@ -10,6 +10,8 @@ do 0
 
 // start experiment
 echo 5678
+echo 5678
+echo 5678
 
 // get first atom
 forward 360
