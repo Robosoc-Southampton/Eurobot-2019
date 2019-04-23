@@ -57,9 +57,9 @@ do 11
 turn -180
 forward 400
 turn 90
-forward 1100
+forward 1230
 turn -90
 forward 550
-turn 160
+turn 130
 forward 650
 
