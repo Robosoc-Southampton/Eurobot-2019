@@ -12,7 +12,12 @@ PRIMARY_ADDRESS = "20:17:03:08:60:45"
 PRIMARY_CONFIG = "src/pi/msgs/config.txt"
 # SECONDARY_ADDRESS = "20:17:03:08:58:54"
 SECONDARY_CONFIG = "src/pi/msgs/config2.txt"
-EXPERIMENT_ADDRESS = "20:17:03:08:60:45"
+EXPERIMENT_ADDRESS = "20:17:03:08:57:33"
+
+c = lib.comms.BluetoothConnection(EXPERIMENT_ADDRESS)
+c.connect()
+c.send(('M', 0))
+c.close()
 
 VISION_PORT = 12345
 VISION_TCP_BUFFER_SIZE = 1024

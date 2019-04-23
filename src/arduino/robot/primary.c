@@ -519,8 +519,8 @@ void setup() {
 
 	rlogf("Attaching alignment servos");
 	// TODO
-	// frontAlignmentServo1.attach(FRONT_ALIGNMENT_SERVO_1_PIN);
-	// frontAlignmentServo2.attach(FRONT_ALIGNMENT_SERVO_2_PIN);
+	frontAlignmentServo1.attach(FRONT_ALIGNMENT_SERVO_1_PIN);
+	frontAlignmentServo2.attach(FRONT_ALIGNMENT_SERVO_2_PIN);
 	frontAlignmentServo1.write(75);
 	frontAlignmentServo2.write(180);
 
