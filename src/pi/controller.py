@@ -142,6 +142,7 @@ def configureSecondary():
 	messages = []
 
 	messages.append(('do', 1100))
+	messages.append(('do', 4))
 
 	if side == "left":
 		messages.append(('turn', -90))
