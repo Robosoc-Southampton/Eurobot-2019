@@ -105,30 +105,30 @@ def configurePrimary():
 		messages.append(('do', 0))
 		messages.append(('forward', 50))
 		messages.append(('turn', 91))
-		messages.append(('forward', 1080))
+		messages.append(('forward', 1000))
 		messages.append(('do', 251))
 		messages.append(('do', 0))
-		messages.append(('forward', -1200))
+		messages.append(('forward', -1050))
 		messages.append(('turn', -90))
 		messages.append(('do', 2))
 		messages.append(('do', 252))
 		messages.append(('do', 0))
-		messages.append(('forward', 100))
+		messages.append(('forward', 70))
 	else:
 		messages.append(('turn', 90))
 		messages.append(('do', 252))
 		messages.append(('do', 0))
 		messages.append(('forward', 50))
 		messages.append(('turn', -91))
-		messages.append(('forward', 1080))
+		messages.append(('forward', 1000))
 		messages.append(('do', 251))
 		messages.append(('do', 0))
-		messages.append(('forward', -1200))
+		messages.append(('forward', -1050))
 		messages.append(('turn', 90))
 		messages.append(('do', 2))
 		messages.append(('do', 252))
 		messages.append(('do', 0))
-		messages.append(('forward', 100))
+		messages.append(('forward', 70))
 
 	messages.append(('echo', 1))
 	messages.append(('do', 1000))
@@ -263,10 +263,13 @@ def doVision(opcode, data):
 
 s = None
 
-if not "-ds" in sys.argv:
-	ip = 'localhost'
-	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	s.connect((ip, VISION_PORT))
+try:
+	if not "-ds" in sys.argv:
+		ip = 'localhost'
+		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		s.connect((ip, VISION_PORT))
+except:
+	print("issue with camera program connection")
 
 configurePrimary()
 configureSecondary()
