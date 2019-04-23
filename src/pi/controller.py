@@ -126,8 +126,12 @@ def configurePrimary():
 	messages.append(('echo', 1))
 	messages.append(('do', 1000))
 
+	def ugh(opcode, data):
+		if opcode == "status" and data == 1:
+			configured[0] = True
+
 	primary_connection.send_batched(messages)
-	primary_connection.on_message(lambda opcode, data: configured[0] = True if opcode == "status" and data == 1)
+	primary_connection.on_message(ugh)
 
 	while not configured[0]:
 		pass
