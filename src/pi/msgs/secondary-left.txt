@@ -53,9 +53,12 @@ turn -5
 do 11
 
 // go to chaos area
-turn -170
-forward 1000
+turn -180
+forward 400
 turn 90
 forward 1030
-turn 45
+turn -90
+forward 600
+turn 160
 forward 650
+
