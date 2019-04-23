@@ -27,7 +27,7 @@ turn 180
 
 // come back to deposit
 forward 170
-turn -90
+turn -88
 forward 330
 do 0
 config-set 60
@@ -56,9 +56,9 @@ do 11
 turn -180
 forward 400
 turn 90
-forward 1030
+forward 1100
 turn -90
-forward 600
+forward 550
 turn 160
 forward 650
 
