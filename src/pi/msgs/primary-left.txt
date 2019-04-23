@@ -14,19 +14,20 @@ do 100
 do 0
 
 // go to 3-side
-forward 1130
+forward 1000
 do 0
 config-set 40
 do 251
 do 0
-forward -10
+forward -15
 turn -90
 do 252
 do 0
-forward 60
+forward 55
 
 // pick up green from 3-side
 do 10
+turn -3
 do 12
 do 14
 do 15
@@ -36,11 +37,11 @@ do 0
 // go to 6-side
 config-set 60
 turn -90
-forward 490
+forward 450
 turn 90
 do 252
 do 0
-forward 360
+forward 325
 
 // pick up reds, greens and blue from 6-side
 do 10
@@ -50,7 +51,7 @@ do 15
 do 1
 do 0
 
-forward 106
+forward 97
 do 10
 do 11
 do 14
@@ -58,7 +59,7 @@ do 15
 do 1
 do 0
 
-forward 106
+forward 97
 do 10
 do 11
 do 14
@@ -66,7 +67,7 @@ do 15
 do 1
 do 0
 
-forward 106
+forward 97
 do 10
 do 11
 do 14
@@ -74,7 +75,7 @@ do 15
 do 1
 do 0
 
-forward 106
+forward 97
 do 10
 do 11
 do 14
@@ -82,16 +83,16 @@ do 15
 do 1
 do 0
 
-forward 106
+forward 97
 do 10
 do 11
 do 0
 
 // go to weighing scales
 turn 20
-forward 70
+forward 100
 turn -20
-forward 200
+forward 150
 turn -30
 
 // deposit atoms into weighing scales
@@ -123,7 +124,6 @@ do 22
 do 23
 // blue
 do 20
-do 1
 do 1
 do 21
 do 22

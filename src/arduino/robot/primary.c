@@ -217,7 +217,7 @@ ACTIVITY(raiseFromSideToTopRed, cooldown=2000, count=550) {
 	if (activity_iteration >= 100 && activity_iteration < 400) armStepper.step(1);
 	if (activity_iteration == 400) secondaryArmServo.write(60);
 	if (activity_iteration == 500) {
-		primaryArmServo.write(90);
+		primaryArmServo.write(82);
 		secondaryArmServo.write(15);
 	}
 }
@@ -232,7 +232,7 @@ ACTIVITY(raiseFromSideToRest, cooldown=2000, count=550) {
 	if (activity_iteration >= 100 && activity_iteration < 400) armStepper.step(1);
 	if (activity_iteration == 400) secondaryArmServo.write(60);
 	if (activity_iteration == 500) {
-		primaryArmServo.write(90);
+		primaryArmServo.write(82);
 		secondaryArmServo.write(15);
 	}
 }
@@ -243,7 +243,7 @@ ACTIVITY(raiseFromSideToTopGreen, cooldown=2000, count=550) {
 	if (activity_iteration >= 100 && activity_iteration < 400) armStepper.step(1);
 	if (activity_iteration == 400) secondaryArmServo.write(60);
 	if (activity_iteration == 500) {
-		primaryArmServo.write(90);
+		primaryArmServo.write(82);
 		secondaryArmServo.write(15);
 	}
 }
@@ -258,7 +258,7 @@ ACTIVITY(raiseFromSideToTopBlue, cooldown=2000, count=550) {
 	if (activity_iteration >= 100 && activity_iteration < 400) armStepper.step(1);
 	if (activity_iteration == 400) secondaryArmServo.write(60);
 	if (activity_iteration == 500) {
-		primaryArmServo.write(90);
+		primaryArmServo.write(82);
 		secondaryArmServo.write(15);
 	}
 }
@@ -271,22 +271,23 @@ START(raiseFromSideToTopBlue) {
 
 ACTIVITY(lowerIntoCarousel, cooldown=1500, count=300) {
 	if (activity_iteration >= 100 && activity_iteration < 250) armStepper.step(-1);
-	if (activity_iteration == 250) primaryArmServo.write(60);
+	if (activity_iteration == 250) primaryArmServo.write(80);
 }
 
 START(lowerIntoCarousel) {
-	primaryArmServo.write(78);
+	
 }
 
 STOP(lowerIntoCarousel) {
 	grabberServo.write(ARM_GRABBER_OPEN);
-	primaryArmServo.write(80);
+	primaryArmServo.write(78);
 }
 
 //////////////////////////////////////////////////////
 
-ACTIVITY(raiseFromCarousel, cooldown=1500, count=150) {
-	armStepper.step(1);
+ACTIVITY(raiseFromCarousel, cooldown=1500, count=250) {
+	if (activity_iteration == 50) primaryArmServo.write(85);
+	if (activity_iteration >= 100) armStepper.step(1);
 }
 
 STOP(raiseFromCarousel) {
@@ -312,7 +313,7 @@ STOP(putInWeighingScales) {
 
 ACTIVITY(retractFromWeighingScales, cooldown=1500, count=500) {
 	if (activity_iteration < 200) armStepper.step(1);
-	if (activity_iteration == 200) secondaryArmServo.write(5);
+	if (activity_iteration == 100) secondaryArmServo.write(5);
 	if (activity_iteration == 300) primaryArmServo.write(90);
 }
 
@@ -327,7 +328,7 @@ ACTIVITY(pickIntoCarousel, cooldown=1500, count=330) {
 }
 
 START(pickIntoCarousel) {
-	primaryArmServo.write(80);
+	primaryArmServo.write(83);
 	secondaryArmServo.write(25);
 	grabberServo.write(ARM_GRABBER_OPEN);
 }

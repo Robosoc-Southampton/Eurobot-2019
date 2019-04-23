@@ -73,8 +73,8 @@
 #define CAROUSEL_STEPPER_3 10
 #define CAROUSEL_STEPPER_4 11
 
-#define ARM_GRABBER_CLOSED 12
-#define ARM_GRABBER_OPEN 55
+#define ARM_GRABBER_CLOSED 10
+#define ARM_GRABBER_OPEN 65
 
 uint16_t readComponentValue(uint16_t component_ID);
 
