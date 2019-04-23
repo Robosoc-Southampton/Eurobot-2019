@@ -40,11 +40,14 @@ forward -100
 turn -180
 do 0
 config-set 100
+do 1000
 forward 1350
 do 0
 config-set 60
 turn 92
-forward 500
+forward 300
+do 1100
+forward 200
 forward -80
 do 10
 forward 65
@@ -56,6 +59,7 @@ T 5
 
 // go to chaos area
 turn 180
+do 1000
 forward 400
 turn -90
 forward 1000
