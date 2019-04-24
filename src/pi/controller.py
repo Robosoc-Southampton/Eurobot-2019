@@ -256,6 +256,13 @@ def collectGreenium(s):
 def collectBlueium(s):
 	collectAtom(s, "findBlueium")
 
+class ExperimentThread:
+	def run():
+		self.experiment_conn = lib.comms.BluetoothConnection(EXPERIMENT_ADDRESS)
+		self.experiment_conn.connect()
+		self.experiment_conn.send(('message', 0))
+		self.experiment_conn.close()
+
 def doVision(opcode, data):
 	if opcode == "status" and data == 1234:
 		secondary_connection.send(('message', 7))
@@ -264,10 +271,8 @@ def doVision(opcode, data):
 		collectGreenium(s)
 	elif opcode == "status" and data == 5678:
 		# will send data to the experiment during connection, causing it to start
-		experiment_conn = lib.comms.BluetoothConnection(EXPERIMENT_ADDRESS)
-		experiment_conn.connect()
-		experiment_conn.send(('message', 0))
-		experiment_conn.close()
+		e = ExperimentThread()
+		e.start()
 
 s = None
 

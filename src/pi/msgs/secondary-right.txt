@@ -13,7 +13,6 @@ do 0
 // start experiment
 echo 5678
 echo 5678
-echo 5678
 
 // get first atom
 forward 360
@@ -22,10 +21,12 @@ do 2
 do 2
 do 0
 turn -87
+echo 5678
 
 // get second atom
 forward 300
 turn 180
+echo 5678
 
 // come back to deposit
 forward 150
@@ -38,7 +39,12 @@ do 31
 
 // to particle accelerator
 forward -100
-turn -180
+do 1100
+turn -90
+forward 500
+forward -20
+turn -90
+do 1000
 do 0
 config-set 100
 do 1000
@@ -46,9 +52,7 @@ forward 1350
 do 0
 config-set 60
 turn 92
-forward 300
-do 1100
-forward 200
+forward 20
 forward -80
 do 10
 forward 65
