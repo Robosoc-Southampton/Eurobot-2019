@@ -36,39 +36,3 @@ do 0
 config-set 60
 forward 120
 do 31
-
-// to particle accelerator
-forward -100
-do 1100
-turn -90
-forward 500
-forward -40
-turn -90
-do 1000
-do 0
-config-set 100
-do 1000
-forward 1350
-do 0
-config-set 60
-turn 92
-forward 20
-forward -80
-do 10
-forward 65
-
-// push down atom
-do 11
-T -5
-T 5
-
-// go to chaos area
-turn 180
-do 1000
-forward 400
-turn -90
-forward 1000
-turn 90
-forward 600
-turn -130
-forward 650
