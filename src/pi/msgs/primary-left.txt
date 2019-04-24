@@ -26,13 +26,118 @@ forward 55
 
 // pick up green from 3-side
 do 10
-do 11
 turn -3
+do 12
+do 14
+do 15
 do 1
 do 0
 
+// go to 6-side
+config-set 60
 turn -90
-do 1000
-forward 1000
-turn -90
+do 1002
+forward 440
+turn 90
+do 252
+do 0
+do 1003
+forward 330
+
+// pick up reds, greens and blue from 6-side
 do 10
+do 11
+do 14
+do 15
+do 1
+do 0
+
+forward 97
+do 10
+do 11
+do 14
+do 15
+do 1
+do 0
+
+forward 97
+do 10
+do 11
+do 14
+do 15
+do 1
+do 0
+
+forward 97
+do 10
+do 11
+do 14
+do 15
+do 1
+do 0
+
+forward 97
+do 10
+do 11
+do 14
+do 15
+do 1
+do 0
+
+forward 97
+do 10
+do 11
+do 0
+
+// go to weighing scales
+turn 20
+forward 150
+do 1100
+turn -20
+forward 150
+turn -25
+
+// deposit atoms into weighing scales
+// green in hand
+do 20
+do 1
+do 1
+do 1
+do 21
+do 22
+do 23
+// red
+do 20
+do 1
+do 21
+do 22
+do 23
+// green
+do 0
+turn 20
+do 20
+do 1
+do 21
+do 22
+do 23
+// red
+do 20
+do 1
+do 21
+do 22
+do 23
+// blue
+do 20
+do 1
+do 21
+do 22
+do 23
+// green
+do 20
+do 1
+do 21
+
+// TODO:
+// open alignment servos
+// rotate and go back to starting area, through chaos area
+// drop off red in carousel
