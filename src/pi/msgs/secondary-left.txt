@@ -17,59 +17,6 @@ echo 5678
 // get first atom
 forward 360
 do 30
-do 2
-do 2
-do 0
-turn 87
-echo 5678
-
-// get second atom
-forward 300
 turn 180
-echo 5678
-
-// come back to deposit
-forward 170
-turn -88
-forward 330
-do 0
-config-set 60
-forward 120
-do 31
-
-// to to particle accelerator
-do 1100
-forward -100
-turn 90
-forward 500
-forward -20
-do 1000
-turn 90
-do 0
-config-set 100
-do 1000
-forward 1575
-turn -90
-do 1100
-forward 20
-do 0
-config-set 60
-forward -20
-do 10
-
-// push down atom
-turn 5
-turn -5
-do 11
-
-// go to chaos area
-turn -180
-do 1000
-forward 400
-turn 90
-forward 1230
-turn -90
-forward 550
-turn 130
-forward 650
+forward 360
 
