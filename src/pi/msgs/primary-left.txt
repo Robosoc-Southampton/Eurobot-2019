@@ -22,7 +22,7 @@ forward -15
 turn -90
 do 252
 do 0
-forward 55
+forward 60
 
 // pick up green from 3-side
 do 10
@@ -37,7 +37,7 @@ do 0
 config-set 60
 turn -90
 do 1002
-forward 440
+forward 450
 turn 90
 do 252
 do 0
