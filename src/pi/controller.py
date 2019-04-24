@@ -4,6 +4,7 @@ import lib.messages
 import lib.state
 from lib.position import RobotPosition
 import sys
+import threading
 import time
 import socket
 import math
@@ -210,7 +211,7 @@ def collectGreenium(s):
 def collectBlueium(s):
 	collectAtom(s, "findBlueium")
 
-class ExperimentThread:
+class ExperimentThread(threading.Thread):
 	def run():
 		self.experiment_conn = lib.comms.BluetoothConnection(EXPERIMENT_ADDRESS)
 		self.experiment_conn.connect()
