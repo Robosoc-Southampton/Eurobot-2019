@@ -135,8 +135,8 @@ namespace robot {
 				perform_do_command(message->payload);
 				break;
 			case 'E': // echo
-				rlogfd("Echoing");
 				robot::send_message('s', message->payload);
+				rlogfd("Echoing");
 				break;
 			case 'K': // config-key
 				robot::configuration::set_config_key(message->payload);

@@ -138,52 +138,6 @@ def configurePrimary():
 
 	print("configured primary")
 
-def configureSecondary():
-	messages = []
-
-	messages.append(('do', 1100))
-	messages.append(('do', 4))
-	messages.append(('do', 0))
-
-	if side == "left":
-		messages.append(('turn', -90))
-		messages.append(('forward', 330))
-		messages.append(('forward', -320))
-		messages.append(('turn', 90))
-		messages.append(('forward', -10))
-		messages.append(('forward', 10))
-	else:
-		messages.append(('turn', 90))
-		messages.append(('forward', 330))
-		messages.append(('forward', -320))
-		messages.append(('turn', -90))
-		messages.append(('forward', -10))
-		messages.append(('forward', 10))
-
-	messages.append(('echo', 1))
-	messages.append(('do', 1000))
-
-	secondary_connection.send_batched(messages)
-
-def waitForConfigure():
-	primary_configured = [True]
-	secondary_configured = ["-ds" in sys.argv]
-
-	def on_configure(robot, opcode, data):
-		if opcode == "status" and data == 1:
-			if robot == "primary":
-				primary_configured[0] = True
-			elif robot == "secondary":
-				secondary_configured[0] = True
-
-	primary_connection.on_message(lambda opcode, data: on_configure("primary", opcode, data))
-	secondary_connection.on_message(lambda opcode, data: on_configure("secondary", opcode, data))
-
-	while not primary_configured[0] or not secondary_configured[0]:
-		pass
-
-	print("configured")
-
 def seeAtoms(s, vision_message):
 	print("Here1")
 	s.send(bytes(vision_message + "\n", 'utf-8'))
@@ -295,10 +249,6 @@ if side == "left":
 else:
 	primary_connection.send_batched(lib.messages.parse_message_file("src/pi/msgs/primary-right.txt"))
 
-configureSecondary()
-waitForConfigure()
-
-secondary_connection.send(("message", 7))
 secondary_connection.on_message(doVision)
 
 if side == "left":
