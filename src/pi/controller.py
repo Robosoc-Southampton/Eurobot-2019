@@ -213,10 +213,13 @@ def collectBlueium(s):
 
 class ExperimentThread(threading.Thread):
 	def run(self):
-		self.experiment_conn = lib.comms.BluetoothConnection(EXPERIMENT_ADDRESS)
-		self.experiment_conn.connect()
-		self.experiment_conn.send(('message', 0))
-		self.experiment_conn.close()
+		try:
+			self.experiment_conn = lib.comms.BluetoothConnection(EXPERIMENT_ADDRESS)
+			self.experiment_conn.connect()
+			self.experiment_conn.send(('message', 0))
+			self.experiment_conn.close()
+		except:
+			print("eh, bluetooth error")
 
 def doVision(opcode, data):
 	if opcode == "status" and data == 1234:

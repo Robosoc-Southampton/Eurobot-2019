@@ -37,7 +37,7 @@ do 0
 config-set 60
 turn -90
 do 1002
-forward 450
+forward 440
 turn 90
 do 252
 do 0
