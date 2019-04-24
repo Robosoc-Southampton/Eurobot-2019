@@ -287,7 +287,6 @@ except:
 configurePrimary()
 
 primary_connection.send(("message", 7))
-
 primary_connection.on_message(lambda opcode, data: print("[" + str(time.clock()) + "] (primary) Message received (%s %s)" % (opcode, data)))
 #secondary_connection.on_message(lambda opcode, data: print("[" + str(time.clock()) + "] (secondary) Message received (%s %s)" % (opcode, data)))
 

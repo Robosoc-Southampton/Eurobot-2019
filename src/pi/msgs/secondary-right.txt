@@ -1,5 +1,6 @@
 
 do 1100
+do 4
 
 // setup and wait for pull cord
 config-key peak-speed
