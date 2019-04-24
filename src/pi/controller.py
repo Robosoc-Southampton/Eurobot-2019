@@ -212,7 +212,7 @@ def collectBlueium(s):
 	collectAtom(s, "findBlueium")
 
 class ExperimentThread(threading.Thread):
-	def run():
+	def run(self):
 		self.experiment_conn = lib.comms.BluetoothConnection(EXPERIMENT_ADDRESS)
 		self.experiment_conn.connect()
 		self.experiment_conn.send(('message', 0))
