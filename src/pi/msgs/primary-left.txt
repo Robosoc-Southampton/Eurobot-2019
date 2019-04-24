@@ -26,6 +26,7 @@ forward 55
 
 // pick up green from 3-side
 do 10
+do 11
 turn -3
 do 1
 do 0
