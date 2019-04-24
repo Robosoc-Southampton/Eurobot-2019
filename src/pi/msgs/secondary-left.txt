@@ -41,7 +41,7 @@ do 1100
 forward -100
 turn 90
 forward 500
-forward -20
+forward -40
 do 1000
 turn 90
 do 0

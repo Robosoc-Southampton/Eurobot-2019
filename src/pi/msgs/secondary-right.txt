@@ -42,7 +42,7 @@ forward -100
 do 1100
 turn -90
 forward 500
-forward -20
+forward -40
 turn -90
 do 1000
 do 0
