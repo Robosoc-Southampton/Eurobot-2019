@@ -285,20 +285,22 @@ except:
 	print("issue with camera program connection")
 
 configurePrimary()
-configureSecondary()
-waitForConfigure()
 
 primary_connection.send(("message", 7))
-secondary_connection.send(("message", 7))
 
 primary_connection.on_message(lambda opcode, data: print("[" + str(time.clock()) + "] (primary) Message received (%s %s)" % (opcode, data)))
 #secondary_connection.on_message(lambda opcode, data: print("[" + str(time.clock()) + "] (secondary) Message received (%s %s)" % (opcode, data)))
-secondary_connection.on_message(doVision)
 
 if side == "left":
 	primary_connection.send_batched(lib.messages.parse_message_file("src/pi/msgs/primary-left.txt"))
 else:
 	primary_connection.send_batched(lib.messages.parse_message_file("src/pi/msgs/primary-right.txt"))
+
+configureSecondary()
+waitForConfigure()
+
+secondary_connection.send(("message", 7))
+secondary_connection.on_message(doVision)
 
 if side == "left":
 	secondary_connection.send_batched(lib.messages.parse_message_file("src/pi/msgs/secondary-left.txt"))
